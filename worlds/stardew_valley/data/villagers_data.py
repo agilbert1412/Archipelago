@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Set, List, FrozenSet, Tuple
+from typing import Set, List, FrozenSet, Tuple, Dict
 from .region_data import SVRegion
 
 
@@ -247,4 +247,4 @@ vincent = villager("Vincent", False, town, "Spring", universal_loves + vincent_l
 willy = villager("Willy", False, beach, "Summer", universal_loves + willy_loves, True)
 wizard = villager("Wizard", False, forest, "Winter", universal_loves + wizard_loves, True)
 
-all_villagers_by_name = {item.name: item for item in all_villagers}
+all_villagers_by_name: Dict[str, Villager] = {villager.name: villager for villager in all_villagers}

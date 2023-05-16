@@ -175,7 +175,8 @@ def extend_friendsanity_locations(randomized_locations: List[LocationData], worl
     exclude_non_bachelors = world_options[options.Friendsanity] == options.Friendsanity.option_bachelors
     exclude_locked_villagers = world_options[options.Friendsanity] == options.Friendsanity.option_starting_npcs or \
                                world_options[options.Friendsanity] == options.Friendsanity.option_bachelors
-    exclude_post_marriage_hearts = world_options[options.Friendsanity] != options.Friendsanity.option_all_with_marriage
+    include_post_marriage_hearts = world_options[options.Friendsanity] == options.Friendsanity.option_all_with_marriage
+    heart_size = world_options[options.FriendsanityHeartSize]
     for villager in all_villagers:
         if not villager.available and exclude_locked_villagers:
             continue
@@ -183,14 +184,18 @@ def extend_friendsanity_locations(randomized_locations: List[LocationData], worl
             continue
         if villager.name == "Leo" and exclude_leo:
             continue
+        heart_cap = 8 if villager.bachelor else 10
+        if include_post_marriage_hearts and villager.bachelor:
+            heart_cap = 14
         for heart in range(1, 15):
-            if villager.bachelor and exclude_post_marriage_hearts and heart > 8:
-                continue
-            if villager.bachelor or heart < 11:
+            if heart > heart_cap:
+                break
+            if heart % heart_size == 0 or heart == heart_cap:
                 randomized_locations.append(location_table[f"Friendsanity: {villager.name} {heart} <3"])
     if not exclude_non_bachelors:
         for heart in range(1, 6):
-            randomized_locations.append(location_table[f"Friendsanity: Pet {heart} <3"])
+            if heart % heart_size == 0 or heart == 5:
+                randomized_locations.append(location_table[f"Friendsanity: Pet {heart} <3"])
 
 
 def extend_festival_locations(randomized_locations: List[LocationData], festival_option: int):
