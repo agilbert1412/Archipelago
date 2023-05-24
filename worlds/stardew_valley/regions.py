@@ -1,6 +1,8 @@
-
+import random
+from dataclasses import dataclass, field
+from enum import IntFlag
 from random import Random
-from typing import Iterable, Dict, Protocol, Optional, List, Tuple
+from typing import Iterable, Dict, Protocol, Optional, List, Tuple, Set
 
 from BaseClasses import Region, Entrance
 from . import options
@@ -313,6 +315,8 @@ mandatory_connections = [
     ConnectionData(SVEntrance.parrot_express_jungle_to_volcano, SVRegion.island_north),
 ]
 
+regions_by_name: Dict[str, RegionData] = {region.name: region for region in stardew_valley_regions}
+connections_by_name: Dict[str, ConnectionData] = {connection.name: connection for connection in mandatory_connections}
 
 def create_final_regions(world_options: StardewOptions) -> List[RegionData]:
     final_regions = []
@@ -378,49 +382,124 @@ def randomize_connections(random: Random, world_options: StardewOptions) -> Tupl
     elif world_options[options.EntranceRandomization] == options.EntranceRandomization.option_chaos:
         connections_to_randomize = [connection for connection in final_connections if
                                     RandomizationFlag.BUILDINGS in connection.flag]
+        connections_to_randomize = exclude_island_if_necessary(connections_to_randomize, world_options)
+
         # On Chaos, we just add the connections to randomize, unshuffled, and the client does it every day
-        randomized_data = {}
+        randomized_data_for_mod = {}
         for connection in connections_to_randomize:
-            randomized_data[connection.name] = connection.name
-            randomized_data[connection.reverse] = connection.reverse
-        return final_connections, randomized_data
+            randomized_data_for_mod[connection.name] = connection.name
+            randomized_data_for_mod[connection.reverse] = connection.reverse
+        return final_connections, randomized_data_for_mod
+
+    connections_to_randomize = exclude_island_if_necessary(connections_to_randomize, world_options)
+    random.shuffle(connections_to_randomize)
+    destination_pool = list(connections_to_randomize)
+    random.shuffle(destination_pool)
+
+    randomized_connections = randomize_chosen_connections(connections_to_randomize, destination_pool)
+    add_non_randomized_connections(final_connections, connections_to_randomize, randomized_connections)
+
+    swap_connections_until_valid(randomized_connections, random)
+    randomized_connections_for_generation = create_connections_for_generation(randomized_connections)
+    randomized_data_for_mod = create_data_for_mod(randomized_connections, connections_to_randomize)
+
+    return randomized_connections_for_generation, randomized_data_for_mod
+
+
+def exclude_island_if_necessary(connections_to_randomize: List[ConnectionData], world_options) -> List[ConnectionData]:
     exclude_island = world_options[options.ExcludeGingerIsland] == options.ExcludeGingerIsland.option_true
     if exclude_island:
         connections_to_randomize = [connection for connection in connections_to_randomize if
                                     RandomizationFlag.GINGER_ISLAND not in connection.flag]
-    random.shuffle(connections_to_randomize)
-
-    destination_pool = list(connections_to_randomize)
-    random.shuffle(destination_pool)
-
-    randomized_connections = []
-    randomized_data = {}
-
-    randomize_chosen_connections(connections_to_randomize, destination_pool, randomized_connections, randomized_data)
-    add_non_randomized_connections(final_connections, connections_to_randomize, randomized_connections)
-
-    return randomized_connections, randomized_data
+    return connections_to_randomize
 
 
-def randomize_chosen_connections(connections_to_randomize, destination_pool, randomized_connections, randomized_data):
-    # farmhouse_done = False
+def randomize_chosen_connections(connections_to_randomize: List[ConnectionData], destination_pool: List[ConnectionData]) -> Dict[ConnectionData, ConnectionData]:
+    randomized_connections = {}
     for connection in connections_to_randomize:
         destination = destination_pool.pop()
-        create_randomized_connection(connection, destination, randomized_connections)
-        create_randomized_data(connection, destination, randomized_data)
+        randomized_connections[connection] = destination
+    return randomized_connections
 
 
-def create_randomized_connection(connection, destination, randomized_connections):
-    randomized_connections.append(ConnectionData(connection.name, destination.destination, destination.reverse))
+def create_connections_for_generation(randomized_connections: Dict[ConnectionData, ConnectionData]) -> List[ConnectionData]:
+    connections = []
+    for connection in randomized_connections:
+        destination = randomized_connections[connection]
+        connections.append(ConnectionData(connection.name, destination.destination, destination.reverse))
+    return connections
 
 
-def create_randomized_data(connection, destination, randomized_data):
-    randomized_data[connection.name] = destination.name
-    randomized_data[destination.reverse] = connection.reverse
+def create_data_for_mod(randomized_connections: Dict[ConnectionData, ConnectionData], connections_to_randomize: List[ConnectionData]) -> Dict[str, str]:
+    randomized_data_for_mod = {}
+    for connection in randomized_connections:
+        if connection not in connections_to_randomize:
+            continue
+        destination = randomized_connections[connection]
+        add_to_mod_data(connection, destination, randomized_data_for_mod)
+    return randomized_data_for_mod
 
 
-def add_non_randomized_connections(connections, connections_to_randomize, randomized_connections):
+def add_to_mod_data(connection: ConnectionData, destination: ConnectionData, randomized_data_for_mod: Dict[str, str]):
+    randomized_data_for_mod[connection.name] = destination.name
+    randomized_data_for_mod[destination.reverse] = connection.reverse
+
+
+def add_non_randomized_connections(connections, connections_to_randomize: List[ConnectionData], randomized_connections: Dict[ConnectionData, ConnectionData]):
     for connection in connections:
         if connection in connections_to_randomize:
             continue
-        randomized_connections.append(connection)
+        randomized_connections[connection] = connection
+
+
+def swap_connections_until_valid(randomized_connections: Dict[ConnectionData, ConnectionData], random: Random):
+    while True:
+        reachable_regions, unreachable_regions = find_reachable_regions(randomized_connections)
+        if not unreachable_regions:
+            return randomized_connections
+        swap_one_connection(randomized_connections, reachable_regions, unreachable_regions, random)
+
+
+def find_reachable_regions(randomized_connections: Dict[ConnectionData, ConnectionData]):
+    reachable_regions = {SVRegion.menu}
+    unreachable_regions = {region.name for region in stardew_valley_regions}
+    unreachable_regions.remove(SVRegion.menu)
+    exits_to_explore = list(regions_by_name[SVRegion.menu].exits)
+    while exits_to_explore:
+        exit_name = exits_to_explore.pop()
+        exit_connection = connections_by_name[exit_name]
+        replaced_connection = randomized_connections[exit_connection]
+        target_region_name = replaced_connection.destination
+        if target_region_name in reachable_regions:
+            continue
+
+        target_region = regions_by_name[target_region_name]
+        reachable_regions.add(target_region_name)
+        unreachable_regions.remove(target_region_name)
+        exits_to_explore.extend(target_region.exits)
+    return reachable_regions, unreachable_regions
+
+
+def swap_one_connection(randomized_connections: Dict[ConnectionData, ConnectionData], reachable_regions: Set[str],
+                        unreachable_regions: Set[str], random: Random):
+    randomized_connections_already_shuffled = {connection: randomized_connections[connection]
+                                               for connection in randomized_connections
+                                               if connection != randomized_connections[connection]}
+    chosen_unreachable_region_name = random.choice(tuple(unreachable_regions))
+    chosen_unreachable_region = regions_by_name[chosen_unreachable_region_name]
+    chosen_unreachable_entrance_name = random.choice(chosen_unreachable_region.exits)
+    chosen_unreachable_entrance = connections_by_name[chosen_unreachable_entrance_name]
+
+    chosen_reachable_entrance = None
+    while chosen_reachable_entrance is None or chosen_reachable_entrance not in randomized_connections_already_shuffled:
+        chosen_reachable_region_name = random.choice(tuple(reachable_regions))
+        chosen_reachable_region = regions_by_name[chosen_reachable_region_name]
+        if not any(chosen_reachable_region.exits):
+            continue
+        chosen_reachable_entrance_name = random.choice(chosen_reachable_region.exits)
+        chosen_reachable_entrance = connections_by_name[chosen_reachable_entrance_name]
+
+    reachable_destination = randomized_connections[chosen_reachable_entrance]
+    unreachable_destination = randomized_connections[chosen_unreachable_entrance]
+    randomized_connections[chosen_reachable_entrance] = unreachable_destination
+    randomized_connections[chosen_unreachable_entrance] = reachable_destination
