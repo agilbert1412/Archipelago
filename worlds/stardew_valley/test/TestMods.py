@@ -1,0 +1,167 @@
+from typing import List, Union
+import unittest
+import random
+import sys
+
+from BaseClasses import MultiWorld
+from . import setup_solo_multiworld
+from .TestOptions import basic_checks, SVTestBase
+from .. import options, locations, items, Group, ItemClassification, StardewOptions
+from ..regions import RandomizationFlag, create_final_connections, randomize_connections
+from ..items import item_table
+from ..locations import location_table, LocationTags
+from ..options import stardew_valley_option_classes, Mods, EntranceRandomization
+
+mod_list = ["DeepWoods", "Tractor Mod", "Bigger Backpack",
+            "Luck Skill", "Magic", "Socializing Skill", "Archaeology",
+            "Cooking Skill", "Binning Skill", "Juna - Roommate NPC",
+            "Professor Jasper Thomas", "Alec Revisited", "Custom NPC - Yoba", "Custom NPC Eugene",
+            "'Prophet' Wellwick", "Mister Ginger (cat npc)", "Shiko - New Custom NPC", "Delores - Custom NPC",
+            "Ayeisha - The Postal Worker (Custom NPC)"]
+
+
+def check_stray_mod_items(chosen_mods: Union[List[str], str], tester: SVTestBase, multiworld: MultiWorld):
+    if isinstance(chosen_mods, str):
+        chosen_mods = [chosen_mods]
+    for multiworld_item in multiworld.get_items():
+        item = item_table[multiworld_item.name]
+        tester.assertTrue(item.mod_name is None or item.mod_name in chosen_mods)
+    for multiworld_location in multiworld.get_locations():
+        if multiworld_location.event:
+            continue
+        location = location_table[multiworld_location.name]
+        tester.assertTrue(location.mod_name is None or location.mod_name in chosen_mods)
+
+
+class TestGenerateModsOptions(SVTestBase):
+
+    def test_given_single_mods_when_generate_then_basic_checks(self):
+        for mod in mod_list:
+            with self.subTest(f"Mod: {mod}"):
+                multi_world = setup_solo_multiworld({Mods: mod})
+                basic_checks(self, multi_world)
+                check_stray_mod_items(mod, self, multi_world)
+
+    def test_given_mod_pairs_when_generate_then_basic_checks(self):
+        num_mods = len(mod_list)
+        for mod1_index in range(0, num_mods):
+            for mod2_index in range(mod1_index + 1, num_mods):
+                mod1 = mod_list[mod1_index]
+                mod2 = mod_list[mod2_index]
+                mods = (mod1, mod2)
+                with self.subTest(f"Mods: {mods}"):
+                    multiworld = setup_solo_multiworld({Mods: mods})
+                    basic_checks(self, multiworld)
+                    check_stray_mod_items(list(mods), self, multiworld)
+
+    def test_given_mod_names_when_generate_paired_with_entrance_randomizer_then_basic_checks(self):
+        for option in EntranceRandomization.options:
+            for mod in mod_list:
+                with self.subTest(f"entrance_randomization: {option}, Mod: {mod}"):
+                    multiworld = setup_solo_multiworld({EntranceRandomization.internal_name: option, Mods: mod})
+                    basic_checks(self, multiworld)
+                    check_stray_mod_items(mod, self, multiworld)
+
+    def test_given_mod_names_when_generate_paired_with_other_options_then_basic_checks(self):
+        if self.skip_long_tests:
+            return
+        for option in stardew_valley_option_classes:
+            if not option.options:
+                continue
+            for value in option.options:
+                for mod in mod_list:
+                    with self.subTest(f"{option.internal_name}: {value}, Mod: {mod}"):
+                        multiworld = setup_solo_multiworld({option.internal_name: option.options[value], Mods: mod})
+                        basic_checks(self, multiworld)
+                        check_stray_mod_items(mod, self, multiworld)
+
+
+class TestGivenModdedProgressiveBackpack(SVTestBase):
+    options = {options.BackpackProgression.internal_name: options.BackpackProgression.option_progressive,
+               options.Mods.internal_name: "Bigger Backpack"}
+
+    def test_when_generate_world_then_three_progressive_backpack_are_added(self):
+        self.assertEqual(self.multiworld.itempool.count(self.world.create_item("Progressive Backpack")), 3)
+
+    def test_when_generate_world_then_all_backpack_locations_are_added(self):
+        created_locations = {location.name for location in self.multiworld.get_locations(1)}
+        backpacks_exist = [location.name in created_locations
+                           for location in locations.locations_by_tag[LocationTags.BACKPACK]]
+        all_exist = all(backpacks_exist)
+        self.assertTrue(all_exist)
+
+
+class TestBaseItemGeneration(SVTestBase):
+    options = {
+        options.Friendsanity.internal_name: options.Friendsanity.option_all_with_marriage,
+        options.SeasonRandomization.internal_name: options.SeasonRandomization.option_progressive,
+        options.SpecialOrderLocations.internal_name: options.SpecialOrderLocations.option_board_qi,
+        options.Mods.internal_name: mod_list
+    }
+
+    def test_all_progression_items_are_added_to_the_pool(self):
+        all_created_items = [item.name for item in self.multiworld.itempool]
+        # Ignore all the stuff that the algorithm chooses one of, instead of all, to fulfill logical progression
+        items_to_ignore = [event.name for event in items.events]
+        items_to_ignore.extend(season.name for season in items.items_by_group[Group.SEASON])
+        items_to_ignore.extend(season.name for season in items.items_by_group[Group.WEAPON])
+        items_to_ignore.extend(season.name for season in items.items_by_group[Group.FOOTWEAR])
+        progression_items = [item for item in items.all_items if item.classification is ItemClassification.progression
+                             and item.name not in items_to_ignore]
+        for progression_item in progression_items:
+            with self.subTest(f"{progression_item.name}"):
+                self.assertIn(progression_item.name, all_created_items)
+
+
+class TestNoGingerIslandModItemGeneration(SVTestBase):
+    options = {
+        options.Friendsanity.internal_name: options.Friendsanity.option_all_with_marriage,
+        options.SeasonRandomization.internal_name: options.SeasonRandomization.option_progressive,
+        options.ExcludeGingerIsland.internal_name: options.ExcludeGingerIsland.option_true,
+        options.Mods.internal_name: mod_list
+    }
+
+    def test_all_progression_items_except_island_are_added_to_the_pool(self):
+        all_created_items = [item.name for item in self.multiworld.itempool]
+        # Ignore all the stuff that the algorithm chooses one of, instead of all, to fulfill logical progression
+        items_to_ignore = [event.name for event in items.events]
+        items_to_ignore.extend(season.name for season in items.items_by_group[Group.SEASON])
+        items_to_ignore.extend(season.name for season in items.items_by_group[Group.WEAPON])
+        items_to_ignore.extend(season.name for season in items.items_by_group[Group.FOOTWEAR])
+        progression_items = [item for item in items.all_items if item.classification is ItemClassification.progression
+                             and item.name not in items_to_ignore]
+        for progression_item in progression_items:
+            with self.subTest(f"{progression_item.name}"):
+                if Group.GINGER_ISLAND in progression_item.groups:
+                    self.assertNotIn(progression_item.name, all_created_items)
+                else:
+                    self.assertIn(progression_item.name, all_created_items)
+
+
+class TestModEntranceRando(unittest.TestCase):
+
+    def test_mod_entrance_randomization(self):
+
+        for option, flag in [(options.EntranceRandomization.option_pelican_town, RandomizationFlag.PELICAN_TOWN),
+                             (options.EntranceRandomization.option_non_progression, RandomizationFlag.NON_PROGRESSION),
+                             (options.EntranceRandomization.option_buildings, RandomizationFlag.BUILDINGS)]:
+            with self.subTest(option=option, flag=flag):
+                seed = random.randrange(sys.maxsize)
+                rand = random.Random(seed)
+                world_options = StardewOptions({options.EntranceRandomization.internal_name: option,
+                                                options.ExcludeGingerIsland.internal_name: options.ExcludeGingerIsland.option_false,
+                                                options.Mods.internal_name: mod_list})
+                final_connections = create_final_connections(world_options)
+
+                _, randomized_connections = randomize_connections(rand, world_options)
+
+                for connection in final_connections:
+                    if flag in connection.flag:
+                        self.assertIn(connection.name, randomized_connections,
+                                      f"Connection {connection.name} should be randomized but it is not in the output. Seed = {seed}")
+                        self.assertIn(connection.reverse, randomized_connections,
+                                      f"Connection {connection.reverse} should be randomized but it is not in the output. Seed = {seed}")
+
+                self.assertEqual(len(set(randomized_connections.values())), len(randomized_connections.values()),
+                                 f"Connections are duplicated in randomization. Seed = {seed}")
+

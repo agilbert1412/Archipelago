@@ -11,6 +11,7 @@ from .logic import StardewLogic, StardewRule, True_, MAX_MONTHS
 from .options import stardew_valley_options, StardewOptions, fetch_options
 from .regions import create_regions
 from .rules import set_rules
+from .mods.mod_data import mod_versions
 from ..generic.Rules import set_rule
 
 client_version = 0
@@ -38,7 +39,7 @@ class StardewWebWorld(WebWorld):
         "English",
         "setup_en.md",
         "setup/en",
-        ["KaitoKid", "Jouramie"]
+        ["KaitoKid", "Jouramie", "Witchybun (Mod Support)"]
     )]
 
 
@@ -269,7 +270,13 @@ class StardewValleyWorld(World):
             key, value = self.modified_bundles[bundle_key].to_pair()
             modified_bundles[key] = value
 
-        excluded_options = [options.BundleRandomization, options.BundlePrice, options.NumberOfPlayerBuffs]
+        instance_mod_versions = {}
+        for mod in mod_versions:
+            if mod in self.options[options.Mods]:
+                instance_mod_versions[mod] = mod_versions[mod]
+
+        excluded_options = [options.BundleRandomization, options.BundlePrice,
+                            options.NumberOfPlayerBuffs, options.Mods]
         slot_data = dict(self.options.options)
         for option in excluded_options:
             slot_data.pop(option.internal_name)
@@ -278,6 +285,7 @@ class StardewValleyWorld(World):
             "randomized_entrances": self.randomized_entrances,
             "modified_bundles": modified_bundles,
             "client_version": "4.0.0",
+            "mod_versions": instance_mod_versions
         })
 
         return slot_data

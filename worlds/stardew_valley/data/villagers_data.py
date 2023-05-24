@@ -1,6 +1,7 @@
 from dataclasses import dataclass
-from typing import Set, List, FrozenSet, Tuple
+from typing import List, Tuple, Optional
 from .region_data import SVRegion
+from ..mods.mod_data import ModNames
 
 
 @dataclass(frozen=True)
@@ -11,12 +12,14 @@ class Villager:
     birthday: str
     gifts: Tuple[str]
     available: bool
+    mod_name: Optional[str]
 
     def __repr__(self):
         return f"{self.name} [Bachelor: {self.bachelor}] [Available from start: {self.available}]" \
                f"(Locations: {self.locations} |" \
                f" Birthday: {self.birthday} |" \
-               f" Gifts: {self.gifts}) "
+               f" Gifts: {self.gifts}) |" \
+               f" Mod: {self.mod_name}"
 
 
 town = (SVRegion.town,)
@@ -33,6 +36,7 @@ desert = (SVRegion.desert,)
 oasis = (SVRegion.oasis,)
 sewers = (SVRegion.sewers,)
 island = (SVRegion.island_east,)
+secret_woods = (SVRegion.secret_woods,)
 
 golden_pumpkin = ("Golden Pumpkin",)
 # magic_rock_candy = ("Magic Rock Candy",)
@@ -202,12 +206,73 @@ super_cucumber = ("Super Cucumber",)
 void_essence = ("Void Essence",)
 wizard_loves = purple_mushroom + solar_essence + super_cucumber + void_essence
 
+#Custom NPC Items and Loves
+
+blueberry = ("Blueberry",)
+chanterelle = ("Chanterelle",)
+garlic = ("Garlic",)
+omelet = ("Omelet",)
+wild_plum = ("Wild Plum",)
+rhubarb = ("Rhubarb",)
+fried_mushroom = ("Fried Mushroom",)
+eggplant_parmesan = ("Eggplant Parmesan",)
+maki_roll = ("Maki Roll",)
+red_plate = ("Red Plate",)
+baked_fish = ("Baked Fish",)
+cheese = ("Cheese",)
+eel = ("Eel",)
+flounder = ("Flounder",)
+salmon = ("Salmon",)
+sashimi = ("Sashimi",)
+tuna = ("Tuna",)
+energy_tonic = ("Energy Tonic",)
+kale = ("Kale",)
+muscle_remedy = ("Muscle Remedy",)
+vegetable_medley = ("Vegetable Medley",)
+trilobite = ("Trilobite",)
+golden_mask = ("Golden Mask",)
+rainbow_shell = ("Rainbow Shell",)
+blue_jazz = ("Blue Jazz",)
+honey = ("Honey",)
+apple = ("Apple",)
+dwarf_gadget = ("Dwarf Gadget",)
+dwarvish_helm = ("Dwarvish Helm",)
+fire_quartz = ("Fire Quartz",)
+jasper = ("Jasper",)
+opal = ("Opal",)
+rare_disc = ("Rare Disc",)
+ancient_doll = ("Ancient Doll",)
+elvish_jewelry = ("Elvish Jewelry",)
+dinosaur_egg = ("Dinosaur Egg",)
+strange_doll = ("Strange Doll",)
+joja_cola = ("Joja Cola",)
+hashbrowns = ("Hashbrowns",)
+jelly = ("Jelly",)
+ghost_crystal = ("Ghost Crystal",)
+prehistoric_scapula = ("Prehistoric Scapula",)
+cherry = ("Cherry",)
+ayeisha_loves = blackberry_cobbler + blueberry + chanterelle + emerald + omelet + sweet_pea + wild_plum + rhubarb + \
+                fried_mushroom + eggplant_parmesan
+shiko_loves = maki_roll + red_plate + ruby + salad + wine
+wellwick_loves = fairy_rose + solar_essence + void_essence + wine
+mister_ginger_loves = baked_fish + cheese + eel + flounder + goat_cheese + lobster + salmon + sashimi + tuna
+delores_loves = aquamarine + blueberry + energy_tonic + green_tea + kale + muscle_remedy + red_plate + \
+                roots_platter + salad + vegetable_medley
+yoba_loves = golden_mask + rainbow_shell
+eugene_loves = blue_jazz + fairy_rose + green_tea + honey + poppy + poppyseed_muffin + \
+               salad + summer_spangle + sunflower + tulip
+jasper_loves = apple + blueberry + diamond + dwarf_gadget + dwarvish_helm + fire_quartz + jasper + \
+               miners_treat + opal + rare_disc
+juna_loves = ancient_doll + elvish_jewelry + dinosaur_egg + strange_doll + joja_cola + hashbrowns + pancakes + \
+             pink_cake + jelly + ghost_crystal + prehistoric_scapula + cherry
+
+
 all_villagers: List[Villager] = []
 
 
 def villager(name: str, bachelor: bool, locations: Tuple[str, ...], birthday: str, gifts: Tuple[str, ...],
-             available: bool) -> Villager:
-    npc = Villager(name, bachelor, locations, birthday, gifts, available)
+             available: bool, mod_name: Optional[str] = None) -> Villager:
+    npc = Villager(name, bachelor, locations, birthday, gifts, available, mod_name)
     all_villagers.append(npc)
     return npc
 
@@ -246,5 +311,17 @@ sandy = villager("Sandy", False, oasis, "Fall", universal_loves + sandy_loves, F
 vincent = villager("Vincent", False, town, "Spring", universal_loves + vincent_loves, True)
 willy = villager("Willy", False, beach, "Summer", universal_loves + willy_loves, True)
 wizard = villager("Wizard", False, forest, "Winter", universal_loves + wizard_loves, True)
+
+# Custom NPCs
+alec = villager("Alec", True, forest, "Winter", universal_loves + trilobite, True, ModNames.alec)
+ayeisha = villager("Ayeisha", False, town, "Summer", universal_loves + ayeisha_loves, True, ModNames.ayeisha)
+delores = villager("Delores", True, forest, "Winter", universal_loves + delores_loves, True, ModNames.delores)
+eugene = villager("Eugene", True, forest, "Spring", universal_loves + eugene_loves, True, ModNames.eugene)
+jasper = villager("Jasper", True, town, "Fall", universal_loves + jasper_loves, True, ModNames.jasper)
+juna = villager("Juna", False, forest, "Summer", universal_loves + juna_loves, True, ModNames.juna)
+kitty = villager("Mr. Ginger", False, forest, "Summer", universal_loves + mister_ginger_loves, True, ModNames.ginger)
+shiko = villager("Shiko", True, town, "Winter", universal_loves + shiko_loves, True, ModNames.shiko)
+wellwick = villager("Wellwick", True, forest, "Winter", universal_loves + wellwick_loves, True, ModNames.shiko)
+yoba = villager("Yoba", False, secret_woods, "Spring", universal_loves + yoba_loves, False, ModNames.yoba)
 
 all_villagers_by_name = {item.name: item for item in all_villagers}

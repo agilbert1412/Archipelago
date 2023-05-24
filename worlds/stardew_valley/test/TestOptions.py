@@ -4,11 +4,11 @@ from random import random
 from typing import Dict
 
 from BaseClasses import ItemClassification, MultiWorld
-from Options import SpecialRange
+from Options import SpecialRange, OptionSet
 from . import setup_solo_multiworld, SVTestBase
 from .. import StardewItem, options, items_by_group, Group
 from ..locations import locations_by_tag, LocationTags
-from ..options import StardewOption, stardew_valley_option_classes
+from ..options import StardewOption, stardew_valley_option_classes, Mods
 
 SEASONS = {"Spring", "Summer", "Fall", "Winter"}
 TOOLS = {"Hoe", "Pickaxe", "Axe", "Watering Can", "Trash Can", "Fishing Rod"}

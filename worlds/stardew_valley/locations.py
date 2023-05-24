@@ -56,6 +56,13 @@ class LocationTags(enum.Enum):
     SPECIAL_ORDER_QI = enum.auto()
     GINGER_ISLAND = enum.auto()
     WALNUT_PURCHASE = enum.auto
+    # Skill Mods
+    LUCK_LEVEL = enum.auto()
+    BINNING_LEVEL = enum.auto()
+    COOKING_LEVEL = enum.auto()
+    SOCIALIZING_LEVEL = enum.auto()
+    MAGIC_LEVEL = enum.auto()
+    ARCHAEOLOGY_LEVEL = enum.auto()
 
 
 @dataclass(frozen=True)
@@ -63,6 +70,7 @@ class LocationData:
     code_without_offset: Optional[int]
     region: str
     name: str
+    mod_name: Optional[str] = None
     tags: FrozenSet[LocationTags] = frozenset()
 
     @property
@@ -86,6 +94,7 @@ def load_location_csv() -> List[LocationData]:
         return [LocationData(int(location["id"]) if location["id"] else None,
                              location["region"],
                              location["name"],
+                             str(location["mod_name"]) if location["mod_name"] else None,
                              frozenset(LocationTags[group]
                                        for group in location["tags"].split(",")
                                        if group))
@@ -167,7 +176,7 @@ def extend_museumsanity_locations(randomized_locations: List[LocationData], muse
         randomized_locations.extend(location_table[f"{prefix}{museum_item.name}"] for museum_item in all_museum_items)
 
 
-def extend_friendsanity_locations(randomized_locations: List[LocationData], world_options):
+def extend_friendsanity_locations(randomized_locations: List[LocationData], world_options: options.StardewOptions):
     if world_options[options.Friendsanity] == options.Friendsanity.option_none:
         return
 
@@ -177,6 +186,8 @@ def extend_friendsanity_locations(randomized_locations: List[LocationData], worl
                                world_options[options.Friendsanity] == options.Friendsanity.option_bachelors
     exclude_post_marriage_hearts = world_options[options.Friendsanity] != options.Friendsanity.option_all_with_marriage
     for villager in all_villagers:
+        if villager.mod_name not in world_options[options.Mods] and villager.mod_name is not None:
+            continue
         if not villager.available and exclude_locked_villagers:
             continue
         if not villager.bachelor and exclude_non_bachelors:
@@ -261,12 +272,15 @@ def create_locations(location_collector: StardewLocationCollector,
     randomized_locations = []
 
     include_island = world_options[options.ExcludeGingerIsland] == options.ExcludeGingerIsland.option_false
-    mandatory_locations = [location for location in locations_by_tag[LocationTags.MANDATORY]
-                           if include_island or LocationTags.GINGER_ISLAND not in location.tags]
-    randomized_locations.extend(mandatory_locations)
+    for mandatory in locations_by_tag[LocationTags.MANDATORY]:
+        if (mandatory.mod_name is None or mandatory.mod_name in world_options[options.Mods]) \
+                & (include_island or LocationTags.GINGER_ISLAND not in mandatory.tags):
+            randomized_locations.append(location_table[mandatory.name])
 
     if not world_options[options.BackpackProgression] == options.BackpackProgression.option_vanilla:
-        randomized_locations.extend(locations_by_tag[LocationTags.BACKPACK])
+        for backpack in locations_by_tag[LocationTags.BACKPACK]:
+            if backpack.mod_name is None or backpack.mod_name in world_options[options.Mods]:
+                randomized_locations.append(location_table[backpack.name])
 
     if not world_options[options.ToolProgression] == options.ToolProgression.option_vanilla:
         randomized_locations.extend(locations_by_tag[LocationTags.TOOL_UPGRADE])
@@ -275,10 +289,14 @@ def create_locations(location_collector: StardewLocationCollector,
         randomized_locations.extend(locations_by_tag[LocationTags.THE_MINES_ELEVATOR])
 
     if not world_options[options.SkillProgression] == options.SkillProgression.option_vanilla:
-        randomized_locations.extend(locations_by_tag[LocationTags.SKILL_LEVEL])
+        for location in locations_by_tag[LocationTags.SKILL_LEVEL]:
+            if location.mod_name is None or location.mod_name in world_options[options.Mods]:
+                randomized_locations.append(location_table[location.name])
 
     if not world_options[options.BuildingProgression] == options.BuildingProgression.option_vanilla:
-        randomized_locations.extend(locations_by_tag[LocationTags.BUILDING_BLUEPRINT])
+        for location in locations_by_tag[LocationTags.BUILDING_BLUEPRINT]:
+            if location.mod_name is None or location.mod_name in world_options[options.Mods]:
+                randomized_locations.append(location_table[location.name])
 
     if not world_options[options.ArcadeMachineLocations] == options.ArcadeMachineLocations.option_disabled:
         randomized_locations.extend(locations_by_tag[LocationTags.ARCADE_MACHINE_VICTORY])
@@ -290,6 +308,7 @@ def create_locations(location_collector: StardewLocationCollector,
     extend_fishsanity_locations(randomized_locations, world_options, random)
     extend_museumsanity_locations(randomized_locations, world_options[options.Museumsanity], random)
     extend_friendsanity_locations(randomized_locations, world_options)
+
     extend_festival_locations(randomized_locations, world_options[options.FestivalLocations])
     extend_special_order_locations(randomized_locations, world_options)
     extend_walnut_purchase_locations(randomized_locations, world_options)

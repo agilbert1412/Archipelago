@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, Tuple, Union
+from typing import List, Tuple, Union, Optional
 
 from . import season_data as season
 from .game_item import GameItem
@@ -11,11 +11,13 @@ class FishItem(GameItem):
     locations: Tuple[str]
     seasons: Tuple[str]
     difficulty: int
+    mod_name: Optional[str]
 
     def __repr__(self):
         return f"{self.name} [{self.item_id}] (Locations: {self.locations} |" \
                f" Seasons: {self.seasons} |" \
-               f" Difficulty: {self.difficulty}) "
+               f" Difficulty: {self.difficulty}) |" \
+               f"Mod: {self.mod_name}"
 
 
 fresh_water = (SVRegion.farm, SVRegion.forest, SVRegion.town, SVRegion.mountain)
@@ -41,11 +43,11 @@ all_fish: List[FishItem] = []
 
 
 def create_fish(name: str, item_id: int, locations: Tuple[str, ...], seasons: Union[str, Tuple[str, ...]],
-                difficulty: int) -> FishItem:
+                difficulty: int, mod_name: Optional[str] = None) -> FishItem:
     if isinstance(seasons, str):
         seasons = (seasons,)
 
-    fish_item = FishItem(name, item_id, locations, seasons, difficulty)
+    fish_item = FishItem(name, item_id, locations, seasons, difficulty, mod_name)
     all_fish.append(fish_item)
     return fish_item
 

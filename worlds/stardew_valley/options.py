@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from typing import Dict, Union, Protocol, runtime_checkable, ClassVar
 
-from Options import Option, Range, DeathLink, SpecialRange, Toggle, Choice
-
+from Options import Option, Range, DeathLink, SpecialRange, Toggle, Choice, OptionSet
+from .mods.mod_data import ModNames
 
 @runtime_checkable
 class StardewOption(Protocol):
@@ -11,15 +11,15 @@ class StardewOption(Protocol):
 
 @dataclass
 class StardewOptions:
-    options: Dict[str, Union[bool, int]]
+    options: Dict[str, Union[bool, int, str]]
 
-    def __getitem__(self, item: Union[str, StardewOption]) -> Union[bool, int]:
+    def __getitem__(self, item: Union[str, StardewOption]) -> Union[bool, int, str]:
         if isinstance(item, StardewOption):
             item = item.internal_name
 
         return self.options.get(item, None)
 
-    def __setitem__(self, key: Union[str, StardewOption], value: Union[bool, int]):
+    def __setitem__(self, key: Union[str, StardewOption], value: Union[bool, int, str]):
         if isinstance(key, StardewOption):
             key = key.internal_name
         self.options[key] = value
@@ -533,6 +533,20 @@ class GiftTax(SpecialRange):
     }
 
 
+class Mods(OptionSet):
+    """List of mods that will be considered for shuffling."""
+    internal_name = "mods"
+    display_name = "Mods"
+    valid_keys = {
+        ModNames.deepwoods, ModNames.tractor, ModNames.big_backpack,
+        ModNames.luck_skill, ModNames.magic, ModNames.socializing_skill, ModNames.archaeology,
+        ModNames.cooking_skill, ModNames.binning_skill, ModNames.juna,
+        ModNames.jasper, ModNames.alec, ModNames.yoba, ModNames.eugene,
+        ModNames.wellwick, ModNames.ginger, ModNames.shiko, ModNames.delores,
+        ModNames.ayeisha
+    }
+
+
 stardew_valley_option_classes = [
     Goal,
     StartingMoney,
@@ -565,6 +579,7 @@ stardew_valley_option_classes = [
     QuickStart,
     Gifting,
     GiftTax,
+    Mods,
 ]
 stardew_valley_options: Dict[str, type(Option)] = {option.internal_name: option for option in
                                                    stardew_valley_option_classes}

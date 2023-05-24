@@ -9,6 +9,7 @@ from typing import Dict, List, Protocol, Union, Set, Optional
 from BaseClasses import Item, ItemClassification
 from . import options, data
 from .data.villagers_data import all_villagers
+from .mods.mod_data import ModNames
 from .options import StardewOptions
 
 ITEM_CODE_OFFSET = 717000
@@ -68,6 +69,7 @@ class ItemData:
     code_without_offset: Optional[int]
     name: str
     classification: ItemClassification
+    mod_name: Optional[str] = None
     groups: Set[Group] = field(default_factory=frozenset)
 
     def __post_init__(self):
@@ -101,7 +103,8 @@ def load_item_csv():
             id = int(item["id"]) if item["id"] else None
             classification = ItemClassification[item["classification"]]
             groups = {Group[group] for group in item["groups"].split(",") if group}
-            items.append(ItemData(id, item["name"], classification, groups))
+            mod_name = str(item["mod_name"]) if item["mod_name"] else None
+            items.append(ItemData(id, item["name"], classification, mod_name, groups))
     return items
 
 
@@ -173,7 +176,7 @@ def create_unique_items(item_factory: StardewItemFactory, world_options: Stardew
     items.append(item_factory("Dark Talisman"))
     items.extend(create_tv_channels(item_factory))
     create_special_quest_rewards(item_factory, items)
-    create_stardrops(item_factory, items)
+    create_stardrops(item_factory, items, world_options)
     create_museum_items(item_factory, world_options, items)
     create_arcade_machine_items(item_factory, world_options, items)
     items.append(item_factory(random.choice(items_by_group[Group.GALAXY_WEAPONS])))
@@ -196,6 +199,8 @@ def create_backpack_items(item_factory: StardewItemFactory, world_options: Stard
     if (world_options[options.BackpackProgression] == options.BackpackProgression.option_progressive or
             world_options[options.BackpackProgression] == options.BackpackProgression.option_early_progressive):
         items.extend(item_factory(item) for item in ["Progressive Backpack"] * 2)
+        if ModNames.big_backpack in world_options[options.Mods]:
+            items.append(item_factory("Progressive Backpack"))
 
 
 def create_mine_rewards(item_factory: StardewItemFactory, items: List[Item], random: Random):
@@ -228,7 +233,10 @@ def create_tools(item_factory: StardewItemFactory, world_options: StardewOptions
 
 def create_skills(item_factory: StardewItemFactory, world_options: StardewOptions, items: List[Item]):
     if world_options[options.SkillProgression] == options.SkillProgression.option_progressive:
-        items.extend([item_factory(item) for item in items_by_group[Group.SKILL_LEVEL_UP] * 10])
+        for item in items_by_group[Group.SKILL_LEVEL_UP]:
+            if item.mod_name not in world_options[options.Mods] and item.mod_name is not None:
+                continue
+            items.extend(item_factory(item) for item in [item.name] * 10)
 
 
 def create_wizard_buildings(item_factory: StardewItemFactory, world_options: StardewOptions, items: List[Item]):
@@ -239,6 +247,8 @@ def create_wizard_buildings(item_factory: StardewItemFactory, world_options: Sta
     items.append(item_factory("Gold Clock"))
     if world_options[options.ExcludeGingerIsland] == options.ExcludeGingerIsland.option_false:
         items.append(item_factory("Island Obelisk"))
+    if ModNames.deepwoods in world_options[options.Mods]:
+        items.append(item_factory("Woods Obelisk"))
 
 
 def create_carpenter_buildings(item_factory: StardewItemFactory, world_options: StardewOptions,
@@ -263,6 +273,8 @@ def create_carpenter_buildings(item_factory: StardewItemFactory, world_options: 
         items.append(item_factory("Progressive House"))
         items.append(item_factory("Progressive House"))
         items.append(item_factory("Progressive House"))
+        if ModNames.tractor in world_options[options.Mods]:
+            items.append(item_factory("Tractor Garage"))
 
 
 def create_special_quest_rewards(item_factory: StardewItemFactory, items: List[Item]):
@@ -273,9 +285,11 @@ def create_special_quest_rewards(item_factory: StardewItemFactory, items: List[I
     items.append(item_factory("Iridium Snake Milk"))
 
 
-def create_stardrops(item_factory: StardewItemFactory, items: List[Item]):
+def create_stardrops(item_factory: StardewItemFactory, items: List[Item], world_options: StardewOptions):
     items.append(item_factory("Stardrop"))  # The Mines level 100
     items.append(item_factory("Stardrop"))  # Old Master Cannoli
+    if ModNames.deepwoods in world_options[options.Mods]:
+        items.append(item_factory("Stardrop"))  # Petting the Unicorn
 
 
 def create_museum_items(item_factory: StardewItemFactory, world_options: StardewOptions, items: List[Item]):
@@ -299,6 +313,8 @@ def create_friendsanity_items(item_factory: StardewItemFactory, world_options: S
     exclude_post_marriage_hearts = world_options[options.Friendsanity] != options.Friendsanity.option_all_with_marriage
     exclude_ginger_island = world_options[options.ExcludeGingerIsland] == options.ExcludeGingerIsland.option_true
     for villager in all_villagers:
+        if villager.mod_name not in world_options[options.Mods] and villager.mod_name is not None:
+            continue
         if not villager.available and exclude_locked_villagers:
             continue
         if not villager.bachelor and exclude_non_bachelors:
