@@ -137,6 +137,10 @@ class EugeneRegion:
     eugene_bedroom = "Eugene's Bedroom"
 
 
+class MagicRegion:
+    altar = "Magic Altar"
+
+
 class JasperRegion:
     jasper_bedroom = "Jasper's Bedroom"
 

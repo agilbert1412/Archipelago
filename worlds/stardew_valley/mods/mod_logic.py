@@ -63,7 +63,7 @@ def can_earn_magic_skill_level(who, level: int) -> StardewRule:
                    who.received("Spell: Shockwave"),
                    who.received("Spell: Meteor"),
                    who.received("Spell: Spirit")]
-    return who.can_earn_spells() & Count(level, spell_count)
+    return who.can_use_altar() & Count(level, spell_count)
 
 
 def can_earn_socializing_skill_level(who, level: int) -> StardewRule:

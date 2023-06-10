@@ -9,7 +9,7 @@ from .data import all_fish, FishItem, all_purchasable_seeds, SeedItem, all_crops
 from .data.bundle_data import BundleItem
 from .data.fish_data import island_fish
 from .data.museum_data import all_museum_items, MuseumItem, all_artifact_items
-from .data.region_data import SVRegion
+from .data.region_data import SVRegion, MagicRegion
 from .data.villagers_data import all_villagers_by_name, Villager
 from .mods.mod_data import ModNames
 from .mods.mod_logic import can_earn_mod_skill_level, append_mod_skill_level
@@ -453,7 +453,7 @@ class StardewLogic:
             "Robin's Lost Axe": self.has_season("Spring"),
             "Jodi's Request": self.has_season("Spring") & self.has("Cauliflower"),
             "Mayor's \"Shorts\"": self.has_season("Summer") & (self.has_relationship("Marnie", 2) |
-                                                               (self.can_blink() & self.can_earn_spells())),
+                                                               (self.can_blink() & self.can_use_altar())),
             "Blackberry Basket": self.has_season("Fall"),
             "Marnie's Request": self.has_relationship("Marnie", 3) & self.has("Cave Carrot"),
             "Pam Is Thirsty": self.has_season("Summer") & self.has("Pale Ale"),
@@ -1437,14 +1437,13 @@ class StardewLogic:
 # Spell Logic in terms of combat usability (similar to weapons)  Strategy is that if the mod doesn't exist, its
 # always false and thus doesn't get considered relative to other logic tests.
 
-    def can_earn_spells(self) -> StardewRule:
-        return self.has_relationship("Wizard", 3) & self.can_reach_region(SVRegion.pierre_store) & \
-            self.can_reach_region(SVRegion.wizard_tower)
+    def can_use_altar(self) -> StardewRule:
+        return self.can_reach_region(MagicRegion.altar)
 
     def has_any_spell(self) -> StardewRule:
         if ModNames.magic not in self.options[options.Mods]:
             return False_()
-        return self.can_earn_spells()
+        return self.can_use_altar()
 
     def has_attack_spell_count(self, count: int) -> StardewRule:
         attack_spell_rule = [self.received("Spell: Fireball"), self.received(
@@ -1454,21 +1453,21 @@ class StardewLogic:
         return Count(count, attack_spell_rule)
 
     def has_support_spell_count(self, count: int) -> StardewRule:
-        support_spell_rule = [self.can_earn_spells(), self.received("Magic Level", 2)
-        ]
+        support_spell_rule = [self.can_use_altar(), self.received("Magic Level", 2)
+                              ]
         return Count(count, support_spell_rule)
 
     def has_decent_spells(self) -> StardewRule:
         if ModNames.magic not in self.options[options.Mods]:
             return False_()
-        magic_resource_rule = self.can_earn_spells() & self.received("Magic Level", 2)
+        magic_resource_rule = self.can_use_altar() & self.received("Magic Level", 2)
         magic_attack_options_rule = self.has_attack_spell_count(1)
         return magic_resource_rule & magic_attack_options_rule
 
     def has_good_spells(self) -> StardewRule:
         if ModNames.magic not in self.options[options.Mods]:
             return False_()
-        magic_resource_rule = self.can_earn_spells() & self.received("Magic Level", 4)
+        magic_resource_rule = self.can_use_altar() & self.received("Magic Level", 4)
         magic_attack_options_rule = self.has_attack_spell_count(2)
         magic_support_options_rule = self.has_support_spell_count(1)
         return magic_resource_rule & magic_attack_options_rule & magic_support_options_rule
@@ -1476,7 +1475,7 @@ class StardewLogic:
     def has_great_spells(self) -> StardewRule:
         if ModNames.magic not in self.options[options.Mods]:
             return False_()
-        magic_resource_rule = self.can_earn_spells() & self.received("Magic Level", 6)
+        magic_resource_rule = self.can_use_altar() & self.received("Magic Level", 6)
         magic_attack_options_rule = self.has_attack_spell_count(3)
         magic_support_options_rule = self.has_support_spell_count(1)
         return magic_resource_rule & magic_attack_options_rule & magic_support_options_rule
@@ -1484,7 +1483,7 @@ class StardewLogic:
     def has_amazing_spells(self) -> StardewRule:
         if ModNames.magic not in self.options[options.Mods]:
             return False_()
-        magic_resource_rule = self.can_earn_spells() & self.received("Magic Level", 8)
+        magic_resource_rule = self.can_use_altar() & self.received("Magic Level", 8)
         magic_attack_options_rule = self.has_attack_spell_count(4)
         magic_support_options_rule = self.has_support_spell_count(2)
         return magic_resource_rule & magic_attack_options_rule & magic_support_options_rule
@@ -1492,7 +1491,7 @@ class StardewLogic:
     def can_blink(self) -> StardewRule:
         if ModNames.magic not in self.options[options.Mods]:
             return False_()
-        return self.received("Spell: Blink") & self.can_earn_spells()
+        return self.received("Spell: Blink") & self.can_use_altar()
 
     def can_do_combat_at_level(self, level: str) -> StardewRule:
         if level == "Basic":
@@ -1515,10 +1514,10 @@ class StardewLogic:
             4: "Iridium"
         }
         return self.has_tool("Watering Can", watering_can_dict[level]) | \
-            (self.received("Spell: Water") & self.can_earn_spells() & self.has_skill_level("Magic", level))
+            (self.received("Spell: Water") & self.can_use_altar() & self.has_skill_level("Magic", level))
 
     def can_use_clear_debris_instead_of_tool_level(self, level: int) -> StardewRule:
         if ModNames.magic not in self.options[options.Mods]:
             return False_()
-        return self.received("Spell: Clear Debris") & self.can_earn_spells() & self.received("Magic Level", level)
+        return self.received("Spell: Clear Debris") & self.can_use_altar() & self.received("Magic Level", level)
 

@@ -170,6 +170,10 @@ class EugeneEntrance:
     garden_to_bedroom = "Eugene's Garden to Eugene's Bedroom"
 
 
+class MagicEntrance:
+    store_to_altar = "Pierre's General Store to Magic Altar"
+
+
 class JasperEntrance:
     museum_to_bedroom = "Museum to Jasper's Bedroom"
 

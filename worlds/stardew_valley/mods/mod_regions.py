@@ -1,8 +1,8 @@
 from dataclasses import dataclass, field
 from ..data.entrance_data import DeepWoodsEntrance, EugeneEntrance, \
-    JasperEntrance, AlecEntrance, YobaEntrance, JunaEntrance
+    JasperEntrance, AlecEntrance, YobaEntrance, JunaEntrance, MagicEntrance
 from ..data.region_data import SVRegion, DeepWoodsRegion, EugeneRegion, JasperRegion, \
-    AlecRegion, YobaRegion, JunaRegion
+    AlecRegion, YobaRegion, JunaRegion, MagicRegion
 from ..region_classes import RegionData, ConnectionData, RandomizationFlag, ModRegionData
 from .mod_data import ModNames
 from typing import List, Dict
@@ -46,6 +46,14 @@ eugene_regions = [
 eugene_entrances = [
     ConnectionData(EugeneEntrance.forest_to_garden, EugeneRegion.eugene_garden, flag=RandomizationFlag.NON_PROGRESSION | RandomizationFlag.LEAD_TO_OPEN_AREA),
     ConnectionData(EugeneEntrance.garden_to_bedroom, EugeneRegion.eugene_bedroom, flag=RandomizationFlag.BUILDINGS)
+]
+
+magic_regions = [
+    RegionData(SVRegion.pierre_store, [MagicEntrance.store_to_altar])
+]
+
+magic_entrances = [
+    ConnectionData(MagicEntrance.store_to_altar, MagicRegion.altar, flag=RandomizationFlag.NOT_RANDOMIZED)
 ]
 
 jasper_regions = [
@@ -92,5 +100,6 @@ ModDataList = {
     ModNames.jasper: ModRegionData(ModNames.jasper, jasper_regions, jasper_entrances),
     ModNames.alec: ModRegionData(ModNames.alec, alec_regions, alec_entrances),
     ModNames.yoba: ModRegionData(ModNames.yoba, yoba_regions, yoba_entrances),
-    ModNames.juna: ModRegionData(ModNames.juna, juna_regions, juna_entrances)
+    ModNames.juna: ModRegionData(ModNames.juna, juna_regions, juna_entrances),
+    ModNames.magic: ModRegionData(ModNames.magic, magic_regions, magic_entrances)
 }

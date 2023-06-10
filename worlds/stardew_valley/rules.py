@@ -5,7 +5,8 @@ from BaseClasses import MultiWorld
 from worlds.generic import Rules as MultiWorldRules
 from . import options, locations
 from .bundles import Bundle
-from .data.entrance_data import dig_to_mines_floor, SVEntrance, move_to_woods_depth, DeepWoodsEntrance, AlecEntrance
+from .data.entrance_data import dig_to_mines_floor, SVEntrance, move_to_woods_depth, DeepWoodsEntrance, AlecEntrance, \
+    MagicEntrance
 from .data.museum_data import all_museum_items, all_mineral_items, all_artifact_items, \
     dwarf_scrolls, skeleton_front, \
     skeleton_middle, skeleton_back, all_museum_items_by_name
@@ -471,3 +472,74 @@ def set_deepwoods_rules(logic: StardewLogic, multi_world: MultiWorld, player: in
                                      logic.can_reach_woods_depth(depth).simplify())
         MultiWorldRules.set_rule(multi_world.get_entrance(DeepWoodsEntrance.use_woods_obelisk, player),
                                  logic.received("Woods Obelisk").simplify())
+
+
+def set_magic_spell_rules(logic: StardewLogic, multi_world: MultiWorld, player: int, world_options: StardewOptions):
+    if ModNames.magic in world_options[options.Mods]:
+        MultiWorldRules.set_rule(multi_world.get_entrance(MagicEntrance.altar, player),
+                                 (logic.has_relationship("Wizard", 3) &
+                                  logic.can_reach_region(SVRegion.wizard_tower)).simplify())
+        MultiWorldRules.add_rule(multi_world.get_location("Analyze: Clear Debris", player),
+                                 ((logic.has_tool("Axe", "Basic") | logic.has_tool("Pickaxe", "Basic"))
+                                  & logic.can_use_altar()).simplify())
+        MultiWorldRules.add_rule(multi_world.get_location("Analyze: Till", player),
+                                 (logic.has_tool("Hoe", "Basic") & logic.can_use_altar()).simplify())
+        MultiWorldRules.add_rule(multi_world.get_location("Analyze: Water", player),
+                                 (logic.has_tool("Watering Can", "Basic") & logic.can_use_altar()).simplify())
+        MultiWorldRules.add_rule(multi_world.get_location("Analyze All Toil School Locations", player),
+                                 (logic.has_tool("Watering Can", "Basic") & logic.has_tool("Hoe", "Basic")
+                                  & (logic.has_tool("Axe", "Basic") | logic.has_tool("Pickaxe", "Basic"))
+                                  & logic.can_use_altar()).simplify())
+        # Do I *want* to add boots into logic when you get them even in vanilla without effort?  idk
+        MultiWorldRules.add_rule(multi_world.get_location("Analyze: Evac", player),
+                                 (logic.can_mine_perfectly() & logic.can_use_altar()).simplify())
+        MultiWorldRules.add_rule(multi_world.get_location("Analyze: Haste", player),
+                                 (logic.has("Coffee") & logic.can_use_altar()).simplify())
+        MultiWorldRules.add_rule(multi_world.get_location("Analyze: Haste", player),
+                                 (logic.has("Life Elixir") & logic.can_use_altar()).simplify())
+        MultiWorldRules.add_rule(multi_world.get_location("Analyze All Life School Locations", player),
+                                 (logic.has("Coffee") & logic.has("Life Elixir")
+                                  & logic.can_mine_perfectly() & logic.can_use_altar()).simplify())
+        MultiWorldRules.add_rule(multi_world.get_location("Analyze: Descend", player),
+                                 (logic.can_reach_region(SVRegion.mines) & logic.can_use_altar()).simplify())
+        MultiWorldRules.add_rule(multi_world.get_location("Analyze: Fireball", player),
+                                 (logic.has("Fire Quartz") & logic.can_use_altar()).simplify())
+        MultiWorldRules.add_rule(multi_world.get_location("Analyze: Frostbite", player),
+                                 (logic.can_mine_to_floor(70) & logic.can_fish(85) & logic.can_use_altar()).simplify())
+        MultiWorldRules.add_rule(multi_world.get_location("Analyze All Elemental School Locations", player),
+                                 (logic.can_reach_region(SVRegion.mines) & logic.has("Fire Quartz")
+                                  & logic.can_reach_region(SVRegion.mines_floor_70) & logic.can_fish(85) &
+                                  logic.can_use_altar()).simplify())
+        MultiWorldRules.add_rule(multi_world.get_location("Analyze: Lantern", player),
+                                 logic.can_use_altar().simplify())
+        MultiWorldRules.add_rule(multi_world.get_location("Analyze: Tendrils", player),
+                                 (logic.can_reach_region(SVRegion.farm) & logic.can_use_altar()).simplify())
+        MultiWorldRules.add_rule(multi_world.get_location("Analyze: Shockwave", player),
+                                 (logic.has("Earth Crystal") & logic.can_use_altar()).simplify())
+        MultiWorldRules.add_rule(multi_world.get_location("Analyze All Nature School Locations", player),
+                                 (logic.has("Earth Crystal") & logic.can_reach_region("Farm") &
+                                  logic.can_use_altar()).simplify())
+        MultiWorldRules.add_rule(multi_world.get_location("Analyze: Meteor", player),
+                                 (logic.can_reach_region(SVRegion.farm) & logic.has_lived_months(12)
+                                  & logic.can_use_altar()).simplify())
+        MultiWorldRules.add_rule(multi_world.get_location("Analyze: Lucksteal", player),
+                                 (logic.can_reach_region(SVRegion.witch_hut) & logic.can_use_altar()).simplify())
+        MultiWorldRules.add_rule(multi_world.get_location("Analyze: Bloodmana", player),
+                                 (logic.can_reach_region(SVRegion.mines_floor_100) & logic.can_use_altar()).simplify())
+        MultiWorldRules.add_rule(multi_world.get_location("Analyze all Eldritch School Locations", player),
+                                 (logic.can_reach_region(SVRegion.witch_hut) &
+                                  logic.can_reach_region(SVRegion.mines_floor_100) &
+                                  logic.can_reach_region(SVRegion.farm) & logic.has_lived_months(12) &
+                                  logic.can_use_altar()).simplify())
+        MultiWorldRules.add_rule(multi_world.get_location("Analyze Every Magic School Location", player),
+                                 (logic.has_tool("Watering Can", "Basic") & logic.has_tool("Hoe", "Basic")
+                                  & (logic.has_tool("Axe", "Basic") | logic.has_tool("Pickaxe", "Basic")) &
+                                  logic.has("Coffee") & logic.has("Life Elixir")
+                                  & logic.can_mine_perfectly() & logic.has("Earth Crystal") &
+                                  logic.can_reach_region(SVRegion.mines) &
+                                  logic.has("Fire Quartz") & logic.can_fish(85) &
+                                  logic.can_reach_region(SVRegion.witch_hut) &
+                                  logic.can_reach_region(SVRegion.mines_floor_100) &
+                                  logic.can_reach_region(SVRegion.farm) & logic.has_lived_months(12) &
+                                  logic.can_use_altar()).simplify())
+
