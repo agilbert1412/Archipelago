@@ -37,6 +37,8 @@ oasis = (SVRegion.oasis,)
 sewers = (SVRegion.sewers,)
 island = (SVRegion.island_east,)
 secret_woods = (SVRegion.secret_woods,)
+museum = (SVRegion.museum,)
+adventurers_guild = (SVRegion.adventurer_guild,)
 
 golden_pumpkin = ("Golden Pumpkin",)
 # magic_rock_candy = ("Magic Rock Candy",)
@@ -251,6 +253,8 @@ jelly = ("Jelly",)
 ghost_crystal = ("Ghost Crystal",)
 prehistoric_scapula = ("Prehistoric Scapula",)
 cherry = ("Cherry",)
+golden_relic = ("Golden Relic",)
+
 ayeisha_loves = blackberry_cobbler + blueberry + chanterelle + emerald + omelet + sweet_pea + wild_plum + rhubarb + \
                 fried_mushroom + eggplant_parmesan
 shiko_loves = maki_roll + red_plate + ruby + salad + wine
@@ -265,6 +269,8 @@ jasper_loves = apple + blueberry + diamond + dwarf_gadget + dwarvish_helm + fire
                miners_treat + opal + rare_disc
 juna_loves = ancient_doll + elvish_jewelry + dinosaur_egg + strange_doll + joja_cola + hashbrowns + pancakes + \
              pink_cake + jelly + ghost_crystal + prehistoric_scapula + cherry
+gunther_loves = elvish_jewelry
+marlon_loves = golden_relic + rhubarb_pie
 
 
 all_villagers: List[Villager] = []
@@ -317,12 +323,14 @@ alec = villager("Alec", True, forest, "Winter", universal_loves + trilobite, Tru
 ayeisha = villager("Ayeisha", False, town, "Summer", universal_loves + ayeisha_loves, True, ModNames.ayeisha)
 delores = villager("Delores", True, forest, "Winter", universal_loves + delores_loves, True, ModNames.delores)
 eugene = villager("Eugene", True, forest, "Spring", universal_loves + eugene_loves, True, ModNames.eugene)
-jasper = villager("Jasper", False, town, "Fall", universal_loves + jasper_loves, True, ModNames.jasper)
+jasper = villager("Jasper", True, town, "Fall", universal_loves + jasper_loves, True, ModNames.jasper)
 juna = villager("Juna", False, forest, "Summer", universal_loves + juna_loves, True, ModNames.juna)
 kitty = villager("Mr. Ginger", False, forest, "Summer", universal_loves + mister_ginger_loves, True, ModNames.ginger)
 shiko = villager("Shiko", True, town, "Winter", universal_loves + shiko_loves, True, ModNames.shiko)
 wellwick = villager("Wellwick", True, forest, "Winter", universal_loves + wellwick_loves, True, ModNames.shiko)
 yoba = villager("Yoba", False, secret_woods, "Spring", universal_loves + yoba_loves, False, ModNames.yoba)
+marlon = villager("Marlon", False, adventurers_guild, "Winter", universal_loves + marlon_loves, False, ModNames.jasper)
+gunther = villager("Gunther", False, museum, "Fall", universal_loves + gunther_loves, False, ModNames.jasper)
 
 all_villagers_by_name: Dict[str, Villager] = {villager.name: villager for villager in all_villagers}
 all_villagers_by_mod: Dict[str, List[Villager]] = {}
