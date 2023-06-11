@@ -49,7 +49,8 @@ eugene_entrances = [
 ]
 
 magic_regions = [
-    RegionData(SVRegion.pierre_store, [MagicEntrance.store_to_altar])
+    RegionData(SVRegion.pierre_store, [MagicEntrance.store_to_altar]),
+    RegionData(MagicRegion.altar)
 ]
 
 magic_entrances = [
