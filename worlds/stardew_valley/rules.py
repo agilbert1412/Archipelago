@@ -128,6 +128,7 @@ def set_rules(multi_world: MultiWorld, player: int, world_options: StardewOption
     set_traveling_merchant_rules(logic, multi_world, player)
     set_arcade_machine_rules(logic, multi_world, player, world_options)
     set_deepwoods_rules(logic, multi_world, player, world_options)
+    set_magic_spell_rules(logic, multi_world, player, world_options)
 
 
 def set_entrance_rules(logic, multi_world, player, world_options: StardewOptions):
@@ -476,7 +477,7 @@ def set_deepwoods_rules(logic: StardewLogic, multi_world: MultiWorld, player: in
 
 def set_magic_spell_rules(logic: StardewLogic, multi_world: MultiWorld, player: int, world_options: StardewOptions):
     if ModNames.magic in world_options[options.Mods]:
-        MultiWorldRules.set_rule(multi_world.get_entrance(MagicEntrance.altar, player),
+        MultiWorldRules.set_rule(multi_world.get_entrance(MagicEntrance.store_to_altar, player),
                                  (logic.has_relationship("Wizard", 3) &
                                   logic.can_reach_region(SVRegion.wizard_tower)).simplify())
         MultiWorldRules.add_rule(multi_world.get_location("Analyze: Clear Debris", player),
