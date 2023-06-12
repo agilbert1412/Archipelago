@@ -1438,6 +1438,8 @@ class StardewLogic:
 # always false and thus doesn't get considered relative to other logic tests.
 
     def can_use_altar(self) -> StardewRule:
+        if ModNames.magic not in self.options[options.Mods]:
+            return False_()
         return self.can_reach_region(MagicRegion.altar)
 
     def has_any_spell(self) -> StardewRule:
