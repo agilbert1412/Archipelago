@@ -329,8 +329,6 @@ kitty = villager("Mr. Ginger", False, forest, "Summer", universal_loves + mister
 shiko = villager("Shiko", True, town, "Winter", universal_loves + shiko_loves, True, ModNames.shiko)
 wellwick = villager("Wellwick", True, forest, "Winter", universal_loves + wellwick_loves, True, ModNames.shiko)
 yoba = villager("Yoba", False, secret_woods, "Spring", universal_loves + yoba_loves, False, ModNames.yoba)
-marlon = villager("Marlon", False, adventurers_guild, "Winter", universal_loves + marlon_loves, False, ModNames.jasper)
-gunther = villager("Gunther", False, museum, "Fall", universal_loves + gunther_loves, False, ModNames.jasper)
 
 all_villagers_by_name: Dict[str, Villager] = {villager.name: villager for villager in all_villagers}
 all_villagers_by_mod: Dict[str, List[Villager]] = {}
