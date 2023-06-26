@@ -19,6 +19,8 @@ class ModNames:
     shiko = "Shiko - New Custom NPC"
     delores = "Delores - Custom NPC"
     ayeisha = "Ayeisha - The Postal Worker (Custom NPC)"
+    riley = "Custom NPC - Riley"
+    skull_cavern_elevator = "Skull Cavern Elevator"
 
 
 mod_versions = {
@@ -41,4 +43,6 @@ mod_versions = {
     ModNames.shiko: "1.1.0",
     ModNames.delores: "1.1.2",
     ModNames.ayeisha: "0.5.0-alpha",
+    ModNames.riley: "1.2.2",
+    ModNames.skull_cavern_elevator: "1.0.0",
 }
