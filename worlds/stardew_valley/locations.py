@@ -33,7 +33,7 @@ class LocationTags(enum.Enum):
     TRASH_CAN_UPGRADE = enum.auto()
     FISHING_ROD_UPGRADE = enum.auto()
     THE_MINES_TREASURE = enum.auto()
-    THE_MINES_ELEVATOR = enum.auto()
+    ELEVATOR = enum.auto()
     SKILL_LEVEL = enum.auto()
     FARMING_LEVEL = enum.auto()
     FISHING_LEVEL = enum.auto()
@@ -301,7 +301,9 @@ def create_locations(location_collector: StardewLocationCollector,
         randomized_locations.extend(locations_by_tag[LocationTags.TOOL_UPGRADE])
 
     if not world_options[options.TheMinesElevatorsProgression] == options.TheMinesElevatorsProgression.option_vanilla:
-        randomized_locations.extend(locations_by_tag[LocationTags.THE_MINES_ELEVATOR])
+        for elevator in locations_by_tag[LocationTags.ELEVATOR]:
+            if elevator.mod_name is None or elevator.mod_name in world_options[options.Mods]:
+                randomized_locations.append(location_table[elevator.name])
 
     if not world_options[options.SkillProgression] == options.SkillProgression.option_vanilla:
         for location in locations_by_tag[LocationTags.SKILL_LEVEL]:

@@ -168,7 +168,7 @@ def create_unique_items(item_factory: StardewItemFactory, world_options: Stardew
 
     create_backpack_items(item_factory, world_options, items)
     create_mine_rewards(item_factory, items, random)
-    create_mine_elevators(item_factory, world_options, items)
+    create_elevators(item_factory, world_options, items)
     create_tools(item_factory, world_options, items)
     create_skills(item_factory, world_options, items)
     create_wizard_buildings(item_factory, world_options, items)
@@ -219,7 +219,7 @@ def create_mine_rewards(item_factory: StardewItemFactory, items: List[Item], ran
     items.append(item_factory("Skull Key"))
 
 
-def create_mine_elevators(item_factory: StardewItemFactory, world_options: StardewOptions, items: List[Item]):
+def create_elevators(item_factory: StardewItemFactory, world_options: StardewOptions, items: List[Item]):
     if (world_options[options.TheMinesElevatorsProgression] ==
             options.TheMinesElevatorsProgression.option_progressive or
             world_options[options.TheMinesElevatorsProgression] ==

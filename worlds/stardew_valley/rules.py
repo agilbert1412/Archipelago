@@ -162,8 +162,9 @@ def set_entrance_rules(logic, multi_world, player, world_options: StardewOptions
                              logic.received("Bus Repair").simplify())
     MultiWorldRules.set_rule(multi_world.get_entrance(Entrance.enter_skull_cavern, player),
                              logic.received(Wallet.skull_key).simplify())
-    MultiWorldRules.set_rule(multi_world.get_entrance(Entrance.mine_to_skull_cavern_floor_100, player),
-                             logic.can_mine_perfectly_in_the_skull_cavern().simplify())
+    for floor in range(25, 200 + 25, 25):
+        MultiWorldRules.set_rule(multi_world.get_entrance(dig_to_skull_floor(floor), player),
+                                 logic.can_mine_to_skull_cavern_floor(floor).simplify())
     MultiWorldRules.set_rule(multi_world.get_entrance(Entrance.talk_to_mines_dwarf, player),
                              logic.can_speak_dwarf() & logic.has_tool(Tool.pickaxe, ToolMaterial.iron))
 

@@ -881,7 +881,7 @@ class StardewLogic:
         return self.can_reach_region(Region.mines_floor_85)
 
     def can_mine_in_the_skull_cavern(self) -> StardewRule:
-        return (self.can_progress_in_the_mines_from_floor(120) &
+        return (self.received("Skull Key") &
                 self.can_reach_region(Region.skull_cavern))
 
     def can_mine_perfectly(self) -> StardewRule:
@@ -963,6 +963,40 @@ class StardewLogic:
                  self.can_progress_in_the_mines_from_floor(previous_elevator)) |
                 (self.has_mine_elevator_to_floor(previous_previous_elevator) &
                  self.can_progress_easily_in_the_mines_from_floor(previous_previous_elevator)))
+
+    def can_progress_in_the_skull_cavern_from_floor(self, floor: int) -> StardewRule:
+        tier = int(floor / 50)
+        rules = []
+        weapon_rule = self.has_great_weapon()
+        rules.append(weapon_rule)
+        rules.append(self.can_cook())
+        if self.options[options.ToolProgression] == options.ToolProgression.option_progressive:
+            rules.append(self.received("Progressive Pickaxe", min(4, max(0, tier + 2))))
+        if self.options[options.SkillProgression] == options.SkillProgression.option_progressive:
+            combat_tier = min(10, max(0, tier * 2 + 6))
+            rules.append(self.has_skill_level(Skill.combat, combat_tier))
+        return And(rules)
+
+    def can_progress_easily_in_the_skull_cavern_from_floor(self, floor: int) -> StardewRule:
+        tier = int(floor / 50) + 1
+        rules = []
+        weapon_rule = self.has_great_weapon()
+        rules.append(weapon_rule)
+        rules.append(self.can_cook())
+        if self.options[options.ToolProgression] == options.ToolProgression.option_progressive:
+            rules.append(self.received("Progressive Pickaxe", min(4, max(0, tier + 2))))
+        if self.options[options.SkillProgression] == options.SkillProgression.option_progressive:
+            combat_tier = min(10, max(0, tier * 2 + 6))
+            rules.append(self.has_skill_level(Skill.combat, combat_tier))
+        return And(rules)
+
+    def can_mine_to_skull_cavern_floor(self, floor: int) -> StardewRule:
+        previous_elevator = max(floor - 25, 0)
+        previous_previous_elevator = max(floor - 50, 0)
+        return ((has_skull_cavern_elevator_to_floor(self, previous_elevator) &
+                 self.can_progress_in_the_skull_cavern_from_floor(previous_elevator)) |
+                (has_skull_cavern_elevator_to_floor(self, previous_previous_elevator) &
+                 self.can_progress_easily_in_the_skull_cavern_from_floor(previous_previous_elevator)))
 
     def has_jotpk_power_level(self, power_level: int) -> StardewRule:
         if self.options[options.ArcadeMachineLocations] != options.ArcadeMachineLocations.option_full_shuffling:
