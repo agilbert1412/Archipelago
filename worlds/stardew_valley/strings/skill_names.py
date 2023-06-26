@@ -13,3 +13,5 @@ class ModSkill:
     cooking = "Cooking"
     magic = "Magic"
     socializing = "Socializing"
+    magic = "Magic"
+    socializing = "Socializing"
