@@ -1,7 +1,7 @@
 from worlds.stardew_valley.strings.entrance_names import DeepWoodsEntrance, EugeneEntrance, \
-    JasperEntrance, AlecEntrance, YobaEntrance, JunaEntrance
+    JasperEntrance, AlecEntrance, YobaEntrance, JunaEntrance, MagicEntrance
 from worlds.stardew_valley.strings.region_names import Region, DeepWoodsRegion, EugeneRegion, JasperRegion, \
-    AlecRegion, YobaRegion, JunaRegion
+    AlecRegion, YobaRegion, JunaRegion, MagicRegion
 from ..region_classes import RegionData, ConnectionData, RandomizationFlag, ModRegionData
 from .mod_data import ModNames
 
@@ -10,27 +10,46 @@ from .mod_data import ModNames
 # DeepWoods Data
 deep_woods_regions = [
     RegionData(Region.farm, [DeepWoodsEntrance.use_woods_obelisk]),
+    RegionData(DeepWoodsRegion.woods_obelisk_menu, [DeepWoodsEntrance.deep_woods_depth_1,
+                                                    DeepWoodsEntrance.deep_woods_depth_10,
+                                                    DeepWoodsEntrance.deep_woods_depth_20,
+                                                    DeepWoodsEntrance.deep_woods_depth_30,
+                                                    DeepWoodsEntrance.deep_woods_depth_40,
+                                                    DeepWoodsEntrance.deep_woods_depth_50,
+                                                    DeepWoodsEntrance.deep_woods_depth_60,
+                                                    DeepWoodsEntrance.deep_woods_depth_70,
+                                                    DeepWoodsEntrance.deep_woods_depth_80,
+                                                    DeepWoodsEntrance.deep_woods_depth_90,
+                                                    DeepWoodsEntrance.deep_woods_depth_100]),
     RegionData(Region.secret_woods, [DeepWoodsEntrance.secret_woods_to_deep_woods]),
-    RegionData(DeepWoodsRegion.main_lichtung, [DeepWoodsEntrance.deep_woods_house,
-                                               DeepWoodsEntrance.deep_woods_depth_10]),
+    RegionData(DeepWoodsRegion.main_lichtung, [DeepWoodsEntrance.deep_woods_house]),
     RegionData(DeepWoodsRegion.abandoned_home),
-    RegionData(DeepWoodsRegion.floor_10, [DeepWoodsEntrance.deep_woods_depth_30]),
-    RegionData(DeepWoodsRegion.floor_30, [DeepWoodsEntrance.deep_woods_depth_50]),
-    RegionData(DeepWoodsRegion.floor_50, [DeepWoodsEntrance.deep_woods_depth_70]),
-    RegionData(DeepWoodsRegion.floor_70, [DeepWoodsEntrance.deep_woods_depth_90]),
-    RegionData(DeepWoodsRegion.floor_90, [DeepWoodsEntrance.deep_woods_depth_100]),
+    RegionData(DeepWoodsRegion.floor_10),
+    RegionData(DeepWoodsRegion.floor_20),
+    RegionData(DeepWoodsRegion.floor_30),
+    RegionData(DeepWoodsRegion.floor_40),
+    RegionData(DeepWoodsRegion.floor_50),
+    RegionData(DeepWoodsRegion.floor_60),
+    RegionData(DeepWoodsRegion.floor_70),
+    RegionData(DeepWoodsRegion.floor_80),
+    RegionData(DeepWoodsRegion.floor_90),
     RegionData(DeepWoodsRegion.floor_100)
 ]
 
 deep_woods_entrances = [
-    ConnectionData(DeepWoodsEntrance.use_woods_obelisk, DeepWoodsRegion.main_lichtung),
+    ConnectionData(DeepWoodsEntrance.use_woods_obelisk, DeepWoodsRegion.woods_obelisk_menu),
     ConnectionData(DeepWoodsEntrance.secret_woods_to_deep_woods, DeepWoodsRegion.main_lichtung),
     ConnectionData(DeepWoodsEntrance.deep_woods_house, DeepWoodsRegion.abandoned_home,
                    flag=RandomizationFlag.NON_PROGRESSION),
+    ConnectionData(DeepWoodsEntrance.deep_woods_depth_1, DeepWoodsRegion.main_lichtung),
     ConnectionData(DeepWoodsEntrance.deep_woods_depth_10, DeepWoodsRegion.floor_10),
+    ConnectionData(DeepWoodsEntrance.deep_woods_depth_20, DeepWoodsRegion.floor_20),
     ConnectionData(DeepWoodsEntrance.deep_woods_depth_30, DeepWoodsRegion.floor_30),
+    ConnectionData(DeepWoodsEntrance.deep_woods_depth_40, DeepWoodsRegion.floor_40),
     ConnectionData(DeepWoodsEntrance.deep_woods_depth_50, DeepWoodsRegion.floor_50),
+    ConnectionData(DeepWoodsEntrance.deep_woods_depth_60, DeepWoodsRegion.floor_60),
     ConnectionData(DeepWoodsEntrance.deep_woods_depth_70, DeepWoodsRegion.floor_70),
+    ConnectionData(DeepWoodsEntrance.deep_woods_depth_80, DeepWoodsRegion.floor_80),
     ConnectionData(DeepWoodsEntrance.deep_woods_depth_90, DeepWoodsRegion.floor_90),
     ConnectionData(DeepWoodsEntrance.deep_woods_depth_100, DeepWoodsRegion.floor_100)
 ]
@@ -42,12 +61,13 @@ eugene_regions = [
 ]
 
 eugene_entrances = [
-    ConnectionData(EugeneEntrance.forest_to_garden, EugeneRegion.eugene_garden, flag=RandomizationFlag.NON_PROGRESSION | RandomizationFlag.LEAD_TO_OPEN_AREA),
+    ConnectionData(EugeneEntrance.forest_to_garden, EugeneRegion.eugene_garden,
+                   flag=RandomizationFlag.NON_PROGRESSION | RandomizationFlag.LEAD_TO_OPEN_AREA),
     ConnectionData(EugeneEntrance.garden_to_bedroom, EugeneRegion.eugene_bedroom, flag=RandomizationFlag.BUILDINGS)
 ]
 
 magic_regions = [
-    RegionData(SVRegion.pierre_store, [MagicEntrance.store_to_altar]),
+    RegionData(Region.pierre_store, [MagicEntrance.store_to_altar]),
     RegionData(MagicRegion.altar)
 ]
 
@@ -70,7 +90,8 @@ alec_regions = [
 ]
 
 alec_entrances = [
-    ConnectionData(AlecEntrance.forest_to_petshop, AlecRegion.pet_store, flag=RandomizationFlag.NON_PROGRESSION | RandomizationFlag.LEAD_TO_OPEN_AREA),
+    ConnectionData(AlecEntrance.forest_to_petshop, AlecRegion.pet_store,
+                   flag=RandomizationFlag.NON_PROGRESSION | RandomizationFlag.LEAD_TO_OPEN_AREA),
     ConnectionData(AlecEntrance.petshop_to_bedroom, AlecRegion.alec_bedroom, flag=RandomizationFlag.BUILDINGS)
 ]
 
@@ -89,7 +110,8 @@ juna_regions = [
 ]
 
 juna_entrances = [
-    ConnectionData(JunaEntrance.forest_to_juna_cave, JunaRegion.juna_cave, flag=RandomizationFlag.NON_PROGRESSION | RandomizationFlag.LEAD_TO_OPEN_AREA)
+    ConnectionData(JunaEntrance.forest_to_juna_cave, JunaRegion.juna_cave,
+                   flag=RandomizationFlag.NON_PROGRESSION | RandomizationFlag.LEAD_TO_OPEN_AREA)
 ]
 
 

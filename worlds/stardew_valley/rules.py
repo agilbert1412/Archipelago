@@ -499,11 +499,11 @@ def set_deepwoods_rules(logic: StardewLogic, multi_world: MultiWorld, player: in
                                  logic.has_tool(Tool.axe, "Gold") & deepwoods.can_reach_woods_depth(logic, 50).simplify())
         MultiWorldRules.add_rule(multi_world.get_location("Chop Down a Deep Woods Iridium Tree", player),
                                  logic.has_tool(Tool.axe, "Iridium").simplify())
-        for depth in {10, 30, 50, 70, 90, 100}:
-            MultiWorldRules.set_rule(multi_world.get_entrance(move_to_woods_depth(depth), player),
-                                     logic.can_reach_woods_depth(depth).simplify())
         MultiWorldRules.set_rule(multi_world.get_entrance(DeepWoodsEntrance.use_woods_obelisk, player),
                                  logic.received("Woods Obelisk").simplify())
+        for depth in range(10, 100 + 10, 10):
+            MultiWorldRules.set_rule(multi_world.get_entrance(move_to_woods_depth(depth), player),
+                                     deepwoods.can_chop_to_depth(logic, depth).simplify())
 
 
 def set_magic_spell_rules(logic: StardewLogic, multi_world: MultiWorld, player: int, world_options: StardewOptions):

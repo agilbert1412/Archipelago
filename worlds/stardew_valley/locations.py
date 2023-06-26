@@ -264,8 +264,11 @@ def extend_special_order_locations(randomized_locations: List[LocationData], wor
         return
 
     include_island = world_options[options.ExcludeGingerIsland] == options.ExcludeGingerIsland.option_false
-    board_locations = filter_ginger_island(world_options, locations_by_tag[LocationTags.SPECIAL_ORDER_BOARD])
-    randomized_locations.extend(board_locations)
+    # board_locations = filter_ginger_island(world_options, locations_by_tag[LocationTags.SPECIAL_ORDER_BOARD])
+    for location in locations_by_tag[LocationTags.SPECIAL_ORDER_BOARD]:
+        if (location.mod_name is None or location.mod_name in world_options[options.Mods]) and \
+                (include_island or LocationTags.GINGER_ISLAND not in location.tags):
+            randomized_locations.append(location)
     if world_options[options.SpecialOrderLocations] == options.SpecialOrderLocations.option_board_qi and include_island:
         randomized_locations.extend(locations_by_tag[LocationTags.SPECIAL_ORDER_QI])
 

@@ -1214,3 +1214,28 @@ id,region,name,tags,mod_name
 7006,The Deep Woods Depth 100,Deep Woods Treasure Chest,MANDATORY,DeepWoods
 7007,The Deep Woods Depth 100,Deep Woods Trash Bin,MANDATORY,DeepWoods
 7008,The Deep Woods Depth 50,Chop Down a Deep Woods Iridium Tree,MANDATORY,DeepWoods
+7009,The Deep Woods Depth 10,The Deep Woods: Depth 10,ELEVATOR,DeepWoods
+7010,The Deep Woods Depth 20,The Deep Woods: Depth 20,ELEVATOR,DeepWoods
+7011,The Deep Woods Depth 30,The Deep Woods: Depth 30,ELEVATOR,DeepWoods
+7012,The Deep Woods Depth 40,The Deep Woods: Depth 40,ELEVATOR,DeepWoods
+7013,The Deep Woods Depth 50,The Deep Woods: Depth 50,ELEVATOR,DeepWoods
+7014,The Deep Woods Depth 60,The Deep Woods: Depth 60,ELEVATOR,DeepWoods
+7015,The Deep Woods Depth 70,The Deep Woods: Depth 70,ELEVATOR,DeepWoods
+7016,The Deep Woods Depth 80,The Deep Woods: Depth 80,ELEVATOR,DeepWoods
+7017,The Deep Woods Depth 90,The Deep Woods: Depth 90,ELEVATOR,DeepWoods
+7018,The Deep Woods Depth 100,The Deep Woods: Depth 100,ELEVATOR,DeepWoods
+7019,The Deep Woods Depth 50,Purify an Infested Lichtung,MANDATORY,DeepWoods
+7020,Skull Cavern Floor 25,Skull Cavern: Floor 25,ELEVATOR,Skull Cavern Elevator
+7021,Skull Cavern Floor 50,Skull Cavern: Floor 50,ELEVATOR,Skull Cavern Elevator
+7022,Skull Cavern Floor 75,Skull Cavern: Floor 75,ELEVATOR,Skull Cavern Elevator
+7023,Skull Cavern Floor 100,Skull Cavern: Floor 100,ELEVATOR,Skull Cavern Elevator
+7024,Skull Cavern Floor 125,Skull Cavern: Floor 125,ELEVATOR,Skull Cavern Elevator
+7025,Skull Cavern Floor 150,Skull Cavern: Floor 150,ELEVATOR,Skull Cavern Elevator
+7026,Skull Cavern Floor 175,Skull Cavern: Floor 175,ELEVATOR,Skull Cavern Elevator
+7027,Skull Cavern Floor 200,Skull Cavern: Floor 200,ELEVATOR,Skull Cavern Elevator
+7501,Town,Missing Envelope,"MANDATORY,QUEST",Ayeisha - The Postal Worker (Custom NPC)
+7502,Town,Lost Emerald Ring,"MANDATORY,QUEST",Ayeisha - The Postal Worker (Custom NPC)
+7503,Forest,Mr.Ginger's request,"MANDATORY,QUEST",Mister Ginger (cat npc)
+7504,Forest,Juna's Drink Request,"MANDATORY,QUEST",Juna - Roommate NPC
+7505,Forest,Juna's BFF Request,"MANDATORY,QUEST",Juna - Roommate NPC
+7506,Forest,Juna's Monster Mash,SPECIAL_ORDER_BOARD,Juna - Roommate NPC

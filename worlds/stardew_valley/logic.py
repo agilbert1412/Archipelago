@@ -26,7 +26,7 @@ from .strings.animal_names import Animal, coop_animals, barn_animals
 from .strings.animal_product_names import AnimalProduct
 from .strings.ap_names.transport_names import Transportation
 from .strings.artisan_good_names import ArtisanGood
-from .strings.building_names import Building, ModBuilding
+from .strings.building_names import Building
 from .strings.calendar_names import Weekday
 from .strings.craftable_names import Craftable
 from .strings.crop_names import Fruit, Vegetable, all_fruits, all_vegetables
@@ -268,6 +268,7 @@ class StardewLogic:
             Craftable.mega_bomb: self.has_skill_level(Skill.mining, 8) & self.has(Ore.gold) & self.has(Loot.solar_essence) & self.has(Loot.void_essence),
             Gift.mermaid_pendant: self.can_reach_region(Region.tide_pools) & self.has_relationship(Generic.bachelor, 10) & self.has_house(1) & self.has(Craftable.rain_totem),
             AnimalProduct.milk: self.has_animal(Animal.cow),
+            Craftable.monster_musk: self.has_prismatic_jelly_reward_access() & self.has(Loot.slime) & self.has(Loot.bat_wing),
             Forageable.morel: self.can_forage(Season.spring, Region.secret_woods),
             "Muscle Remedy": self.can_reach_region(Region.hospital) & self.can_spend_money(1000),
             Fish.mussel: self.can_forage(Generic.any, Region.beach) or self.has(Fish.mussel_node),
@@ -276,6 +277,7 @@ class StardewLogic:
             ArtisanGood.oak_resin: self.has(Machine.tapper),
             Ingredient.oil: self.can_spend_money_at(Region.pierre_store, 200) | (self.has(Machine.oil_maker) & (self.has(Vegetable.corn) | self.has(Flower.sunflower) | self.has(Seed.sunflower))),
             Machine.oil_maker: self.has_farming_level(8) & self.has(Loot.slime) & self.has(Material.hardwood) & self.has(MetalBar.gold),
+            Craftable.oil_of_garlic: (self.has_skill_level(Skill.combat, 6) & self.has(Vegetable.garlic) & self.has(Ingredient.oil)) | (self.can_reach_region(Region.mines_dwarf_shop)),
             Geode.omni: self.can_mine_in_the_mines_floor_41_80() | self.can_reach_region(Region.desert) | self.can_do_panning() | self.received(Wallet.rusty_key) | (self.has(Fish.octopus) & self.has_building(Building.fish_pond)) | self.can_reach_region(Region.volcano_floor_10),
             Animal.ostrich: self.has_building(Building.barn) & self.has(AnimalProduct.ostrich_egg) & self.has(Machine.ostrich_incubator),
             AnimalProduct.ostrich_egg: self.can_forage(Generic.any, Region.island_north, True),
@@ -332,6 +334,7 @@ class StardewLogic:
             AnimalProduct.squid_ink: self.can_mine_in_the_mines_floor_81_120() | (self.has_building(Building.fish_pond) & self.has(Fish.squid)),
             Craftable.staircase: self.has_skill_level(Skill.mining, 2) & self.has(Material.stone),
             Material.stone: self.has_tool(Tool.pickaxe),
+            Meal.strange_bun: self.has_relationship(NPC.shane, 7) & self.has(Ingredient.wheat_flour) & self.has(WaterItem.periwinkle) & self.has(ArtisanGood.void_mayonnaise),
             AnimalProduct.sturgeon_roe: self.has(Fish.sturgeon) & self.has_building(Building.fish_pond),
             Ingredient.sugar: self.can_spend_money_at(Region.pierre_store, 100) | (
                     self.has_building(Building.mill) & self.has(Vegetable.beet)),
