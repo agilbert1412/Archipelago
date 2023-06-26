@@ -88,8 +88,8 @@ def can_earn_cooking_skill_level(self, level: int) -> StardewRule:
 
 def can_earn_binning_skill_level(self, level: int) -> StardewRule:
     if level >= 6:
-        return self.can_reach_region(Region.town) & self.has(Machine.recycler) & \
+        return self.can_reach_region(Region.town) & self.has(Machine.recycling_machine) & \
             (self.can_fish() | self.can_crab_pot())
     else:
-        return self.can_reach_region(Region.town) | (self.has(Machine.recycler) &
+        return self.can_reach_region(Region.town) | (self.has(Machine.recycling_machine) &
                                                      (self.can_fish() | self.can_crab_pot()))

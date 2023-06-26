@@ -13,9 +13,9 @@ from .data.recipe_data import all_cooking_recipes, CookingRecipe, RecipeSource, 
     StarterSource, ShopSource, SkillSource
 from .data.villagers_data import all_villagers_by_name, Villager
 from .items import all_items, Group
-from .mods.logic.mod_buildings import modded_buildings
-from .mods.logic.mod_quests import modded_quests
-from .mods.logic.mod_special_orders import modded_special_orders
+from .mods.logic.buildings import modded_buildings
+from .mods.logic.quests import modded_quests
+from .mods.logic.special_orders import modded_special_orders
 from .mods.logic.skullcavernelevator import has_skull_cavern_elevator_to_floor
 from .mods.mod_data import ModNames
 from .mods.logic import magic, skills

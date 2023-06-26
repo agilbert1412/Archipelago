@@ -476,7 +476,8 @@ def fill_with_resource_packs_and_traps(item_factory: StardewItemFactory, world_o
     useful_resource_packs = [pack for pack in items_by_group[Group.RESOURCE_PACK_USEFUL]
                              if pack.name not in items_already_added_names]
     trap_items = [pack for pack in items_by_group[Group.TRAP]
-                  if pack.name not in items_already_added_names]
+                  if pack.name not in items_already_added_names and
+                  (pack.mod_name is None or pack.mod_name in world_options[options.Mods])]
 
     priority_filler_items = []
     priority_filler_items.extend(useful_resource_packs)

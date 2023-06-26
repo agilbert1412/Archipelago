@@ -3,6 +3,7 @@ from ...strings.craftable_names import Craftable
 from ...strings.performance_names import Performance
 from ...strings.skill_names import Skill
 from ...strings.tool_names import Tool, ToolMaterial
+from ...strings.ap_names.transport_names import ModTransportation
 from ...stardew_rule import StardewRule, True_, And
 from ... import options
 
@@ -13,7 +14,7 @@ def can_reach_woods_depth(self, depth: int) -> StardewRule:
     if depth > 10:
         rules.append(self.has(Craftable.bomb) | self.has_tool(Tool.axe, ToolMaterial.iridium))
     if depth > 30:
-        rules.append(self.received(ModBuilding.woods_obelisk))
+        rules.append(self.received(ModTransportation.woods_obelisk))
     if depth > 50:
         rules.append(self.can_do_combat_at_level(Performance.great) & self.can_cook())
     if self.options[options.SkillProgression] == options.SkillProgression.option_progressive:
