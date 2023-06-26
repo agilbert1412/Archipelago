@@ -523,11 +523,7 @@ class StardewLogic:
             SpecialOrder.qis_prismatic_grange: self.has(Loot.bug_meat) & self.can_spend_money(80000), # All colors can be bought except purple
         })
 
-        # Mod Building List (For now smh)
-        if ModNames.tractor in self.options[options.Mods]:
-            self.building_rules.update({
-                ModBuilding.tractor_garage: self.can_spend_money(150000) & self.has(MetalBar.iron) &
-                                  self.has(MetalBar.iridium) & self.has(ArtisanGood.battery_pack)})
+        self.special_order_rules.update(modded_special_orders(self, self.options))
 
     def has(self, items: Union[str, (Iterable[str], Sized)], count: Optional[int] = None) -> StardewRule:
         if isinstance(items, str):
