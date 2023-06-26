@@ -1,13 +1,10 @@
 from worlds.stardew_valley.strings.entrance_names import DeepWoodsEntrance, EugeneEntrance, \
-    JasperEntrance, AlecEntrance, YobaEntrance, JunaEntrance, MagicEntrance
+    JasperEntrance, AlecEntrance, YobaEntrance, JunaEntrance, MagicEntrance, AyeishaEntrance, RileyEntrance
 from worlds.stardew_valley.strings.region_names import Region, DeepWoodsRegion, EugeneRegion, JasperRegion, \
-    AlecRegion, YobaRegion, JunaRegion, MagicRegion
+    AlecRegion, YobaRegion, JunaRegion, MagicRegion, AyeishaRegion, RileyRegion
 from ..region_classes import RegionData, ConnectionData, RandomizationFlag, ModRegionData
 from .mod_data import ModNames
 
-# Making this to reduce clutter from the regions file
-
-# DeepWoods Data
 deep_woods_regions = [
     RegionData(Region.farm, [DeepWoodsEntrance.use_woods_obelisk]),
     RegionData(DeepWoodsRegion.woods_obelisk_menu, [DeepWoodsEntrance.deep_woods_depth_1,
@@ -101,7 +98,7 @@ yoba_regions = [
 ]
 
 yoba_entrances = [
-    ConnectionData(YobaEntrance.secret_woods_to_clearing, YobaRegion.yoba_clearing)
+    ConnectionData(YobaEntrance.secret_woods_to_clearing, YobaRegion.yoba_clearing, flag=RandomizationFlag.BUILDINGS)
 ]
 
 juna_regions = [
@@ -114,6 +111,25 @@ juna_entrances = [
                    flag=RandomizationFlag.NON_PROGRESSION | RandomizationFlag.LEAD_TO_OPEN_AREA)
 ]
 
+ayeisha_regions = [
+    RegionData(Region.bus_stop, [AyeishaEntrance.bus_stop_to_mail_van]),
+    RegionData(AyeishaRegion.mail_van)
+]
+
+ayeisha_entrances = [
+    ConnectionData(AyeishaEntrance.bus_stop_to_mail_van, AyeishaRegion.mail_van,
+                   flag=RandomizationFlag.NON_PROGRESSION | RandomizationFlag.LEAD_TO_OPEN_AREA)
+]
+
+riley_regions = [
+    RegionData(Region.town, [RileyEntrance.town_to_riley]),
+    RegionData(RileyRegion.riley_house)
+]
+
+riley_entrances = [
+    ConnectionData(RileyEntrance.town_to_riley, RileyRegion.riley_house,
+                   flag=RandomizationFlag.NON_PROGRESSION | RandomizationFlag.LEAD_TO_OPEN_AREA)
+]
 
 ModDataList = {
     ModNames.deepwoods: ModRegionData(ModNames.deepwoods, deep_woods_regions, deep_woods_entrances),
@@ -122,5 +138,7 @@ ModDataList = {
     ModNames.alec: ModRegionData(ModNames.alec, alec_regions, alec_entrances),
     ModNames.yoba: ModRegionData(ModNames.yoba, yoba_regions, yoba_entrances),
     ModNames.juna: ModRegionData(ModNames.juna, juna_regions, juna_entrances),
-    ModNames.magic: ModRegionData(ModNames.magic, magic_regions, magic_entrances)
+    ModNames.magic: ModRegionData(ModNames.magic, magic_regions, magic_entrances),
+    ModNames.ayeisha: ModRegionData(ModNames.ayeisha, ayeisha_regions, ayeisha_entrances),
+    ModNames.riley: ModRegionData(ModNames.riley, riley_regions, riley_entrances),
 }

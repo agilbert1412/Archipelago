@@ -172,3 +172,11 @@ class YobaRegion:
 
 class JunaRegion:
     juna_cave = "Juna's Cave"
+
+
+class AyeishaRegion:
+    mail_van = "Ayeisha's Mail Van"
+
+
+class RileyRegion:
+    riley_house = "Riley's House"

@@ -208,3 +208,11 @@ class YobaEntrance:
 class JunaEntrance:
     forest_to_juna_cave = "Forest to Juna's Cave"
 
+
+class AyeishaEntrance:
+    bus_stop_to_mail_van = "Bus Stop to Ayeisha's Mail Van"
+
+
+class RileyEntrance:
+    town_to_riley = "Town to Riley's House"
+
