@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from Options import DeathLink, NamedRange, PerGameCommonOptions, Range, Toggle
+from Options import DeathLink, NamedRange, PerGameCommonOptions, Range, Toggle, Choice
 
 standard_race_lengths = {
         "2k": 2000,
@@ -30,8 +30,26 @@ standard_race_speeds = {
     }
 
 
+class Goal(Choice):
+    """The completion condition for the slot
+    One Hard Travel: Your victory condition will be a trip at maximum distance and maximum speed (chosen from the other settings)
+    Allsanity: Obtain every check
+    Short MacGuffin: The slot will contain items that are the letters for "Ap-Go!". Collecting all 6 is victory
+    Long MacGuffin: The slot will contain items that are the letters for "Archipela-Go!". Collecting all 13 is victory
+    """
+    internal_name = "goal"
+    display_name = "Goal"
+    option_one_hard_travel = 0
+    option_allsanity = 1
+    option_short_macguffin = 2
+    option_long_macguffin = 3
+    default = 0
+
+
 class NumberOfChecks(Range):
-    """The number of checks to generate in the world."""
+    """The number of checks to generate in the world.
+    Most items in this game are flexible, so the more checks you have, the more of each item you will get, but each will be less powerful.
+    If you pick a MacGuffin goal, you need at least enough checks to fit the goal items. If not, they will be placed in your start_inventory"""
     internal_name = "number_of_checks"
     display_name = "Number of Checks"
     range_start = 1
@@ -127,6 +145,7 @@ class EnableTraps(Toggle):
 
 @dataclass
 class APGOOptions(PerGameCommonOptions):
+    goal: Goal
     number_of_checks: NumberOfChecks
     minimum_distance: MinimumDistance
     maximum_distance: MaximumDistance
