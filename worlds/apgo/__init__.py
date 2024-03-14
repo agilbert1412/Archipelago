@@ -1,9 +1,14 @@
+from typing import Mapping, Any, Union
+
 from BaseClasses import Region, Location, Item, ItemClassification, Tutorial
 from worlds.AutoWorld import World, WebWorld
 
-from .regions import create_regions
-from .options import APGOOptions
-from .items import APGOItem
+from .Regions import create_regions
+from .Options import APGOOptions
+from .Items import APGOItem, item_table, APGOItemData, create_items
+from .Locations import APGOLocation, location_table
+
+GAME_NAME = "Archipela-Go!"
 
 
 class APGOWebWorld(WebWorld):
@@ -30,10 +35,11 @@ class APGOWorld(World):
     """
     Archipela-Go is an exercise game designed around walking or jogging outside to unlock progression
     """
-    game = "Archipela-Go!"
+    game = GAME_NAME
     web = APGOWebWorld()
-    location_id_to_name = {}
-    item_id_to_name = {}
+
+    item_name_to_id = {name: data.id for name, data in item_table.items()}
+    location_name_to_id = {name: id for name, id in location_table.items()}
 
     options_dataclass = APGOOptions
     options: APGOOptions
@@ -42,11 +48,20 @@ class APGOWorld(World):
         create_regions(self.multiworld, self.player, self.options)
 
     def create_items(self) -> None:
-        pass
+        created_items = create_items(self.create_item, self.options, self.random)
+        self.multiworld.itempool += created_items
 
-    def create_item(self, name: str) -> "Item":
-        item_class = self.get_item_classification(name)
-        return APGOItem(name, item_class, self.item_id_to_name.get(name, None), self.player)
+    def create_item(self, item: Union[str, APGOItemData]) -> APGOItem:
+        if isinstance(item, str):
+            item = item_table[item]
+
+        return APGOItem(item.name, item.classification, item.code, self.player)
 
     def get_item_classification(self, name: str) -> ItemClassification:
         return ItemClassification.progression
+
+    def fill_slot_data(self) -> Mapping[str, Any]:  # json of WebHostLib.models.Slot
+        return {
+            # "distance_per_tier": self.options.
+            # "speed_per_tier":
+        }

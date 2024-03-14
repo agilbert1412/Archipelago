@@ -1,5 +1,5 @@
 from BaseClasses import MultiWorld, Region
-from .options import APGOOptions
+from .Options import APGOOptions
 
 
 def create_regions(multiworld: MultiWorld, player: int, options: APGOOptions) -> None:
