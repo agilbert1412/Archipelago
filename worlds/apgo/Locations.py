@@ -1,6 +1,7 @@
 from typing import Optional, Protocol, Dict
 
 from BaseClasses import Location
+from .Regions import area_number
 from .Trips import Trip, all_trips
 
 
@@ -31,5 +32,6 @@ def create_locations(location_factory: APGOLocationFactory, trips: Dict[Trip, in
     for trip_type in trips:
         for identifier in range(1, trips[trip_type]+1):
             trip_name = trip_type.get_name_unique(identifier)
-            trip_id= location_table[trip_name]
-            location_factory(trip_name, trip_id, "Menu")
+            trip_id = location_table[trip_name]
+            trip_region = area_number(trip_type.key_needed)
+            location_factory(trip_name, trip_id, trip_region)

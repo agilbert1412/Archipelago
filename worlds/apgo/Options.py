@@ -159,7 +159,7 @@ class APGOOptions(PerGameCommonOptions):
     minimum_distance: MinimumDistance
     maximum_distance: MaximumDistance
     speed_requirement: SpeedRequirement
-    enable_area_locks: EnableLocks
+    enable_locks: EnableLocks
     enable_distance_reductions: EnableDistanceReductions
     enable_time_bonuses: EnableTimeBonuses
     enable_scouting_distance_bonuses: EnableScoutingDistanceBonuses

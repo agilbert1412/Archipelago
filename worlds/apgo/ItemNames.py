@@ -1,7 +1,7 @@
 class ItemName:
     # Progression
     distance_reduction = "Progressive Distance Reduction"
-    area_unlock = "Progressive Area Unlock"
+    key = "Progressive Key"
 
     # Macguffins for the goals
     macguffin_A = "A"
