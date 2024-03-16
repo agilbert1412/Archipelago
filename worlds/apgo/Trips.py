@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from random import Random
 from typing import Dict, List, Union
 
-from .Options import NumberOfChecks, EnableLocks, SpeedRequirement
+from .Options import NumberOfChecks, NumberOfLocks, SpeedRequirement
 
 
 @dataclass(frozen=True)
@@ -14,11 +14,11 @@ class Trip:
 
     def get_name(self) -> str:
         name = f"Trip Distance {self.distance_tier}"
-        if self.speed_tier > 0:
-            name += f"(Speed {self.speed_tier})"
         if self.key_needed > 0:
-            name += f"(Key {self.key_needed})"
-            return name
+            name += f" (Area {self.key_needed})"
+        if self.speed_tier > 0:
+            name += f" (Speed {self.speed_tier})"
+        return name
 
     def get_name_unique(self, unique_identifier: int) -> str:
         return f"{self.get_name()} #{unique_identifier}"
@@ -36,28 +36,28 @@ for distance in range(1, max_per_category + 1):
 def generate_trips(options: Dict[str, int], random: Random) -> Dict[Trip, int]:
     valid_trips = []
     enable_speed = options[SpeedRequirement.internal_name] > 0
-    enable_keys = options[EnableLocks.internal_name] == EnableLocks.option_true
+    number_of_keys = options[NumberOfLocks.internal_name]
     for trip in all_trips:
         has_speed = trip.speed_tier > 0
         if enable_speed != has_speed:
             continue
-        if trip.key_needed > 0 and not enable_keys:
+        if trip.key_needed > number_of_keys:
             continue
         valid_trips.append(trip)
     chosen_trips = random.choices(valid_trips, k=options[NumberOfChecks.internal_name])
 
-    make_sure_all_key_tiers_have_one_trip(chosen_trips, enable_keys)
+    make_sure_all_key_tiers_have_one_trip(chosen_trips, number_of_keys)
 
     return Counter(chosen_trips)
 
 
-def make_sure_all_key_tiers_have_one_trip(chosen_trips: List[Trip], enable_keys: bool) -> None:
-    if not enable_keys:
+def make_sure_all_key_tiers_have_one_trip(chosen_trips: List[Trip], number_of_keys: int) -> None:
+    if number_of_keys <= 0:
         return
-    for missing_key_tier in range(0, max_per_category + 1):
+    for missing_key_tier in range(0, number_of_keys + 1):
         if find_trip_with_key_tier(chosen_trips, missing_key_tier):
             continue
-        for higher_key_tier in range(max_per_category, missing_key_tier - 1, -1):
+        for higher_key_tier in range(number_of_keys, missing_key_tier - 1, -1):
             if missing_key_tier == higher_key_tier:
                 return
             trip_to_downgrade = find_trip_with_key_tier(chosen_trips, higher_key_tier)

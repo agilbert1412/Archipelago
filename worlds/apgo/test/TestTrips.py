@@ -54,7 +54,7 @@ class TestGenerateTrips(TestCase):
         for desired_trips in range(1, 101, step):
             with self.subTest(f"{desired_trips} trips"):
                 options = {Options.NumberOfChecks.internal_name: desired_trips,
-                           Options.EnableLocks.internal_name: Options.EnableLocks.option_true,
+                           Options.NumberOfLocks.internal_name: 2,
                            Options.SpeedRequirement.internal_name: 0}
                 trips = generate_trips(options, create_random())
                 total_trips = sum(trips.values())
