@@ -95,12 +95,12 @@ class SpeedRequirement(NamedRange):
     special_range_names = standard_race_speeds
 
 
-class EnableAreaLocks(Toggle):
+class EnableLocks(Toggle):
     """
     Whether some checks are hard locked at the start, and require a "key" item to unlock
     """
-    internal_name = "enable_scouting_bonuses"
-    display_name = "Enable Scouting Bonuses"
+    internal_name = "enable_locks"
+    display_name = "Enable Locks"
 
 
 class EnableDistanceReductions(Toggle):
@@ -113,7 +113,7 @@ class EnableDistanceReductions(Toggle):
 
 class EnableTimeBonuses(Toggle):
     """
-    Whether the item can contain items that add time to your clock to reach checks
+    Whether the item pool can contain items that add time to your clock to reach checks
     """
     internal_name = "enable_time_bonuses"
     display_name = "Enable Time Bonuses"
@@ -135,12 +135,21 @@ class EnableCollectionDistanceBonuses(Toggle):
     display_name = "Enable Collection Distance Bonuses"
 
 
-class EnableTraps(Toggle):
+class TrapRate(NamedRange):
     """
-    Whether the item pool can contain traps. Some traps may be honor-system based and rely on the player to execute them
+    What percentage of the remaining item pool should be traps. Some traps may be honor-system based and rely on the player to execute them
     """
-    internal_name = "enable_traps"
-    display_name = "Enable Traps"
+    internal_name = "trap_rate"
+    display_name = "Trap Rate"
+    range_start = 0
+    range_end = 100
+    default = 50
+    special_range_names = {
+        "none": 0,
+        "quarter": 25,
+        "half": 50,
+        "all": 100,
+    }
 
 
 @dataclass
@@ -150,10 +159,10 @@ class APGOOptions(PerGameCommonOptions):
     minimum_distance: MinimumDistance
     maximum_distance: MaximumDistance
     speed_requirement: SpeedRequirement
-    enable_area_locks: EnableAreaLocks
+    enable_area_locks: EnableLocks
     enable_distance_reductions: EnableDistanceReductions
     enable_time_bonuses: EnableTimeBonuses
     enable_scouting_distance_bonuses: EnableScoutingDistanceBonuses
     enable_collection_distance_bonuses: EnableCollectionDistanceBonuses
-    enable_traps: EnableTraps
+    trap_rate: TrapRate
     death_link: DeathLink
