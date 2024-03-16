@@ -73,7 +73,7 @@ class APGOWorld(World):
 
     def fill_slot_data(self) -> Mapping[str, Any]:
         return {
-            self.options.goal.internal_name: self.options.goal,
+            self.options.goal.internal_name: self.options.goal.value,
             self.options.minimum_distance.internal_name: self.options.minimum_distance,
             self.options.maximum_distance.internal_name: self.options.maximum_distance,
             self.options.speed_requirement.internal_name: self.options.speed_requirement,
