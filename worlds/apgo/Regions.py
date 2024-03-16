@@ -1,7 +1,7 @@
 from typing import Dict
 
 from BaseClasses import MultiWorld, Region
-from . import Trip
+from .Trips import Trip
 from .Options import APGOOptions
 
 
@@ -18,7 +18,7 @@ def create_regions(multiworld: MultiWorld, player: int, options: APGOOptions, tr
 
     for i in range(1, max_key + 1):
         name = area_number(i)
-        created_regions[area_number] = Region(name, player, multiworld)
+        created_regions[name] = Region(name, player, multiworld)
         previous_name = area_number(i-1)
         created_regions[previous_name].connect(created_regions[name])
 

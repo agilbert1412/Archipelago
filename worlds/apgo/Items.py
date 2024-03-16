@@ -4,9 +4,9 @@ from typing import Protocol, Union, List, Dict
 from attr import dataclass
 
 from BaseClasses import Item, ItemClassification
-from . import APGOOptions
+from .Options import APGOOptions
 from .ItemNames import ItemName
-from .Options import Goal, EnableLocks, EnableDistanceReductions, EnableCollectionDistanceBonuses, EnableScoutingDistanceBonuses
+from .Options import Goal, EnableDistanceReductions, EnableCollectionDistanceBonuses, EnableScoutingDistanceBonuses
 from .Trips import Trip
 
 all_trap_names = [ItemName.shuffle_trap, ItemName.silence_trap, ItemName.fog_of_war_trap,
@@ -112,14 +112,10 @@ def create_short_macguffin_items(item_factory: APGOItemFactory, items: List[APGO
 
 
 def create_keys(item_factory: APGOItemFactory, items: List[APGOItem], trips: Dict[Trip, int], options: APGOOptions) -> None:
-    if options.enable_area_locks == EnableLocks.option_false:
+    if options.number_of_locks <= 0:
         return
 
-    max_key = 0
-    for trip in trips:
-        if trip.key_needed > max_key:
-            max_key = trip.key_needed
-    items.extend([item_factory(item) for item in [ItemName.key] * max_key])
+    items.extend([item_factory(item) for item in [ItemName.key] * options.number_of_locks])
 
 
 def create_traps(item_factory: APGOItemFactory, items: List[APGOItem], number_filler_items: int, options: APGOOptions, random: Random) -> None:

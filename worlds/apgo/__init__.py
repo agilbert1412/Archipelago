@@ -51,7 +51,7 @@ class APGOWorld(World):
         self.trips = generate_trips(self.options.as_dict(*[option_name for option_name in self.options_dataclass.type_hints]), self.random)
 
     def create_regions(self) -> None:
-        world_regions = create_regions(self.multiworld, self.player, self.options)
+        world_regions = create_regions(self.multiworld, self.player, self.options, self.trips)
 
         def create_location(name: str, code: Optional[int], region: str):
             region = world_regions[region]
@@ -59,7 +59,7 @@ class APGOWorld(World):
             location.access_rule = lambda _: True
             region.locations.append(location)
 
-        create_locations(self.multiworld, self.trips)
+        create_locations(create_location, self.trips)
 
     def create_items(self) -> None:
         created_items = create_items(self.create_item, self.trips, self.options, self.random)
@@ -71,11 +71,11 @@ class APGOWorld(World):
 
         return APGOItem(item.name, item.classification, item.id, self.player)
 
-    def get_item_classification(self, name: str) -> ItemClassification:
-        return ItemClassification.progression
-
-    def fill_slot_data(self) -> Mapping[str, Any]:  # json of WebHostLib.models.Slot
+    def fill_slot_data(self) -> Mapping[str, Any]:
         return {
+            self.options.goal.internal_name: self.options.goal,
             self.options.minimum_distance.internal_name: self.options.minimum_distance,
             self.options.maximum_distance.internal_name: self.options.maximum_distance,
+            self.options.speed_requirement.internal_name: self.options.speed_requirement,
+            "trips": self.trips,
         }

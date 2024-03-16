@@ -54,7 +54,7 @@ class NumberOfChecks(Range):
     display_name = "Number of Checks"
     range_start = 1
     range_end = 1000
-    default = 5
+    default = 10
 
 
 class MinimumDistance(NamedRange):
@@ -82,6 +82,21 @@ class MaximumDistance(NamedRange):
     special_range_names = standard_race_lengths
 
 
+class NumberOfLocks(NamedRange):
+    """
+    This will place "keys" in the item pools, and some checks will start out locked behind a random number of keys
+    If there are not enough checks to hold all the keys you need, this option will be reduced by force
+    """
+    internal_name = "number_of_locks"
+    display_name = "NumberOfLocks"
+    range_start = 0
+    range_end = 10
+    default = 3
+    special_range_names = {
+        "none": 0
+    }
+
+
 class SpeedRequirement(NamedRange):
     """Every check will generate a random minimum speed in km/h you must travel at in order to be allowed to get it.
     This setting will be an upper bound for this speed requirement. The lower bound will scale with the choice as well.
@@ -95,28 +110,12 @@ class SpeedRequirement(NamedRange):
     special_range_names = standard_race_speeds
 
 
-class EnableLocks(Toggle):
-    """
-    Whether some checks are hard locked at the start, and require a "key" item to unlock
-    """
-    internal_name = "enable_locks"
-    display_name = "Enable Locks"
-
-
 class EnableDistanceReductions(Toggle):
     """
     Whether some checks will spawn further than the maximum distance, and distance reduction items are in the pool
     """
     internal_name = "enable_distance_reductions"
     display_name = "Enable Distance Reductions"
-
-
-class EnableTimeBonuses(Toggle):
-    """
-    Whether the item pool can contain items that add time to your clock to reach checks
-    """
-    internal_name = "enable_time_bonuses"
-    display_name = "Enable Time Bonuses"
 
 
 class EnableScoutingDistanceBonuses(Toggle):
@@ -159,9 +158,8 @@ class APGOOptions(PerGameCommonOptions):
     minimum_distance: MinimumDistance
     maximum_distance: MaximumDistance
     speed_requirement: SpeedRequirement
-    enable_locks: EnableLocks
+    number_of_locks: NumberOfLocks
     enable_distance_reductions: EnableDistanceReductions
-    enable_time_bonuses: EnableTimeBonuses
     enable_scouting_distance_bonuses: EnableScoutingDistanceBonuses
     enable_collection_distance_bonuses: EnableCollectionDistanceBonuses
     trap_rate: TrapRate
