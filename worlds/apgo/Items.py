@@ -33,7 +33,7 @@ offset = 8902301100000
 
 all_items = [
     APGOItemData(ItemName.distance_reduction, ItemClassification.progression, offset + 1),
-    APGOItemData(ItemName.area_unlock, ItemClassification.progression, offset + 2),
+    APGOItemData(ItemName.key, ItemClassification.progression, offset + 2),
     APGOItemData(ItemName.scouting_distance, ItemClassification.useful, offset + 3),
     APGOItemData(ItemName.collection_distance, ItemClassification.useful, offset + 4),
 
@@ -72,19 +72,7 @@ def create_items(item_factory: APGOItemFactory, trips: Dict[Trip, int], options:
     create_keys(item_factory, items, trips, options)
     number_items_left = options.number_of_checks - len(items)
     create_traps(item_factory, items, number_items_left, options, random)
-
-    random_items = []
-    if options.enable_distance_reductions == EnableDistanceReductions.option_true:
-        random_items.append(ItemName.distance_reduction)
-    if options.enable_scouting_distance_bonuses == EnableScoutingDistanceBonuses.option_true:
-        random_items.append(ItemName.scouting_distance)
-    if options.enable_collection_distance_bonuses == EnableCollectionDistanceBonuses.option_true:
-        random_items.append(ItemName.collection_distance)
-    if len(random_items) == 0:
-        random_items.append(ItemName.area_unlock)
-    number_items_left = options.number_of_checks - len(items)
-    chosen_items = random.choices(random_items, k=number_items_left)
-    items.extend([item_factory(item) for item in chosen_items])
+    create_additional_items(item_factory, items, options, random)
 
     return items
 
@@ -131,10 +119,10 @@ def create_keys(item_factory: APGOItemFactory, items: List[APGOItem], trips: Dic
     for trip in trips:
         if trip.key_needed > max_key:
             max_key = trip.key_needed
-    items.extend([item_factory(item) for item in [ItemName.area_unlock] * max_key])
+    items.extend([item_factory(item) for item in [ItemName.key] * max_key])
 
 
-def create_traps(item_factory: APGOItemFactory, items: List[APGOItem], number_filler_items: int, options: APGOOptions, random) -> None:
+def create_traps(item_factory: APGOItemFactory, items: List[APGOItem], number_filler_items: int, options: APGOOptions, random: Random) -> None:
     trap_rate = options.trap_rate.value
     number_of_traps = (number_filler_items * trap_rate) // 100
     if number_of_traps <= 0:
@@ -142,3 +130,20 @@ def create_traps(item_factory: APGOItemFactory, items: List[APGOItem], number_fi
 
     chosen_traps = random.choices(all_trap_names, k=number_of_traps)
     items.extend([item_factory(item) for item in chosen_traps])
+
+
+def create_additional_items(item_factory: APGOItemFactory, items: List[APGOItem], options: APGOOptions, random: Random) -> None:
+    number_items_left = options.number_of_checks - len(items)
+    if number_items_left <= 0:
+        return
+    random_items = []
+    if options.enable_distance_reductions == EnableDistanceReductions.option_true:
+        random_items.append(ItemName.distance_reduction)
+    if options.enable_scouting_distance_bonuses == EnableScoutingDistanceBonuses.option_true:
+        random_items.append(ItemName.scouting_distance)
+    if options.enable_collection_distance_bonuses == EnableCollectionDistanceBonuses.option_true:
+        random_items.append(ItemName.collection_distance)
+    if len(random_items) == 0:
+        random_items.append(ItemName.key)
+    chosen_items = random.choices(random_items, k=number_items_left)
+    items.extend([item_factory(item) for item in chosen_items])
