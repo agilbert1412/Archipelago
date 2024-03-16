@@ -1,13 +1,16 @@
 from random import Random
-from typing import Protocol, Union, List
+from typing import Protocol, Union, List, Dict
 
 from attr import dataclass
 
 from BaseClasses import Item, ItemClassification
 from . import APGOOptions
 from .ItemNames import ItemName
-from .Options import Goal
+from .Options import Goal, EnableLocks, EnableDistanceReductions, EnableCollectionDistanceBonuses, EnableScoutingDistanceBonuses
+from .Trips import Trip
 
+all_trap_names = [ItemName.shuffle_trap, ItemName.silence_trap, ItemName.fog_of_war_trap,
+                  ItemName.push_up_trap, ItemName.socializing_trap, ItemName.sit_up_trap, ItemName.jumping_jack_trap, ItemName.touch_grass_trap]
 
 class APGOItem(Item):
     game = "Archipela-Go!"
@@ -63,41 +66,79 @@ all_items = [
 item_table = {item.name: item for item in all_items}
 
 
-def create_items(create_item: APGOItemFactory, options: APGOOptions, random : Random) -> List[APGOItem]:
-    created_items = []
-    create_goal_items(create_item, created_items, options)
-    number_items_left = options.number_of_checks - len(created_items)
+def create_items(item_factory: APGOItemFactory, trips: Dict[Trip, int], options: APGOOptions, random: Random) -> List[APGOItem]:
+    items = []
+    create_goal_items(item_factory, items, options)
+    create_keys(item_factory, items, trips, options)
+    number_items_left = options.number_of_checks - len(items)
+    create_traps(item_factory, items, number_items_left, options, random)
+
+    random_items = []
+    if options.enable_distance_reductions == EnableDistanceReductions.option_true:
+        random_items.append(ItemName.distance_reduction)
+    if options.enable_scouting_distance_bonuses == EnableScoutingDistanceBonuses.option_true:
+        random_items.append(ItemName.scouting_distance)
+    if options.enable_collection_distance_bonuses == EnableCollectionDistanceBonuses.option_true:
+        random_items.append(ItemName.collection_distance)
+    if len(random_items) == 0:
+        random_items.append(ItemName.area_unlock)
+    number_items_left = options.number_of_checks - len(items)
+    chosen_items = random.choices(random_items, k=number_items_left)
+    items.extend([item_factory(item) for item in chosen_items])
+
+    return items
 
 
-def create_goal_items(create_item: APGOItemFactory, items: List[APGOItem], options: APGOOptions) -> None:
-    create_long_macguffin_items(create_item, items, options)
-    create_short_macguffin_items(create_item, items, options)
+def create_goal_items(item_factory: APGOItemFactory, items: List[APGOItem], options: APGOOptions) -> None:
+    create_long_macguffin_items(item_factory, items, options)
+    create_short_macguffin_items(item_factory, items, options)
 
 
-def create_long_macguffin_items(create_item: APGOItemFactory, items: List[APGOItem], options: APGOOptions) -> None:
+def create_long_macguffin_items(item_factory: APGOItemFactory, items: List[APGOItem], options: APGOOptions) -> None:
     if options.goal != Goal.option_long_macguffin:
         return
-    items.append(create_item(ItemName.macguffin_A))
-    items.append(create_item(ItemName.macguffin_r))
-    items.append(create_item(ItemName.macguffin_c))
-    items.append(create_item(ItemName.macguffin_h))
-    items.append(create_item(ItemName.macguffin_i))
-    items.append(create_item(ItemName.macguffin_p))
-    items.append(create_item(ItemName.macguffin_e))
-    items.append(create_item(ItemName.macguffin_l))
-    items.append(create_item(ItemName.macguffin_a))
-    items.append(create_item(ItemName.macguffin_hyphen))
-    items.append(create_item(ItemName.macguffin_G))
-    items.append(create_item(ItemName.macguffin_o))
-    items.append(create_item(ItemName.macguffin_exclamation)),
+    items.append(item_factory(ItemName.macguffin_A))
+    items.append(item_factory(ItemName.macguffin_r))
+    items.append(item_factory(ItemName.macguffin_c))
+    items.append(item_factory(ItemName.macguffin_h))
+    items.append(item_factory(ItemName.macguffin_i))
+    items.append(item_factory(ItemName.macguffin_p))
+    items.append(item_factory(ItemName.macguffin_e))
+    items.append(item_factory(ItemName.macguffin_l))
+    items.append(item_factory(ItemName.macguffin_a))
+    items.append(item_factory(ItemName.macguffin_hyphen))
+    items.append(item_factory(ItemName.macguffin_G))
+    items.append(item_factory(ItemName.macguffin_o))
+    items.append(item_factory(ItemName.macguffin_exclamation)),
 
 
-def create_short_macguffin_items(create_item: APGOItemFactory, items: List[APGOItem], options: APGOOptions) -> None:
+def create_short_macguffin_items(item_factory: APGOItemFactory, items: List[APGOItem], options: APGOOptions) -> None:
     if options.goal != Goal.option_short_macguffin:
         return
-    items.append(create_item(ItemName.macguffin_A))
-    items.append(create_item(ItemName.macguffin_p))
-    items.append(create_item(ItemName.macguffin_hyphen))
-    items.append(create_item(ItemName.macguffin_G))
-    items.append(create_item(ItemName.macguffin_o))
-    items.append(create_item(ItemName.macguffin_exclamation)),
+    items.append(item_factory(ItemName.macguffin_A))
+    items.append(item_factory(ItemName.macguffin_p))
+    items.append(item_factory(ItemName.macguffin_hyphen))
+    items.append(item_factory(ItemName.macguffin_G))
+    items.append(item_factory(ItemName.macguffin_o))
+    items.append(item_factory(ItemName.macguffin_exclamation)),
+
+
+def create_keys(item_factory: APGOItemFactory, items: List[APGOItem], trips: Dict[Trip, int], options: APGOOptions) -> None:
+    if options.enable_area_locks == EnableLocks.option_false:
+        return
+
+    max_key = 0
+    for trip in trips:
+        if trip.key_needed > max_key:
+            max_key = trip.key_needed
+    items.extend([item_factory(item) for item in [ItemName.area_unlock] * max_key])
+
+
+def create_traps(item_factory: APGOItemFactory, items: List[APGOItem], number_filler_items: int, options: APGOOptions, random) -> None:
+    trap_rate = options.trap_rate.value
+    number_of_traps = (number_filler_items * trap_rate) // 100
+    if number_of_traps <= 0:
+        return
+
+    chosen_traps = random.choices(all_trap_names, k=number_of_traps)
+    items.extend([item_factory(item) for item in chosen_traps])

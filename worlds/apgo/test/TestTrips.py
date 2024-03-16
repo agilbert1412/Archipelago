@@ -25,7 +25,7 @@ class TestGenerateTrips(TestCase):
         for desired_trips in range(1, 101, step):
             with self.subTest(f"{desired_trips} trips"):
                 options = {Options.NumberOfChecks.internal_name: desired_trips,
-                           Options.EnableAreaLocks.internal_name: Options.EnableAreaLocks.option_false,
+                           Options.EnableLocks.internal_name: Options.EnableLocks.option_false,
                            Options.SpeedRequirement.internal_name: 0}
                 trips = generate_trips(options, create_random())
                 total_trips = sum(trips.values())
@@ -39,7 +39,7 @@ class TestGenerateTrips(TestCase):
         for desired_trips in range(1, 101, step):
             with self.subTest(f"{desired_trips} trips"):
                 options = {Options.NumberOfChecks.internal_name: desired_trips,
-                           Options.EnableAreaLocks.internal_name: Options.EnableAreaLocks.option_false,
+                           Options.EnableLocks.internal_name: Options.EnableLocks.option_false,
                            Options.SpeedRequirement.internal_name: 5}
                 trips = generate_trips(options, create_random())
                 total_trips = sum(trips.values())
@@ -54,7 +54,7 @@ class TestGenerateTrips(TestCase):
         for desired_trips in range(1, 101, step):
             with self.subTest(f"{desired_trips} trips"):
                 options = {Options.NumberOfChecks.internal_name: desired_trips,
-                           Options.EnableAreaLocks.internal_name: Options.EnableAreaLocks.option_true,
+                           Options.EnableLocks.internal_name: Options.EnableLocks.option_true,
                            Options.SpeedRequirement.internal_name: 0}
                 trips = generate_trips(options, create_random())
                 total_trips = sum(trips.values())

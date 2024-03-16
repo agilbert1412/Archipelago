@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from random import Random
 from typing import Dict, List, Union
 
-from .Options import NumberOfChecks, EnableAreaLocks, SpeedRequirement
+from .Options import NumberOfChecks, EnableLocks, SpeedRequirement
 
 
 @dataclass(frozen=True)
@@ -36,7 +36,7 @@ for distance in range(1, max_per_category + 1):
 def generate_trips(options: Dict[str, int], random: Random) -> Dict[Trip, int]:
     valid_trips = []
     enable_speed = options[SpeedRequirement.internal_name] > 0
-    enable_keys = options[EnableAreaLocks.internal_name] == EnableAreaLocks.option_true
+    enable_keys = options[EnableLocks.internal_name] == EnableLocks.option_true
     for trip in all_trips:
         has_speed = trip.speed_tier > 0
         if enable_speed != has_speed:

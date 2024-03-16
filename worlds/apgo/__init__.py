@@ -1,4 +1,4 @@
-from typing import Mapping, Any, Union
+from typing import Mapping, Any, Union, Dict, Optional
 
 from BaseClasses import Region, Location, Item, ItemClassification, Tutorial
 from worlds.AutoWorld import World, WebWorld
@@ -6,7 +6,8 @@ from worlds.AutoWorld import World, WebWorld
 from .Regions import create_regions
 from .Options import APGOOptions
 from .Items import APGOItem, item_table, APGOItemData, create_items
-from .Locations import APGOLocation, location_table
+from .Locations import APGOLocation, location_table, create_locations
+from .Trips import generate_trips, Trip
 
 GAME_NAME = "Archipela-Go!"
 
@@ -44,24 +45,37 @@ class APGOWorld(World):
     options_dataclass = APGOOptions
     options: APGOOptions
 
+    trips: Dict[Trip, int]
+
+    def generate_early(self):
+        self.trips = generate_trips(self.options.as_dict(*[option_name for option_name in self.options_dataclass.type_hints]), self.random)
+
     def create_regions(self) -> None:
-        create_regions(self.multiworld, self.player, self.options)
+        world_regions = create_regions(self.multiworld, self.player, self.options)
+
+        def create_location(name: str, code: Optional[int], region: str):
+            region = world_regions[region]
+            location = APGOLocation(self.player, name, code, region)
+            location.access_rule = lambda _: True
+            region.locations.append(location)
+
+        create_locations(self.multiworld, self.trips)
 
     def create_items(self) -> None:
-        created_items = create_items(self.create_item, self.options, self.random)
+        created_items = create_items(self.create_item, self.trips, self.options, self.random)
         self.multiworld.itempool += created_items
 
     def create_item(self, item: Union[str, APGOItemData]) -> APGOItem:
         if isinstance(item, str):
             item = item_table[item]
 
-        return APGOItem(item.name, item.classification, item.code, self.player)
+        return APGOItem(item.name, item.classification, item.id, self.player)
 
     def get_item_classification(self, name: str) -> ItemClassification:
         return ItemClassification.progression
 
     def fill_slot_data(self) -> Mapping[str, Any]:  # json of WebHostLib.models.Slot
         return {
-            # "distance_per_tier": self.options.
-            # "speed_per_tier":
+            self.options.minimum_distance.internal_name: self.options.minimum_distance,
+            self.options.maximum_distance.internal_name: self.options.maximum_distance,
         }
