@@ -1,3 +1,4 @@
+import json
 from typing import Mapping, Any, Union, Dict, Optional
 
 from BaseClasses import Region, Location, Item, ItemClassification, Tutorial
@@ -74,10 +75,11 @@ class APGOWorld(World):
         return APGOItem(item.name, item.classification, item.id, self.player)
 
     def fill_slot_data(self) -> Mapping[str, Any]:
+        trips_dictionary = [trip.as_dict_with_amount(amount) for trip, amount in self.trips.items()]
         return {
             self.options.goal.internal_name: self.options.goal.value,
-            self.options.minimum_distance.internal_name: self.options.minimum_distance,
-            self.options.maximum_distance.internal_name: self.options.maximum_distance,
-            self.options.speed_requirement.internal_name: self.options.speed_requirement,
-            "trips": self.trips,
+            self.options.minimum_distance.internal_name: self.options.minimum_distance.value,
+            self.options.maximum_distance.internal_name: self.options.maximum_distance.value,
+            self.options.speed_requirement.internal_name: self.options.speed_requirement.value,
+            "trips": trips_dictionary,
         }
