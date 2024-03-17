@@ -42,6 +42,8 @@ class APGOWorld(World):
     item_name_to_id = {name: data.id for name, data in item_table.items()}
     location_name_to_id = {name: id for name, id in location_table.items()}
 
+    data_version = 0
+
     options_dataclass = APGOOptions
     options: APGOOptions
 
