@@ -1,4 +1,3 @@
-from collections import Counter
 from dataclasses import dataclass
 from random import Random
 from typing import Dict, List, Union
@@ -22,6 +21,18 @@ class Trip:
 
     def get_name_unique(self, unique_identifier: int) -> str:
         return f"{self.get_name()} #{unique_identifier}"
+
+    def as_dict_with_amount(self, amount: int) -> Dict[str, int]:
+        dict_without_amount = self.as_dict()
+        dict_without_amount["amount"] = amount
+        return dict_without_amount
+
+    def as_dict(self) -> Dict[str, int]:
+        return {
+            "distance_tier": self.distance_tier,
+            "key_needed": self.key_needed,
+            "speed_tier": self.speed_tier,
+        }
 
 
 all_trips = []
@@ -48,7 +59,12 @@ def generate_trips(options: Dict[str, int], random: Random) -> Dict[Trip, int]:
 
     make_sure_all_key_tiers_have_one_trip(chosen_trips, number_of_keys)
 
-    return Counter(chosen_trips)
+    trip_counts = dict()
+    for trip in chosen_trips:
+        if trip not in trip_counts:
+            trip_counts[trip] = 0
+        trip_counts[trip] += 1
+    return trip_counts
 
 
 def make_sure_all_key_tiers_have_one_trip(chosen_trips: List[Trip], number_of_keys: int) -> None:
