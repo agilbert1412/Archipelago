@@ -1,8 +1,8 @@
-from typing import Optional, Protocol, Dict
+from typing import Optional, Protocol, Dict, List
 
 from BaseClasses import Location
 from .Regions import area_number
-from .Trips import Trip, all_trips
+from .Trips import Trip, all_trip_templates
 
 
 class APGOLocation(Location):
@@ -17,9 +17,9 @@ location_table = {
 }
 
 i = 1
-for trip in all_trips:
+for trip_template in all_trip_templates:
     for unique_identifier in range(1, 10):
-        location_table[trip.get_name_unique(unique_identifier)] = offset + i
+        location_table[trip_template.get_name_unique(unique_identifier)] = offset + i
         i += 1
 
 
@@ -28,10 +28,9 @@ class APGOLocationFactory(Protocol):
         raise NotImplementedError
 
 
-def create_locations(location_factory: APGOLocationFactory, trips: Dict[Trip, int]) -> None:
-    for trip_type in trips:
-        for identifier in range(1, trips[trip_type]+1):
-            trip_name = trip_type.get_name_unique(identifier)
-            trip_id = location_table[trip_name]
-            trip_region = area_number(trip_type.key_needed)
-            location_factory(trip_name, trip_id, trip_region)
+def create_locations(location_factory: APGOLocationFactory, trips: List[Trip]) -> None:
+    for trip in trips:
+        trip_name = trip.location_name
+        trip_id = location_table[trip_name]
+        trip_region = area_number(trip.template.key_needed)
+        location_factory(trip_name, trip_id, trip_region)
