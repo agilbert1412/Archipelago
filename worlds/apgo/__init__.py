@@ -1,5 +1,5 @@
 import json
-from typing import Mapping, Any, Union, Dict, Optional
+from typing import Mapping, Any, Union, Dict, Optional, List
 
 from BaseClasses import Region, Location, Item, ItemClassification, Tutorial
 from worlds.AutoWorld import World, WebWorld
@@ -48,7 +48,7 @@ class APGOWorld(World):
     options_dataclass = APGOOptions
     options: APGOOptions
 
-    trips: Dict[Trip, int]
+    trips: List[Trip]
 
     def generate_early(self):
         self.trips = generate_trips(self.options.as_dict(*[option_name for option_name in self.options_dataclass.type_hints]), self.random)
@@ -75,11 +75,12 @@ class APGOWorld(World):
         return APGOItem(item.name, item.classification, item.id, self.player)
 
     def fill_slot_data(self) -> Mapping[str, Any]:
-        trips_dictionary = [trip.as_dict_with_amount(amount) for trip, amount in self.trips.items()]
-        return {
+        trips_dictionary = {trip.location_name: trip.as_dict() for trip in self.trips}
+        slot_data = {
             self.options.goal.internal_name: self.options.goal.value,
             self.options.minimum_distance.internal_name: self.options.minimum_distance.value,
             self.options.maximum_distance.internal_name: self.options.maximum_distance.value,
             self.options.speed_requirement.internal_name: self.options.speed_requirement.value,
             "trips": trips_dictionary,
         }
+        return slot_data

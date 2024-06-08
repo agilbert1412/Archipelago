@@ -1,11 +1,11 @@
-from typing import Dict
+from typing import Dict, List
 
 from BaseClasses import MultiWorld, Region
 from .Trips import Trip
 from .Options import APGOOptions
 
 
-def create_regions(multiworld: MultiWorld, player: int, options: APGOOptions, trips: Dict[Trip, int]) -> Dict[str, Region]:
+def create_regions(multiworld: MultiWorld, player: int, options: APGOOptions, trips: List[Trip]) -> Dict[str, Region]:
     created_regions = dict()
     created_regions["Menu"] = Region("Menu", player, multiworld)
     created_regions[area_number(0)] = Region(area_number(0), player, multiworld)
@@ -13,8 +13,8 @@ def create_regions(multiworld: MultiWorld, player: int, options: APGOOptions, tr
 
     max_key = 0
     for trip in trips:
-        if trip.key_needed > max_key:
-            max_key = trip.key_needed
+        if trip.template.key_needed > max_key:
+            max_key = trip.template.key_needed
 
     for i in range(1, max_key + 1):
         name = area_number(i)

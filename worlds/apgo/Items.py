@@ -66,7 +66,7 @@ all_items = [
 item_table = {item.name: item for item in all_items}
 
 
-def create_items(item_factory: APGOItemFactory, trips: Dict[Trip, int], options: APGOOptions, random: Random) -> List[APGOItem]:
+def create_items(item_factory: APGOItemFactory, trips: List[Trip], options: APGOOptions, random: Random) -> List[APGOItem]:
     items = []
     create_goal_items(item_factory, items, options)
     create_keys(item_factory, items, trips, options)
@@ -111,7 +111,7 @@ def create_short_macguffin_items(item_factory: APGOItemFactory, items: List[APGO
     items.append(item_factory(ItemName.macguffin_exclamation)),
 
 
-def create_keys(item_factory: APGOItemFactory, items: List[APGOItem], trips: Dict[Trip, int], options: APGOOptions) -> None:
+def create_keys(item_factory: APGOItemFactory, items: List[APGOItem], trips: List[Trip], options: APGOOptions) -> None:
     if options.number_of_locks <= 0:
         return
 
