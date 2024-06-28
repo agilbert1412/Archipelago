@@ -5,7 +5,9 @@ from typing import Dict, Any, Iterable, Optional, List, TextIO, cast
 
 from BaseClasses import Region, Entrance, Location, Item, Tutorial, ItemClassification, MultiWorld, CollectionState
 from Options import PerGameCommonOptions
+from Utils import local_path
 from worlds.AutoWorld import World, WebWorld
+from worlds.LauncherComponents import launch_subprocess, components, Component, icon_paths, Type
 from .bundles.bundle_room import BundleRoom
 from .bundles.bundles import get_all_bundles
 from .content import StardewContent, create_content
@@ -56,6 +58,21 @@ class StardewWebWorld(WebWorld):
             "setup/en",
             ["KaitoKid", "Jouramie", "Witchybun (Mod Support)", "Exempt-Medic (Proofreading)"]
         )]
+
+
+def launch_client():
+    from .client import launch
+    launch_subprocess(launch, name="Stardew Valley Tracker")
+
+
+components.append(Component(
+    "Stardew Valley Tracker",
+    func=launch_client,
+    component_type=Type.CLIENT,
+    icon='stardew'
+))
+
+icon_paths['stardew'] = local_path('data', 'stardew.png')
 
 
 class StardewValleyWorld(World):
