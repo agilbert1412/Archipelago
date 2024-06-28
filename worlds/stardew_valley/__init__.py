@@ -36,6 +36,7 @@ STARDEW_VALLEY = "Stardew Valley"
 UNIVERSAL_TRACKER_SEED_PROPERTY = "ut_seed"
 
 client_version = 0
+TRACKER_ENABLED = False
 
 
 class StardewLocation(Location):
@@ -63,19 +64,20 @@ class StardewWebWorld(WebWorld):
         )]
 
 
-def launch_client():
-    from .client import launch
-    launch_subprocess(launch, name="Stardew Valley Tracker")
+if TRACKER_ENABLED:
+    def launch_client():
+        from .client import launch
+        launch_subprocess(launch, name="Stardew Valley Tracker")
 
 
-components.append(Component(
-    "Stardew Valley Tracker",
-    func=launch_client,
-    component_type=Type.CLIENT,
-    icon='stardew'
-))
+    components.append(Component(
+        "Stardew Valley Tracker",
+        func=launch_client,
+        component_type=Type.CLIENT,
+        icon='stardew'
+    ))
 
-icon_paths['stardew'] = local_path('data', 'stardew.png')
+    icon_paths['stardew'] = local_path('data', 'stardew.png')
 
 
 class StardewValleyWorld(World):
