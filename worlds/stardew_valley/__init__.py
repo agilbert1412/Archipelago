@@ -28,7 +28,7 @@ from .strings.goal_names import Goal as GoalName
 from .strings.region_names import Region as RegionName
 
 client_version = 0
-TRACKER_ENABLED = False
+TRACKER_ENABLED = True
 
 
 class StardewLocation(Location):
