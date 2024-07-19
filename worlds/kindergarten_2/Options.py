@@ -11,7 +11,6 @@ class Goal(Choice):
     option_creature_feature = 0
     option_all_missions = 1
     option_secret_ending = 2
-    option_all_missions_and_secret_ending = 3
 
 
 class ShuffleMoney(Toggle):
@@ -36,18 +35,10 @@ class ShuffleOutfits(Toggle):
     default = 0
 
 
-class ExtraLocations(Toggle):
-    """Whether to shuffle some extra locations in the form of arbitrary events and actions you can take during the day"""
-    internal_name = "extra_locations"
-    display_name = "Extra Location"
-    default = 1
-
-
 @dataclass
 class Kindergarten2Options(PerGameCommonOptions):
     goal: Goal
     shuffle_money: ShuffleMoney
     shuffle_monstermon: ShuffleMonstermon
     shuffle_outfits: ShuffleOutfits
-    extra_locations: ExtraLocations
     death_link: DeathLink

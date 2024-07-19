@@ -30,5 +30,6 @@ def assert_can_win(tester: Kindergarten2TestBase, multiworld: MultiWorld):
 
 
 def assert_same_number_items_locations(tester: Kindergarten2TestBase, multiworld: MultiWorld):
-    non_event_locations = [location for location in multiworld.get_locations() if not location.advancement]
-    tester.assertEqual(len(multiworld.itempool), len(non_event_locations))
+    items = [item for item in multiworld.itempool]
+    non_event_locations = [location for location in multiworld.get_locations() if location.address is not None]
+    tester.assertEqual(len(items), len(non_event_locations))

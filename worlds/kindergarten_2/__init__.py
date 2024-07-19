@@ -6,7 +6,7 @@ from .Items import ItemData, item_table, items_by_group, Group
 from .ItemsCreation import create_items
 from .ItemsClasses import Kindergarten2Item
 from .Locations import Kindergarten2Location, location_table, create_locations
-from .Options import Kindergarten2Options, Goal, ShuffleMoney, ShuffleMonstermon, ShuffleOutfits, ExtraLocations
+from .Options import Kindergarten2Options, Goal, ShuffleMoney, ShuffleMonstermon, ShuffleOutfits
 from .Regions import create_regions
 from .Rules import set_rules
 from .constants.money import Money
@@ -64,6 +64,11 @@ class Kindergarten2World(World):
             if item in self.multiworld.itempool:
                 self.multiworld.itempool.remove(item)
 
+        if self.options.shuffle_money == ShuffleMoney.option_true:
+            self.multiworld.early_items[self.player][Money.starting_money] = 3
+
+        # self.multiworld.exclude_locations[self.player].value.add()
+
         self.setup_victory()
 
     def create_item(self, item: Union[str, ItemData], classification: ItemClassification = None) -> Kindergarten2Item:
@@ -87,7 +92,6 @@ class Kindergarten2World(World):
             ShuffleMoney.internal_name,
             ShuffleMonstermon.internal_name,
             ShuffleOutfits.internal_name,
-            ExtraLocations.internal_name,
             "death_link"
         )
         options_dict.update({

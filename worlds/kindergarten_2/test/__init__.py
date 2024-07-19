@@ -5,9 +5,10 @@ from typing import Dict, FrozenSet, Tuple, Any
 from argparse import Namespace
 
 from BaseClasses import MultiWorld, CollectionState
+from Fill import distribute_items_restrictive
 from test.bases import WorldTestBase
 from .. import GAME_NAME, Kindergarten2World
-from test.general import gen_steps, setup_solo_multiworld as setup_base_solo_multiworld
+from test.general import setup_solo_multiworld as setup_base_solo_multiworld
 from worlds.AutoWorld import call_all
 
 
@@ -22,7 +23,8 @@ class Kindergarten2TestBase(WorldTestBase):
             self.world = self.multiworld.worlds[self.player]  # noqa
 
 
-def setup_kindergarten_solo_multiworld(test_options=None, seed=None, _cache: Dict[FrozenSet[Tuple[str, Any]], MultiWorld] = {}) -> MultiWorld: #noqa
+def setup_kindergarten_solo_multiworld_with_fill(test_options=None, seed=None, _cache: Dict[FrozenSet[Tuple[str, Any]], MultiWorld] = {}) -> MultiWorld: #noqa
+    gen_steps = ("generate_early", "create_regions", "create_items", "set_rules", "generate_basic", "pre_fill", "post_fill")
     if test_options is None:
         test_options = {}
 
@@ -40,6 +42,8 @@ def setup_kindergarten_solo_multiworld(test_options=None, seed=None, _cache: Dic
     multiworld.set_options(args)
     for step in gen_steps:
         call_all(multiworld, step)
+        if step == "pre_fill":
+            distribute_items_restrictive(multiworld)
 
     _cache[frozen_options] = multiworld
 

@@ -1,7 +1,8 @@
 class Money:
     starting_money = "Progressive Starting Money"
-    number_of_shuffled_money_items = 6
-    amount_per_money_item = 2
+    number_of_progression_money_items = 11
+    number_of_filler_money_items = 7
+    amount_per_money_item = 1
 
 
 class Cost:

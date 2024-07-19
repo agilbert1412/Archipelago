@@ -38,6 +38,31 @@ mission_locations = [
     LocationData(Mission.secret_ending, mission_complete(Mission.secret_ending)),
 ]
 
+# Extra Locations, mostly to pad Sphere 1 a little bit
+extra_locations = [
+    LocationData("Declare War On Bob", "Dumb Tuesday"),
+    LocationData("Eat With The Principal", "Dumb Tuesday"),
+    LocationData("Survive Tuesday", "Dumb Tuesday"),
+    LocationData("Experience Study Hall", "Dumb Tuesday"),
+    LocationData("Eat A Burger", "Dumb Tuesday"),
+    LocationData("Meet A Dumpster Hag", "Dumb Tuesday"),
+    LocationData("Use A Toilet", "Dumb Tuesday"),
+    LocationData("Cry A River", "Dumb Tuesday"),
+    LocationData("Win A Bet With Carla", "Dumb Tuesday"),
+    LocationData("Kill Felix", "Dead Felix"),
+    LocationData("Common Decency", "Cat At Microwave"),
+    LocationData("K-I-S-S-I-N-G", "Something Gross"),
+]
+
+money_locations = [
+    LocationData("Felix's Tip", "Love Letter"),  # 3$
+    LocationData("Sell Drugs To Monty", "Negociated With Monty"),  # 5$
+    LocationData("Sell Inhaler To Monty", "Sold Inhaler"),  # 2$
+    LocationData("Borrow Money From Felix", "Borrowed Money"),  # 5$
+    LocationData("Skeleton Wallet", "Nugget Cave"),  # 3$
+    LocationData("Ted's Cubby", "Steal From Cubbies"),  # 3$
+]
+
 monstermon_locations = [
     LocationData(MonstermonCard.celestial_slug, "Broken Wheelchair"),
     LocationData(MonstermonCard.hard_boogar, "Handicap Ramp"),
@@ -84,20 +109,11 @@ monstermon_locations = [
     LocationData(MonstermonCard.purple_plush, "Toy Chest During Gym"),
     LocationData(MonstermonCard.spiky_flim_flam, "Monstermon Battle"),  # Buggs
     LocationData(MonstermonCard.monster_ghost, "Monty Laser"),
-    LocationData(MonstermonCard.knight_who_turned_evil, "Kill Felix"),
+    LocationData(MonstermonCard.knight_who_turned_evil, "Dead Felix"),
     LocationData(MonstermonCard.evil_thwarter, "Monstermon Battle"),  # Agnes
     LocationData(MonstermonCard.mysterious_package, "Billy's Box"),
     LocationData(MonstermonCard.oglebop_ogre, "Unclogged Toilet"),
     LocationData(MonstermonCard.dank_magician, mission_complete(Mission.creature_feature)),
-]
-
-money_locations = [
-    LocationData("Felix's Tip", "Love Letter"),  # 3$
-    LocationData("Sell Drugs To Monty", "Negociated With Monty"),  # 5$
-    LocationData("Sell Inhaler To Monty", "Sold Inhaler"),  # 2$
-    LocationData("Borrow Money From Felix", "Borrowed Money"),  # 5$
-    LocationData("Skeleton Wallet", "Nugget Cave"),  # 3$
-    LocationData("Ted's Cubby", "Steal From Cubbies"),  # 3$
 ]
 
 all_locations = []
@@ -105,12 +121,16 @@ for i, mission_location in enumerate(mission_locations):
     mission_location.id_without_offset = 1 + i
     all_locations.append(mission_location)
 
+for i, extra_location in enumerate(extra_locations):
+    extra_location.id_without_offset = 101 + i
+    all_locations.append(extra_location)
+
 for i, money_location in enumerate(money_locations):
-    money_location.id_without_offset = 101 + i
+    money_location.id_without_offset = 201 + i
     all_locations.append(money_location)
 
 for i, monstermon_location in enumerate(monstermon_locations):
-    monstermon_location.id_without_offset = 101 + i
+    monstermon_location.id_without_offset = 301 + i
     all_locations.append(monstermon_location)
 
 location_table = dict()
@@ -137,6 +157,12 @@ def create_locations(multiworld: MultiWorld, player: int, world_options: Kinderg
             create_victory_event(region, player)
             continue
 
+        name = location_data.name
+        location = Kindergarten2Location(player, name, location_table[name], region)
+        region.locations.append(location)
+
+    for location_data in extra_locations:
+        region = multiworld.get_region(location_data.region, player)
         name = location_data.name
         location = Kindergarten2Location(player, name, location_table[name], region)
         region.locations.append(location)

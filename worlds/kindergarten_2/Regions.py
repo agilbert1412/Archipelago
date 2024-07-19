@@ -46,7 +46,7 @@ def create_regions(multiworld: MultiWorld, player: int, world_options: Kindergar
     new_region(multiworld, player, "Weapons Closet", ["Enter Weapons Closet For Chainsaw", "Enter Weapons Closet For Murder Shovel",
                                                       "Enter Weapons Closet For Nugget Cave Shovel", "Enter Weapons Closet For Device",
                                                       "Enter Weapons Closet With A Bomb"], [])
-    new_region(multiworld, player, "Tenders", ["Give Tenders To Nugget"], [])
+    new_region(multiworld, player, "Tenders", ["Give Tenders To Nugget"], ["Bring Tenders To Microwave"])
     new_region(multiworld, player, "Science Class With Leg", ["Go To Science Class With A Leg"], [])
     new_region(multiworld, player, "Gym", ["Go To Gym"], ["Give Bugs A Soda", "Go To Toy Chest"])
     new_region(multiworld, player, "Bugs Soda", ["Give Bugs A Soda"], [])
@@ -58,8 +58,9 @@ def create_regions(multiworld: MultiWorld, player: int, world_options: Kindergar
     new_region(multiworld, player, "Monstermon Battle", ["Play Monstermon"], [])
     new_region(multiworld, player, "Girl's bathroom", ["Go To Girl's Bathroom"], [])
     new_region(multiworld, player, "Lockdown", ["Enter Lockdown"], [])
-    new_region(multiworld, player, "Smoky", ["Give Smoky To Hall Monitor"], [])
-    new_region(multiworld, player, "Fallen Beehive", ["Shake Beehive On Penny"], [])
+    new_region(multiworld, player, "Smoky", ["Give Smoky To Hall Monitor"], ["Bring Smoky To Microwave"])
+    new_region(multiworld, player, "Fallen Beehive", ["Shake Beehive On Penny"], ["See Something Gross"])
+    new_region(multiworld, player, "Something Gross", ["See Something Gross"], [])
     new_region(multiworld, player, "Replace Lounge Flower", ["Replace Yellow Flower With Blue"], [])
     new_region(multiworld, player, "Negociated With Monty", ["Negociate With Monty"], [])
     new_region(multiworld, player, "Toilet Paper To Ozzy", ["Give Toilet Paper To Ozzy"], [])
@@ -67,18 +68,19 @@ def create_regions(multiworld: MultiWorld, player: int, world_options: Kindergar
     new_region(multiworld, player, "Woods Puzzle", ["Get Lost In The Woods"], [])
     new_region(multiworld, player, "Nugget Fidget Spinner", ["Give Nugget Fidget Spinner"], [])
     new_region(multiworld, player, "Red Book", ["Touch The Red Book"], [])
-    new_region(multiworld, player, "Gravy", ["Give Gravy To Cindy"], [])
+    new_region(multiworld, player, "Gravy", ["Give Gravy To Cindy"], ["Bring Gravy To Microwave"])
     new_region(multiworld, player, "Secret Lab", ["Enter Secret Lab"], [])
     new_region(multiworld, player, "Cafeteria", ["Go To Lunch"], [])
     new_region(multiworld, player, "Toy Chest During Gym", ["Go To Toy Chest"], [])
     new_region(multiworld, player, "Monty Laser", ["Give Penny's Laser To Monty"], [])
-    new_region(multiworld, player, "Kill Felix", ["Show Ted The Contract"], [])
+    new_region(multiworld, player, "Dead Felix", ["Show Ted The Contract"], [])
     new_region(multiworld, player, "Billy's Box", ["Check Billy's Box"], [])
     new_region(multiworld, player, "Unclogged Toilet", ["Janitor Unclogs Toilet"], [])
     new_region(multiworld, player, "Love Letter", ["Give Love Letter"], [])
     new_region(multiworld, player, "Sold Inhaler", ["Sell Inhaler"], [])
     new_region(multiworld, player, "Borrowed Money", ["Borrow Money"], [])
     new_region(multiworld, player, "Nugget Cave", ["Enter Nugget Cave"], [])
+    new_region(multiworld, player, "Cat At Microwave", ["Bring Smoky To Microwave", "Bring Tenders To Microwave", "Bring Gravy To Microwave", ], [])
 
 
 def new_mission_region(multiworld: MultiWorld, player: int, mission_name: str, exits: Union[None, str, List[str]] = None) -> Region:

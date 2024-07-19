@@ -2,7 +2,7 @@ from typing import Dict
 
 from BaseClasses import MultiWorld
 from Options import NamedRange
-from . import Kindergarten2TestBase, setup_kindergarten_solo_multiworld
+from . import Kindergarten2TestBase, setup_kindergarten_solo_multiworld_with_fill
 from .option_names import options_to_include
 from .checks.world_checks import assert_can_win, assert_same_number_items_locations
 
@@ -34,7 +34,7 @@ class TestGenerateDynamicOptions(Kindergarten2TestBase):
                         with self.subTest(f"{option1.internal_name}: {key1}, {option2.internal_name}: {key2}"):
                             choices = {option1.internal_name: option1_choices[key1],
                                        option2.internal_name: option2_choices[key2]}
-                            multiworld = setup_kindergarten_solo_multiworld(choices)
+                            multiworld = setup_kindergarten_solo_multiworld_with_fill(choices)
                             basic_checks(self, multiworld)
 
     def test_given_option_truple_when_generate_then_basic_checks(self):
@@ -55,7 +55,7 @@ class TestGenerateDynamicOptions(Kindergarten2TestBase):
                                     choices = {option1.internal_name: option1_choices[key1],
                                                option2.internal_name: option2_choices[key2],
                                                option3.internal_name: option3_choices[key3]}
-                                    multiworld = setup_kindergarten_solo_multiworld(choices)
+                                    multiworld = setup_kindergarten_solo_multiworld_with_fill(choices)
                                     basic_checks(self, multiworld)
 
     def test_given_option_quartet_when_generate_then_basic_checks(self):
@@ -82,5 +82,5 @@ class TestGenerateDynamicOptions(Kindergarten2TestBase):
                                                        option2.internal_name: option2_choices[key2],
                                                        option3.internal_name: option3_choices[key3],
                                                        option4.internal_name: option4_choices[key4]}
-                                            multiworld = setup_kindergarten_solo_multiworld(choices)
+                                            multiworld = setup_kindergarten_solo_multiworld_with_fill(choices)
                                             basic_checks(self, multiworld)

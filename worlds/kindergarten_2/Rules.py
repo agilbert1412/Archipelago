@@ -17,10 +17,16 @@ def create_event_item(player, event: str) -> Kindergarten2Item:
 
 
 def set_rules(multiworld: MultiWorld, player, world_options: Kindergarten2Options):
+    set_extra_locations_rules(multiworld, player, world_options)
     set_mission_rules(multiworld, player, world_options)
     set_extra_entrance_rules(multiworld, player, world_options)
     set_monstermon_card_rules(multiworld, player, world_options)
     set_outfit_rules(multiworld, player, world_options)
+
+
+def set_extra_locations_rules(multiworld: MultiWorld, player, world_options: Kindergarten2Options):
+    set_rule(multiworld.get_location("Win A Bet With Carla", player),
+             has_starting_money(Cost.monty_push, player, world_options))
 
 
 def set_mission_rules(multiworld: MultiWorld, player, world_options: Kindergarten2Options):
@@ -41,10 +47,10 @@ def set_mission_rules(multiworld: MultiWorld, player, world_options: Kindergarte
         set_rule(multiworld.get_location("Victory", player),
                  lambda state: all([state.can_reach_location(mission, player) for mission in all_missions]))
 
-    elif world_options.goal == Goal.option_all_missions_and_secret_ending:
-        set_rule(multiworld.get_location("Victory", player),
-                 lambda state: all([state.can_reach_location(mission, player) for mission in all_missions]) and
-                               has_monstermon_cards(state, 50, player, world_options))
+    # elif world_options.goal == Goal.option_all_missions_and_secret_ending:
+    #     set_rule(multiworld.get_location("Victory", player),
+    #              lambda state: all([state.can_reach_location(mission, player) for mission in all_missions]) and
+    #                            has_monstermon_cards(state, 50, player, world_options))
 
 
 def set_start_mission_rules(multiworld: MultiWorld, player: int, world_options: Kindergarten2Options) -> None:
