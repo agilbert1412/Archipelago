@@ -1,15 +1,18 @@
-import typing
-from typing import ClassVar
+import logging
 
-from typing import Dict, FrozenSet, Tuple, Any
+from typing import ClassVar, Dict, FrozenSet, Tuple, Any
 from argparse import Namespace
 
-from BaseClasses import MultiWorld, CollectionState
+from BaseClasses import MultiWorld, get_seed
 from Fill import distribute_items_restrictive
 from test.bases import WorldTestBase
 from .. import GAME_NAME, Kindergarten2World
 from test.general import setup_solo_multiworld as setup_base_solo_multiworld
 from worlds.AutoWorld import call_all
+
+logger = logging.getLogger(__name__)
+DEFAULT_TEST_SEED = get_seed()
+logger.info(f"Default Test Seed: {DEFAULT_TEST_SEED}")
 
 
 class Kindergarten2TestBase(WorldTestBase):
@@ -23,8 +26,12 @@ class Kindergarten2TestBase(WorldTestBase):
             self.world = self.multiworld.worlds[self.player]  # noqa
 
 
-def setup_kindergarten_solo_multiworld_with_fill(test_options=None, seed=None, _cache: Dict[FrozenSet[Tuple[str, Any]], MultiWorld] = {}) -> MultiWorld: #noqa
-    gen_steps = ("generate_early", "create_regions", "create_items", "set_rules", "generate_basic", "pre_fill", "post_fill")
+def setup_kindergarten_solo_multiworld_with_fill(test_options=None, seed=None, fill=False, _cache: Dict[FrozenSet[Tuple[str, Any]], MultiWorld] = {}) -> MultiWorld: #noqa
+    if fill:
+        gen_steps = ("generate_early", "create_regions", "create_items", "set_rules", "generate_basic", "pre_fill", "post_fill")
+    else:
+        gen_steps = ("generate_early", "create_regions", "create_items", "set_rules", "generate_basic")
+
     if test_options is None:
         test_options = {}
 
