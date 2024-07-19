@@ -8,7 +8,7 @@ To run the script, use `python -m worlds.stardew_valley.scripts.export_locations
 import json
 import os
 
-from worlds.dlcquest import location_table
+from worlds.kindergarten_2 import location_table
 
 if not os.path.isdir("output"):
     os.mkdir("output")

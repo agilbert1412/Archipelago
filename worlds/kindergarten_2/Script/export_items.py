@@ -8,7 +8,7 @@ To run the script, use `python -m worlds.dlcquest.Script.export_items` from the 
 import json
 import os.path
 
-from worlds.dlcquest import item_table
+from worlds.kindergarten_2 import item_table
 
 if not os.path.isdir("output"):
     os.mkdir("output")
