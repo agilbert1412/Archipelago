@@ -17,11 +17,11 @@ def create_regions(multiworld: MultiWorld, player: int, world_options: Kindergar
                 start_mission(Mission.creature_feature), start_mission(Mission.secret_ending)])
 
     new_mission_region(multiworld, player, Mission.tale_of_janitors, ["Enter Weapons Closet For Chainsaw", "Go To Girl's Bathroom"])
-    new_mission_region(multiworld, player, Mission.flowers_for_diana, ["Shake Beehive On Penny", "Replace Yellow Flower With Blue", "Negociate With Monty", "Ask For Vegan Lunch", "Give Gravy To Cindy"])
-    new_mission_region(multiworld, player, Mission.hitman_guard, "Return To The Broken Wheelchair")
-    new_mission_region(multiworld, player, Mission.cain_not_able, ["Enter Weapons Closet For Murder Shovel", "Show Ted The Contract"])
+    new_mission_region(multiworld, player, Mission.flowers_for_diana, ["Shake Beehive On Penny", "Replace Yellow Flower With Blue", "Negociate With Monty", "Ask For Vegan Lunch", "Give Gravy To Cindy", "Give Love Letter"])
+    new_mission_region(multiworld, player, Mission.hitman_guard, ["Return To The Broken Wheelchair", "Sell Inhaler"])
+    new_mission_region(multiworld, player, Mission.cain_not_able, ["Enter Weapons Closet For Murder Shovel", "Show Ted The Contract", "Borrow Money"])
     new_mission_region(multiworld, player, Mission.opposites_attract, ["Janitor Unclogs Toilet"])
-    new_mission_region(multiworld, player, Mission.dodge_a_nugget, ["Nuget is 'Special'", "Enter Weapons Closet For Nugget Cave Shovel", "Give Tenders To Nugget", "Go To Science Class With A Leg", "Distract Applegate", "Buy All Burgers"])
+    new_mission_region(multiworld, player, Mission.dodge_a_nugget, ["Nuget is 'Special'", "Enter Weapons Closet For Nugget Cave Shovel", "Give Tenders To Nugget", "Go To Science Class With A Leg", "Distract Applegate", "Buy All Burgers", "Enter Nugget Cave"])
     new_mission_region(multiworld, player, Mission.things_go_boom, "Enter Weapons Closet For Device")
     new_mission_region(multiworld, player, Mission.breaking_sad, ["Applegate Meltdown"])
     new_mission_region(multiworld, player, Mission.creature_feature, ["Enter Weapons Closet With A Bomb", "Enter Lockdown", "Enter Secret Lab", "Check Billy's Box"])
@@ -75,6 +75,10 @@ def create_regions(multiworld: MultiWorld, player: int, world_options: Kindergar
     new_region(multiworld, player, "Kill Felix", ["Show Ted The Contract"], [])
     new_region(multiworld, player, "Billy's Box", ["Check Billy's Box"], [])
     new_region(multiworld, player, "Unclogged Toilet", ["Janitor Unclogs Toilet"], [])
+    new_region(multiworld, player, "Love Letter", ["Give Love Letter"], [])
+    new_region(multiworld, player, "Sold Inhaler", ["Sell Inhaler"], [])
+    new_region(multiworld, player, "Borrowed Money", ["Borrow Money"], [])
+    new_region(multiworld, player, "Nugget Cave", ["Enter Nugget Cave"], [])
 
 
 def new_mission_region(multiworld: MultiWorld, player: int, mission_name: str, exits: Union[None, str, List[str]] = None) -> Region:

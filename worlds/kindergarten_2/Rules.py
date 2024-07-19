@@ -94,6 +94,8 @@ def set_complete_mission_rules(multiworld: MultiWorld, player: int, world_option
 def set_extra_entrance_rules(multiworld: MultiWorld, player, world_options: Kindergarten2Options):
     set_rule(multiworld.get_entrance("Go To School With A+", player),
              has_item(InventoryItem.an_a_plus, player))
+    set_rule(multiworld.get_entrance("Go To School With A+ And Laser", player),
+             has_items([InventoryItem.an_a_plus, InventoryItem.laser_beam], player))
     set_rule(multiworld.get_entrance("Return To The Broken Wheelchair", player),
              has_starting_money(Cost.battery + Cost.burger, player, world_options))
     set_rule(multiworld.get_entrance("Push Monty Up The Ramp", player),
@@ -146,6 +148,14 @@ def set_extra_entrance_rules(multiworld: MultiWorld, player, world_options: Kind
              has_starting_money(Cost.hand_sanitizer + Cost.monty_read, player, world_options))
     set_rule(multiworld.get_entrance("Check Billy's Box", player),
              has_starting_money(Cost.battery, player, world_options))
+    set_rule(multiworld.get_entrance("Give Love Letter", player),
+             has_starting_money(Cost.monty_push, player, world_options))
+    set_rule(multiworld.get_entrance("Sell Inhaler", player),
+             has_starting_money(Cost.battery + Cost.burger, player, world_options))
+    set_rule(multiworld.get_entrance("Borrow Money", player),
+             has_starting_money(Cost.hand_sanitizer, player, world_options))
+    set_rule(multiworld.get_entrance("Enter Nugget Cave", player),
+             has_starting_money(Cost.lighter_into_school + Cost.burger + Cost.blueberry_soda, player, world_options))
 
 
 def set_monstermon_card_rules(multiworld: MultiWorld, player, world_options: Kindergarten2Options):

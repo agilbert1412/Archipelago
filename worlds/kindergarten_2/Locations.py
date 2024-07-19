@@ -92,12 +92,12 @@ monstermon_locations = [
 ]
 
 money_locations = [
-    LocationData("Felix's Tip", "Bedroom"),  # 3$
-    LocationData("Sell Drugs To Monty", "Bedroom"),  # 5$
-    LocationData("Sell Inhaler To Monty", "Bedroom"),  # 2$
-    LocationData("Borrow Money From Felix", "Bedroom"),  # 5$
-    LocationData("Skeleton Wallet", "Bedroom"),  # 3$
-    LocationData("Ted's Cubby", "Bedroom"),  # 3$
+    LocationData("Felix's Tip", "Love Letter"),  # 3$
+    LocationData("Sell Drugs To Monty", "Negociated With Monty"),  # 5$
+    LocationData("Sell Inhaler To Monty", "Sold Inhaler"),  # 2$
+    LocationData("Borrow Money From Felix", "Borrowed Money"),  # 5$
+    LocationData("Skeleton Wallet", "Nugget Cave"),  # 3$
+    LocationData("Ted's Cubby", "Steal From Cubbies"),  # 3$
 ]
 
 all_locations = []

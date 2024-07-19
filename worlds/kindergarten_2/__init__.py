@@ -9,6 +9,7 @@ from .Locations import Kindergarten2Location, location_table, create_locations
 from .Options import Kindergarten2Options, Goal, ShuffleMoney, ShuffleMonstermon, ShuffleOutfits, ExtraLocations
 from .Regions import create_regions
 from .Rules import set_rules
+from .constants.money import Money
 from .constants.world_strings import GAME_NAME
 
 client_version = 0
@@ -63,6 +64,8 @@ class Kindergarten2World(World):
             if item in self.multiworld.itempool:
                 self.multiworld.itempool.remove(item)
 
+        self.setup_victory()
+
     def create_item(self, item: Union[str, ItemData], classification: ItemClassification = None) -> Kindergarten2Item:
         if isinstance(item, str):
             item = item_table[item]
@@ -71,9 +74,12 @@ class Kindergarten2World(World):
 
         return Kindergarten2Item(item.name, classification, item.code, self.player)
 
+    def setup_victory(self):
+        self.multiworld.completion_condition[self.player] = lambda state: state.has("Victory", self.player)
+
     def get_filler_item_name(self) -> str:
-        trap = self.multiworld.random.choice(items_by_group[Group.Trap])
-        return trap.name
+        # trap = self.multiworld.random.choice(items_by_group[Group.Trap])
+        return Money.starting_money
 
     def fill_slot_data(self):
         options_dict = self.options.as_dict(
