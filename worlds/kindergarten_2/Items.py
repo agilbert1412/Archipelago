@@ -5,6 +5,7 @@ from .ItemsClasses import ItemData, Group
 from .constants.inventory_item_names import InventoryItem
 from .constants.money import Money
 from .constants.monstermon_card_names import blue_cards, red_cards, green_cards, yellow_cards, purple_cards
+from .constants.outfit_names import Outfit
 
 inventory_items = [
     InventoryItem.bob_toolbelt,
@@ -36,20 +37,50 @@ def create_monstermon_items_data(start_index: int) -> List[ItemData]:
 
 
 outfit_items = [
+    Outfit.default,
+    Outfit.nugget,
+    Outfit.cindy,
+    Outfit.ted,
+    Outfit.carla,
+    Outfit.monty,
+    Outfit.felix,
+    Outfit.ozzy,
+    Outfit.penny,
+    Outfit.lily,
+    Outfit.billy,
+    Outfit.jerome,
+    Outfit.buggs,
+    Outfit.lily_undercover,
+    Outfit.billy_undercover,
+    Outfit.ms_applegate,
+    Outfit.dr_danner,
+    Outfit.the_janitor,
+    Outfit.bob,
+    Outfit.principal,
+    Outfit.agnes,
+    Outfit.lunch_lady,
+    Outfit.hall_monitor,
+    Outfit.stevie,
+    Outfit.monster,
+    Outfit.ron,
+    Outfit.madison,
+    Outfit.alice,
+    Outfit.seasonal,
+    Outfit.cultist,
 ]
 
 
 def create_outfits_items_data(start_index: int) -> List[ItemData]:
-    return [ItemData(start_index + i, outfit_item, progression, {Group.Outfit}) for i, outfit_item in enumerate(outfit_items)]
+    return [ItemData(start_index + i, outfit_item, ItemClassification.filler, {Group.Outfit}) for i, outfit_item in enumerate(outfit_items)]
 
 
 progression = ItemClassification.progression
 
 all_items: List[ItemData] = [
     *create_inventory_items_data(1),
-    *create_monstermon_items_data(101),
-    *create_outfits_items_data(201),
-    ItemData(301, Money.starting_money, progression, {Group.Money}),
+    ItemData(201, Money.starting_money, progression, {Group.Money}),
+    *create_monstermon_items_data(301),
+    *create_outfits_items_data(401),
 ]
 
 

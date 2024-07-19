@@ -3,6 +3,7 @@ from collections import Counter
 from BaseClasses import Location, MultiWorld, Region
 from .Options import Kindergarten2Options, Goal
 from .Rules import create_event_item
+from .constants.outfit_names import Outfit
 from .constants.world_strings import GAME_NAME
 from .constants.mission_names import Mission, mission_complete, mission
 from .constants.monstermon_card_names import MonstermonCard
@@ -91,12 +92,12 @@ monstermon_locations = [
     LocationData(MonstermonCard.ofaka_tornado, mission_complete(Mission.things_go_boom)),
     LocationData(MonstermonCard.literally_grass, "Negociated With Monty"),
     LocationData(MonstermonCard.doodoo_bug, "Toilet Paper To Ozzy"),
-    LocationData(MonstermonCard.mystical_tomato, "Behind Lunch Counter"),
+    LocationData(MonstermonCard.mystical_tomato, "Obtained Nuggets"),
     LocationData(MonstermonCard.hissing_fauna, "Monstermon Battle"),  # Monty
     LocationData(MonstermonCard.legendary_sword, "Woods Puzzle"),
     LocationData(MonstermonCard.golden_dewdrop, "Monstermon Battle"),  # Jerome
     LocationData(MonstermonCard.zen_octopus, "Nugget Fidget Spinner"),
-    LocationData(MonstermonCard.forbidden_book, "Red Book"),
+    LocationData(MonstermonCard.forbidden_book, "Principal's Office"),
     LocationData(MonstermonCard.marshmallow, "Monstermon Battle"),  # Cindy
     LocationData(MonstermonCard.pot_of_grease, "Gravy"),
     LocationData(MonstermonCard.lamb_with_cleaver, mission_complete(Mission.tale_of_janitors)),
@@ -116,6 +117,39 @@ monstermon_locations = [
     LocationData(MonstermonCard.dank_magician, mission_complete(Mission.creature_feature)),
 ]
 
+outfit_locations = [
+    # LocationData(Outfit.default, ""),
+    LocationData(Outfit.nugget, "Buried Nugget"),
+    LocationData(Outfit.cindy, "Electrocuted Cindy"),
+    LocationData(Outfit.ted, mission_complete(Mission.cain_not_able)),
+    LocationData(Outfit.carla, mission_complete(Mission.opposites_attract)),
+    LocationData(Outfit.monty, mission_complete(Mission.breaking_sad)),
+    LocationData(Outfit.felix, "Dead Felix"),
+    LocationData(Outfit.ozzy, mission_complete(Mission.hitman_guard)),
+    LocationData(Outfit.penny, mission_complete(Mission.opposites_attract)),
+    LocationData(Outfit.lily, mission_complete(Mission.breaking_sad)),
+    LocationData(Outfit.billy, mission_complete(Mission.breaking_sad)),
+    LocationData(Outfit.jerome, "Dumb Tuesday"),
+    LocationData(Outfit.buggs, mission_complete(Mission.opposites_attract)),
+    LocationData(Outfit.lily_undercover, "Billy's Box"),
+    LocationData(Outfit.billy_undercover, "Billy's Box"),
+    LocationData(Outfit.ms_applegate, mission_complete(Mission.creature_feature)),
+    LocationData(Outfit.dr_danner, mission_complete(Mission.creature_feature)),
+    LocationData(Outfit.the_janitor, "Monty Laser"),
+    LocationData(Outfit.bob, "Dead Bob"),
+    LocationData(Outfit.principal, "Principal's Office"),
+    LocationData(Outfit.agnes, "Adopted Cat"),
+    LocationData(Outfit.lunch_lady, "Handicap Ramp"),
+    LocationData(Outfit.hall_monitor, "Handicap Ramp"),
+    LocationData(Outfit.stevie, mission(Mission.tale_of_janitors)),
+    LocationData(Outfit.monster, mission_complete(Mission.creature_feature)),
+    LocationData(Outfit.ron, mission_complete(Mission.creature_feature)),
+    LocationData(Outfit.madison, mission_complete(Mission.creature_feature)),
+    LocationData(Outfit.alice, mission_complete(Mission.creature_feature)),
+    LocationData(Outfit.seasonal, "Principal's Office"),
+    LocationData(Outfit.cultist, mission_complete(Mission.secret_ending)),
+]
+
 all_locations = []
 for i, mission_location in enumerate(mission_locations):
     mission_location.id_without_offset = 1 + i
@@ -132,6 +166,10 @@ for i, money_location in enumerate(money_locations):
 for i, monstermon_location in enumerate(monstermon_locations):
     monstermon_location.id_without_offset = 301 + i
     all_locations.append(monstermon_location)
+
+for i, outfit_location in enumerate(outfit_locations):
+    outfit_location.id_without_offset = 401 + i
+    all_locations.append(outfit_location)
 
 location_table = dict()
 
@@ -184,6 +222,13 @@ def create_locations(multiworld: MultiWorld, player: int, world_options: Kinderg
             location = Kindergarten2Location(player, name, None, region)
             location.place_locked_item(create_event_item(player, name))
         region.locations.append(location)
+
+    if world_options.shuffle_outfits:
+        for location_data in outfit_locations:
+            name = location_data.name
+            region = multiworld.get_region(location_data.region, player)
+            location = Kindergarten2Location(player, name, location_table[name], region)
+            region.locations.append(location)
 
 
 def create_victory_event(region: Region, player: int):

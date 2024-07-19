@@ -41,6 +41,21 @@ class Kindergarten2World(World):
     options_dataclass = Kindergarten2Options
     options: Kindergarten2Options
 
+    def generate_early(self) -> None:
+        self.precollect_starting_outfit()
+
+    def precollect_starting_outfit(self) -> None:
+        if self.options.shuffle_outfits == ShuffleOutfits.option_false:
+            return
+
+        if [item for item in self.multiworld.precollected_items[self.player]
+            if item.name in {outfit.name for outfit in items_by_group[Group.Outfit]}]:
+            return
+
+        chosen_outfit = self.random.choice(items_by_group[Group.Outfit])
+        starting_outfit = Kindergarten2Item(chosen_outfit.name, chosen_outfit.classification, chosen_outfit.code, self.player)
+        self.multiworld.push_precollected(starting_outfit)
+
     def create_regions(self):
         create_regions(self.multiworld, self.player, self.options)
         create_locations(self.multiworld, self.player, self.options)

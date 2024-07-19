@@ -102,32 +102,26 @@ def set_extra_entrance_rules(multiworld: MultiWorld, player, world_options: Kind
              has_item(InventoryItem.an_a_plus, player))
     set_rule(multiworld.get_entrance("Go To School With A+ And Laser", player),
              has_items([InventoryItem.an_a_plus, InventoryItem.laser_beam], player))
-    set_rule(multiworld.get_entrance("Return To The Broken Wheelchair", player),
-             has_starting_money(Cost.battery + Cost.burger, player, world_options))
     set_rule(multiworld.get_entrance("Push Monty Up The Ramp", player),
              has_starting_money(Cost.monty_push, player, world_options))
     set_rule(multiworld.get_entrance("Enter Weapons Closet For Chainsaw", player),
              has_starting_money(Cost.carla_distract_lunch_lady, player, world_options))
     set_rule(multiworld.get_entrance("Enter Weapons Closet For Murder Shovel", player),
              has_starting_money(Cost.hand_sanitizer + Cost.monty_read, player, world_options))
-    set_rule(multiworld.get_entrance("Enter Weapons Closet For Nugget Cave Shovel", player),
+    set_rule(multiworld.get_entrance("Smuggle Lighter Into The School", player),
              has_starting_money(Cost.lighter_into_school, player, world_options))
     set_rule(multiworld.get_entrance("Enter Weapons Closet For Device", player),
              has_starting_money(Cost.burger, player, world_options))
     set_rule(multiworld.get_entrance("Enter Weapons Closet With A Bomb", player),
              has_starting_money(Cost.battery, player, world_options))
-    set_rule(multiworld.get_entrance("Give Tenders To Nugget", player),
-             has_starting_money(Cost.lighter_into_school, player, world_options))
-    set_rule(multiworld.get_entrance("Go To Science Class With A Leg", player),
-             has_starting_money(Cost.lighter_into_school + Cost.burger + Cost.blueberry_soda + Cost.science_class, player, world_options))
     set_rule(multiworld.get_entrance("Give Bugs A Soda", player),
              has_starting_money(Cost.cherry_soda, player, world_options))
     set_rule(multiworld.get_entrance("Go To Science Class", player),
              has_starting_money(Cost.science_class, player, world_options))
+    set_rule(multiworld.get_entrance("Go To Science Class With A Leg", player),
+             has_starting_money(Cost.science_class, player, world_options))
     set_rule(multiworld.get_entrance("Play Monstermon", player),
              has_monstermon_cards_rule(10, player, world_options))
-    set_rule(multiworld.get_entrance("Distract Applegate", player),
-             has_starting_money(Cost.lighter_into_school, player, world_options))
     set_rule(multiworld.get_entrance("Applegate Meltdown", player),
              has_starting_money(Cost.monty_push, player, world_options))
     set_rule(multiworld.get_entrance("Enter Lockdown", player),
@@ -143,7 +137,7 @@ def set_extra_entrance_rules(multiworld: MultiWorld, player, world_options: Kind
     set_rule(multiworld.get_entrance("Give Toilet Paper To Ozzy", player),
              has_starting_money(Cost.burger, player, world_options))
     set_rule(multiworld.get_entrance("Buy All Burgers", player),
-             has_starting_money(Cost.lighter_into_school + Cost.burger, player, world_options))
+             has_starting_money(Cost.burger, player, world_options))
     set_rule(multiworld.get_entrance("Ask For Vegan Lunch", player),
              has_starting_money(Cost.monty_push, player, world_options))
     set_rule(multiworld.get_entrance("Give Gravy To Cindy", player),
@@ -161,7 +155,9 @@ def set_extra_entrance_rules(multiworld: MultiWorld, player, world_options: Kind
     set_rule(multiworld.get_entrance("Borrow Money", player),
              has_starting_money(Cost.hand_sanitizer, player, world_options))
     set_rule(multiworld.get_entrance("Enter Nugget Cave", player),
-             has_starting_money(Cost.lighter_into_school + Cost.burger + Cost.blueberry_soda, player, world_options))
+             has_starting_money(Cost.blueberry_soda, player, world_options))
+    set_rule(multiworld.get_entrance("Escape Lunch After Bob Died", player),
+             has_starting_money(Cost.carla_distract_lunch_lady, player, world_options))
 
 
 def set_monstermon_card_rules(multiworld: MultiWorld, player, world_options: Kindergarten2Options):
