@@ -56,7 +56,7 @@ def set_start_mission_rules(multiworld: MultiWorld, player: int, world_options: 
              has_items([InventoryItem.an_a_plus, InventoryItem.prestigious_pin], player))
 
     set_rule(multiworld.get_entrance(start_mission(Mission.things_go_boom), player),
-             has_items([InventoryItem.laser_beam, InventoryItem.monstermon_plushie], player))
+             has_items([InventoryItem.laser_beam, InventoryItem.an_a_plus, InventoryItem.monstermon_plushie], player))
     set_rule(multiworld.get_entrance(start_mission(Mission.breaking_sad), player),
              has_items([InventoryItem.monstermon_plushie, InventoryItem.strange_chemical], player))
 
