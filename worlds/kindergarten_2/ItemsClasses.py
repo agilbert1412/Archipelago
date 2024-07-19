@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 from typing import Set
 
 from BaseClasses import Item, ItemClassification
-from .strings.world_strings import GAME_NAME
+from .constants.world_strings import GAME_NAME
 
 
 class Kindergarten2Item(Item):

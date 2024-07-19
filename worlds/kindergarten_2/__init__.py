@@ -9,7 +9,7 @@ from .Locations import Kindergarten2Location, location_table, create_locations
 from .Options import Kindergarten2Options, Goal, ShuffleMoney, ShuffleMonstermon, ShuffleOutfits, ExtraLocations
 from .Regions import create_regions
 from .Rules import set_rules
-from .strings.world_strings import GAME_NAME
+from .constants.world_strings import GAME_NAME
 
 client_version = 0
 

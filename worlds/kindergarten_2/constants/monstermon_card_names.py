@@ -3,30 +3,36 @@ red_cards = []
 green_cards = []
 yellow_cards = []
 purple_cards = []
+all_cards = []
 
 
 def blue(card_name: str) -> str:
     blue_cards.append(card_name)
-    return card_name
+    return card(card_name)
 
 
 def red(card_name: str) -> str:
     red_cards.append(card_name)
-    return card_name
+    return card(card_name)
 
 
 def green(card_name: str) -> str:
     green_cards.append(card_name)
-    return card_name
+    return card(card_name)
 
 
 def yellow(card_name: str) -> str:
     yellow_cards.append(card_name)
-    return card_name
+    return card(card_name)
 
 
 def purple(card_name: str) -> str:
     purple_cards.append(card_name)
+    return card(card_name)
+
+
+def card(card_name: str) -> str:
+    all_cards.append(card_name)
     return card_name
 
 

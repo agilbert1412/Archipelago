@@ -1,9 +1,10 @@
+import typing
 from typing import ClassVar
 
 from typing import Dict, FrozenSet, Tuple, Any
 from argparse import Namespace
 
-from BaseClasses import MultiWorld
+from BaseClasses import MultiWorld, CollectionState
 from test.bases import WorldTestBase
 from .. import GAME_NAME, Kindergarten2World
 from test.general import gen_steps, setup_solo_multiworld as setup_base_solo_multiworld
