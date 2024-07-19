@@ -173,7 +173,7 @@ for i, outfit_location in enumerate(outfit_locations):
 
 location_table = dict()
 
-location_table.update({location_data.name: offset + i for i, location_data in enumerate(all_locations)})
+location_table.update({location_data.name: offset + location_data.id_without_offset for location_data in all_locations})
 
 
 def create_locations(multiworld: MultiWorld, player: int, world_options: Kindergarten2Options) -> None:
@@ -185,9 +185,9 @@ def create_locations(multiworld: MultiWorld, player: int, world_options: Kinderg
     elif world_options.goal == Goal.option_all_missions:
         region_victory = multiworld.get_region(mission_complete(Mission.creature_feature), player)
         create_victory_event(region_victory, player)
-    elif world_options.goal == Goal.option_all_missions_and_secret_ending:
-        region_victory = multiworld.get_region(mission_complete(Mission.secret_ending), player)
-        create_victory_event(region_victory, player)
+    # elif world_options.goal == Goal.option_all_missions_and_secret_ending:
+    #     region_victory = multiworld.get_region(mission_complete(Mission.secret_ending), player)
+    #     create_victory_event(region_victory, player)
 
     for location_data in mission_locations:
         region = multiworld.get_region(location_data.region, player)
