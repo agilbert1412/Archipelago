@@ -110,6 +110,7 @@ class Kindergarten2World(World):
             "death_link"
         )
         options_dict.update({
-            "seed": self.random.randrange(99999999)
+            "seed": self.random.randrange(99999999),
+            "multiworld_version": "1.0.0",
         })
         return options_dict
