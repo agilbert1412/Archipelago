@@ -84,7 +84,7 @@ def set_complete_mission_rules(multiworld: MultiWorld, player: int, world_option
     set_rule(multiworld.get_entrance(win_mission(Mission.opposites_attract), player),
              has_starting_money(Cost.science_class, player, world_options))
     set_rule(multiworld.get_entrance(win_mission(Mission.dodge_a_nugget), player),
-             has_starting_money(Cost.lighter_into_school + Cost.burger + Cost.blueberry_soda, player, world_options))
+             has_starting_money(Cost.lighter_into_school + Cost.burger + Cost.soda_machine, player, world_options))
     set_rule(multiworld.get_entrance(win_mission(Mission.cain_not_able), player),
              has_starting_money(Cost.hand_sanitizer + Cost.monty_read, player, world_options))
 
