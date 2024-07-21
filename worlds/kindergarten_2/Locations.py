@@ -188,6 +188,14 @@ def create_locations(multiworld: MultiWorld, player: int, world_options: Kinderg
     #     region_victory = multiworld.get_region(mission_complete(Mission.secret_ending), player)
     #     create_victory_event(region_victory, player)
 
+    create_mission_locations(multiworld, player, victory_location)
+    create_extra_locations(multiworld, player)
+    create_money_locations(multiworld, player, world_options)
+    create_monstermon_locations(multiworld, player, world_options)
+    create_outfit_locations(multiworld, player, world_options)
+
+
+def create_mission_locations(multiworld: MultiWorld, player: int, victory_location: str) -> None:
     for location_data in mission_locations:
         region = multiworld.get_region(location_data.region, player)
         if location_data.name == victory_location:
@@ -198,19 +206,27 @@ def create_locations(multiworld: MultiWorld, player: int, world_options: Kinderg
         location = Kindergarten2Location(player, name, location_table[name], region)
         region.locations.append(location)
 
+
+def create_extra_locations(multiworld: MultiWorld, player: int) -> None:
     for location_data in extra_locations:
         region = multiworld.get_region(location_data.region, player)
         name = location_data.name
         location = Kindergarten2Location(player, name, location_table[name], region)
         region.locations.append(location)
 
-    if world_options.shuffle_money:
-        for location_data in money_locations:
-            name = location_data.name
-            region = multiworld.get_region(location_data.region, player)
-            location = Kindergarten2Location(player, name, location_table[name], region)
-            region.locations.append(location)
 
+def create_money_locations(multiworld: MultiWorld, player: int, world_options: Kindergarten2Options) -> None:
+    if world_options.shuffle_money <= 0:
+        return
+
+    for location_data in money_locations:
+        name = location_data.name
+        region = multiworld.get_region(location_data.region, player)
+        location = Kindergarten2Location(player, name, location_table[name], region)
+        region.locations.append(location)
+
+
+def create_monstermon_locations(multiworld: MultiWorld, player: int, world_options: Kindergarten2Options) -> None:
     for location_data in monstermon_locations:
         name = location_data.name
         region = multiworld.get_region(location_data.region, player)
@@ -222,12 +238,16 @@ def create_locations(multiworld: MultiWorld, player: int, world_options: Kinderg
             location.place_locked_item(create_event_item(player, name))
         region.locations.append(location)
 
-    if world_options.shuffle_outfits:
-        for location_data in outfit_locations:
-            name = location_data.name
-            region = multiworld.get_region(location_data.region, player)
-            location = Kindergarten2Location(player, name, location_table[name], region)
-            region.locations.append(location)
+
+def create_outfit_locations(multiworld: MultiWorld, player: int, world_options: Kindergarten2Options) -> None:
+    if not world_options.shuffle_outfits:
+        return
+
+    for location_data in outfit_locations:
+        name = location_data.name
+        region = multiworld.get_region(location_data.region, player)
+        location = Kindergarten2Location(player, name, location_table[name], region)
+        region.locations.append(location)
 
 
 def create_victory_event(region: Region, player: int):

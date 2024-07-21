@@ -181,14 +181,13 @@ def has_items(items: List[str], player: int) -> Callable[[Any], bool]:
 
 
 def has_starting_money(amount: float, player: int, world_options: Kindergarten2Options) -> Callable[[Any], bool]:
-    if world_options.shuffle_money == ShuffleMoney.option_true:
-        return lambda state: state.has(Money.starting_money, player, math.ceil(amount / Money.amount_per_money_item))
+    if world_options.shuffle_money > 0:
+        return lambda state: state.has(Money.starting_money, player, math.ceil(amount / world_options.shuffle_money))
     return lambda state: True
 
 
 def has_monstermon_cards_rule(number: int, player: int, world_options: Kindergarten2Options) -> Callable[[Any], bool]:
     return lambda state: has_monstermon_cards(state, number, player, world_options)
-
 
 
 def has_monstermon_cards(state, number: int, player: int, world_options: Kindergarten2Options) -> bool:
@@ -209,6 +208,3 @@ def has_monstermon_cards(state, number: int, player: int, world_options: Kinderg
 
     # The items still exist, but as events
     return state.has_from_list(all_cards, player, number)
-
-
-

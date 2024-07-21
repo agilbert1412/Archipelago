@@ -79,8 +79,10 @@ progression = ItemClassification.progression
 all_items: List[ItemData] = [
     *create_inventory_items_data(1),
     ItemData(201, Money.starting_money, progression, {Group.Money}),
+    ItemData(202, Money.pocket_change, progression, {Group.Money}),
     *create_monstermon_items_data(301),
     *create_outfits_items_data(401),
+    ItemData(501, "Nothing", ItemClassification.filler, {}),
 ]
 
 

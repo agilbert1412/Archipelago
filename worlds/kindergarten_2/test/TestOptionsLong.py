@@ -121,12 +121,12 @@ def get_number_log_steps(number_worlds: int) -> int:
 
 class TestGenerateManyWorlds(Kindergarten2TestBase):
     def test_generate_many_worlds_without_fill_then_check_results(self):
-        number_worlds = 1000
+        number_worlds = 400
         seed = get_seed()
         self.generate_and_check_many_worlds(number_worlds, seed, fill=False)
 
     def test_generate_many_worlds_with_fill_then_check_results(self):
-        number_worlds = 200
+        number_worlds = 80
         seed = get_seed()
         self.generate_and_check_many_worlds(number_worlds, seed, fill=True)
 

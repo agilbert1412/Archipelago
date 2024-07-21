@@ -1,3 +1,4 @@
+import math
 from typing import Union
 
 from BaseClasses import Tutorial, ItemClassification
@@ -79,8 +80,8 @@ class Kindergarten2World(World):
             if item in self.multiworld.itempool:
                 self.multiworld.itempool.remove(item)
 
-        if self.options.shuffle_money == ShuffleMoney.option_true:
-            self.multiworld.early_items[self.player][Money.starting_money] = 3
+        if self.options.shuffle_money > 0:
+            self.multiworld.early_items[self.player][Money.starting_money] = math.ceil(3 / self.options.shuffle_money)
 
         # self.multiworld.exclude_locations[self.player].value.add()
 

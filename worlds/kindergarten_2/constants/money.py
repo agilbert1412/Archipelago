@@ -1,8 +1,7 @@
 class Money:
     starting_money = "Progressive Starting Money"
-    number_of_progression_money_items = 11
-    number_of_filler_money_items = 7
-    amount_per_money_item = 1
+    pocket_change = "Pocket Change"
+    minimum_progression_money = 12
 
 
 class Cost:
