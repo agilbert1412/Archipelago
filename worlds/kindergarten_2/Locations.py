@@ -45,7 +45,6 @@ extra_locations = [
     LocationData("Eat With The Principal", "Dumb Tuesday"),
     LocationData("Survive Tuesday", "Dumb Tuesday"),
     LocationData("Experience Study Hall", "Dumb Tuesday"),
-    LocationData("Eat A Burger", "Dumb Tuesday"),
     LocationData("Meet A Dumpster Hag", "Dumb Tuesday"),
     LocationData("Use A Toilet", "Dumb Tuesday"),
     LocationData("Cry A River", "Dumb Tuesday"),
