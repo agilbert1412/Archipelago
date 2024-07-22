@@ -83,6 +83,7 @@ all_items: List[ItemData] = [
     *create_monstermon_items_data(301),
     *create_outfits_items_data(401),
     ItemData(501, "Nothing", ItemClassification.filler, {}),
+    ItemData(502, "Janitor Trap", ItemClassification.trap, {Group.Trap}),
 ]
 
 

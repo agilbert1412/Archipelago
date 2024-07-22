@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
-from Options import Choice, DeathLink, PerGameCommonOptions, Toggle, NamedRange
+from Options import Choice, DeathLink, PerGameCommonOptions, Toggle, NamedRange, OptionSet
+from worlds.kindergarten_2.constants.filler_names import Filler
 
 
 class Goal(Choice):
@@ -39,21 +40,19 @@ class ShuffleOutfits(Toggle):
     default = 0
 
 
-class FillerItems(Choice):
+class FillerItems(OptionSet):
     """What to use as filler items?
     Nothing: All filler items are empty
     Pocket Change: Fillers are money bundles, but smaller than the progression ones
     Money: Filler generates extra money items
-    Random Pocket Change: Fillers are a random mix of "Nothing" and "Pocket Change" items
-    Random Pocket Change: Fillers are a random mix of "Nothing" and "Starting Money" items"""
+    Traps: Filler generates some traps
+    """
     internal_name = "filler_items"
     display_name = "Filler Items"
-    default = 1
-    option_nothing = 0
-    option_pocket_change = 1
-    option_money = 2
-    option_random_pocket_change = 3
-    option_random_money = 4
+    valid_keys = frozenset({Filler.nothing, Filler.pocket_change, Filler.money, Filler.traps})
+    preset_none = frozenset()
+    preset_all = valid_keys
+    default = frozenset({Filler.pocket_change, Filler.traps})
 
 
 @dataclass

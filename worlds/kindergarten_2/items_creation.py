@@ -5,6 +5,7 @@ from BaseClasses import ItemClassification
 from .ItemsClasses import Group, Kindergarten2Item
 from .Options import Kindergarten2Options, FillerItems
 from .Items import items_by_group
+from .constants.filler_names import Filler
 from .constants.money import Money
 
 
@@ -51,14 +52,12 @@ def create_fillers(created_items, world, world_options: Kindergarten2Options, lo
 
 def get_valid_filler_items(world_options: Kindergarten2Options) -> List[str]:
     valid_filler = []
-    if world_options.filler_items == FillerItems.option_nothing or \
-            world_options.filler_items == FillerItems.option_random_pocket_change or \
-            world_options.filler_items == FillerItems.option_random_money:
+    if Filler.nothing in world_options.filler_items:
         valid_filler.append("Nothing")
-    if world_options.filler_items == FillerItems.option_pocket_change or \
-            world_options.filler_items == FillerItems.option_random_pocket_change:
+    if Filler.pocket_change in world_options.filler_items:
         valid_filler.append(Money.pocket_change)
-    if world_options.filler_items == FillerItems.option_money or \
-            world_options.filler_items == FillerItems.option_random_money:
+    if Filler.money in world_options.filler_items:
         valid_filler.append(Money.starting_money)
+    if Filler.traps in world_options.filler_items:
+        valid_filler.append("Janitor Trap")
     return valid_filler
