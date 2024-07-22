@@ -2,9 +2,9 @@ from random import Random
 from typing import List
 
 from BaseClasses import ItemClassification
-from .ItemsClasses import Group, Kindergarten2Item
-from .Options import Kindergarten2Options, FillerItems
-from .Items import items_by_group
+from .items_classes import Group, Kindergarten2Item
+from .options import Kindergarten2Options
+from .items import items_by_group
 from .constants.filler_names import Filler
 from .constants.money import Money
 

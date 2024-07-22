@@ -1,9 +1,7 @@
 from typing import List, Union
 
 from BaseClasses import Entrance, MultiWorld, Region
-from .Options import Kindergarten2Options, Goal
-from .Locations import Kindergarten2Location, location_table
-from .Rules import create_event_item
+from .options import Kindergarten2Options
 from .constants.mission_names import Mission, mission, start_mission, win_mission, mission_complete
 
 

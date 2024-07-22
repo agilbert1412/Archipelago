@@ -1,8 +1,6 @@
-from collections import Counter
-
 from BaseClasses import Location, MultiWorld, Region
-from .Options import Kindergarten2Options, Goal
-from .Rules import create_event_item
+from .options import Kindergarten2Options, Goal
+from .rules import create_event_item
 from .constants.outfit_names import Outfit
 from .constants.world_strings import GAME_NAME
 from .constants.mission_names import Mission, mission_complete, mission

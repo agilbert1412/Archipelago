@@ -3,8 +3,8 @@ from typing import List, Callable, Any
 
 from BaseClasses import ItemClassification, MultiWorld
 from worlds.generic.Rules import set_rule
-from .ItemsClasses import Kindergarten2Item
-from .Options import Kindergarten2Options, Goal, ShuffleMoney, ShuffleMonstermon
+from .items_classes import Kindergarten2Item
+from .options import Kindergarten2Options, Goal, ShuffleMonstermon
 from .constants.inventory_item_names import InventoryItem
 from .constants.mission_names import start_mission, Mission, win_mission
 from .constants.money import Cost

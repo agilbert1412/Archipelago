@@ -1,7 +1,7 @@
 from typing import Dict, List
 
 from BaseClasses import ItemClassification
-from .ItemsClasses import ItemData, Group
+from .items_classes import ItemData, Group
 from .constants.inventory_item_names import InventoryItem
 from .constants.money import Money
 from .constants.monstermon_card_names import blue_cards, red_cards, green_cards, yellow_cards, purple_cards

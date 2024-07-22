@@ -1,13 +1,13 @@
 from . import Kindergarten2TestBase
-from .. import Options
+from .. import options
 from ..constants.inventory_item_names import InventoryItem
 from ..constants.monstermon_card_names import all_cards
 
 
 class TestCreatureFeatureGoal(Kindergarten2TestBase):
-    options = {Options.Goal.internal_name: Options.Goal.option_creature_feature,
-               Options.ShuffleMonstermon.internal_name: Options.ShuffleMonstermon.option_true,
-               Options.ShuffleMoney.internal_name: 1}
+    options = {options.Goal.internal_name: options.Goal.option_creature_feature,
+               options.ShuffleMonstermon.internal_name: options.ShuffleMonstermon.option_true,
+               options.ShuffleMoney.internal_name: 1}
 
     def test_items_needed(self):
         self.assertFalse(self.multiworld.state.can_reach_location("Victory", self.player))
@@ -29,9 +29,9 @@ class TestCreatureFeatureGoal(Kindergarten2TestBase):
 
 
 class TestAllMissionsGoal(Kindergarten2TestBase):
-    options = {Options.Goal.internal_name: Options.Goal.option_all_missions,
-               Options.ShuffleMonstermon.internal_name: Options.ShuffleMonstermon.option_true,
-               Options.ShuffleMoney.internal_name: 1}
+    options = {options.Goal.internal_name: options.Goal.option_all_missions,
+               options.ShuffleMonstermon.internal_name: options.ShuffleMonstermon.option_true,
+               options.ShuffleMoney.internal_name: 1}
 
     def test_items_needed(self):
         self.assertFalse(self.multiworld.state.can_reach_location("Victory", self.player))
@@ -58,9 +58,9 @@ class TestAllMissionsGoal(Kindergarten2TestBase):
 
 
 class TestSecretEndingGoalWithMonstermon(Kindergarten2TestBase):
-    options = {Options.Goal.internal_name: Options.Goal.option_secret_ending,
-               Options.ShuffleMonstermon.internal_name: Options.ShuffleMonstermon.option_true,
-               Options.ShuffleMoney.internal_name: 1}
+    options = {options.Goal.internal_name: options.Goal.option_secret_ending,
+               options.ShuffleMonstermon.internal_name: options.ShuffleMonstermon.option_true,
+               options.ShuffleMoney.internal_name: 1}
 
     def test_items_needed(self):
         self.assertFalse(self.multiworld.state.can_reach_location("Victory", self.player))

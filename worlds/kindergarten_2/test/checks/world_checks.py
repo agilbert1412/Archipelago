@@ -1,8 +1,7 @@
 from typing import List
 
-from BaseClasses import MultiWorld, ItemClassification
+from BaseClasses import MultiWorld
 from .. import Kindergarten2TestBase
-from ... import Options
 
 
 def get_all_item_names(multiworld: MultiWorld) -> List[str]:

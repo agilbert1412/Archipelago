@@ -3,13 +3,13 @@ from typing import Union
 
 from BaseClasses import Tutorial, ItemClassification
 from worlds.AutoWorld import WebWorld, World
-from .Items import ItemData, item_table, items_by_group, Group
-from .ItemsCreation import create_items
-from .ItemsClasses import Kindergarten2Item
-from .Locations import Kindergarten2Location, location_table, create_locations
-from .Options import Kindergarten2Options, Goal, ShuffleMoney, ShuffleMonstermon, ShuffleOutfits
-from .Regions import create_regions
-from .Rules import set_rules
+from .items import item_table, items_by_group
+from .items_creation import create_items
+from .items_classes import ItemData, Kindergarten2Item, Group
+from .locations import Kindergarten2Location, location_table, create_locations
+from .options import Kindergarten2Options, Goal, ShuffleMoney, ShuffleMonstermon, ShuffleOutfits
+from .regions import create_regions
+from .rules import set_rules
 from .constants.money import Money
 from .constants.world_strings import GAME_NAME
 
