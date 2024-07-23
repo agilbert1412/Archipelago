@@ -5,7 +5,9 @@ from worlds.kindergarten_2.constants.filler_names import Filler
 
 
 class Goal(Choice):
-    """Goal for this playthrough"""
+    """Goal for this playthrough.
+    Either completing the final mission "Creature Feature", All Missions,
+    or getting the Monstermon Secret Ending"""
     internal_name = "goal"
     display_name = "Goal"
     default = 0
