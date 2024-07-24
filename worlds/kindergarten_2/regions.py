@@ -39,7 +39,8 @@ def create_regions(multiworld: MultiWorld, player: int, world_options: Kindergar
     new_region(multiworld, player, "Dumb Tuesday", "Go To School", ["Push Monty Up The Ramp", "Visit Principal's Office", "Go To Gym", "Go To Science Class", "Go To Recess", "Go To Lunch", "Give Nugget Fidget Spinner"])
     new_region(multiworld, player, "Smart Class", "Go To School With A+", ["Give Toilet Paper To Ozzy"])
     new_region(multiworld, player, "Smart Class With Laser", "Go To School With A+ And Laser", ["Give Penny's Laser To Monty"])
-    new_region(multiworld, player, "Handicap Ramp", ["Push Monty Up The Ramp", "Nuget is 'Special'"], ["Get Lost In The Woods"])
+    new_region(multiworld, player, "Handicap Ramp (Monty)", ["Push Monty Up The Ramp"], ["Be Handicapped"])
+    new_region(multiworld, player, "Handicap Ramp", ["Be Handicapped", "Nuget is 'Special'"], ["Get Lost In The Woods"])
     new_region(multiworld, player, "Lighter Into School", ["Smuggle Lighter Into The School"], ["Distract Applegate", "Enter Weapons Closet For Nugget Cave Shovel", "Buy All Burgers"])
     new_region(multiworld, player, "Lunch Lady Gets More Burgers", ["Buy All Burgers"], ["Enter Nugget Cave", "Bury Nugget In Nuggets", "Grab Nuggets While Lunch Lady Gets Burgers"])
     new_region(multiworld, player, "Weapons Closet", ["Enter Weapons Closet For Chainsaw", "Enter Weapons Closet For Murder Shovel",

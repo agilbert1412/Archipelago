@@ -46,7 +46,7 @@ extra_locations = [
     LocationData("Meet A Dumpster Hag", "Dumb Tuesday"),
     LocationData("Use A Toilet", "Dumb Tuesday"),
     LocationData("Cry A River", "Dumb Tuesday"),
-    LocationData("Win A Bet With Carla", "Dumb Tuesday"),
+    LocationData("Win A Bet With Carla", "Handicap Ramp (Monty)"),
     LocationData("Kill Felix", "Dead Felix"),
     LocationData("Common Decency", "Cat At Microwave"),
     LocationData("K-I-S-S-I-N-G", "Something Gross"),
