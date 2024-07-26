@@ -48,7 +48,7 @@ class MonstermonCard:
     hermit_frog = blue("Hermit Frog")
     castle_of_sand = blue("Castle Of Sand")
 
-    man_on_fire = red("Man On Fire")
+    man_on_fire = red("Man on Fire")
     chair_of_spikes = red("Chair of Spikes")
     cigaretmon = red("Cigaretmon")
     dune_worm = red("Dune Worm")
