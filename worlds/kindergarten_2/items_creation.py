@@ -46,7 +46,7 @@ def create_fillers(created_items, world, world_options: Kindergarten2Options, lo
     valid_filler = get_valid_filler_items(world_options)
     number_of_filler = locations_count - len(created_items)
     chosen_filler = random.choices(valid_filler, k=number_of_filler)
-    created_filler = [world.create_item(item, ItemClassification.progression) for item in chosen_filler]
+    created_filler = [world.create_item(item) for item in chosen_filler]
     created_items.extend(created_filler)
 
 
