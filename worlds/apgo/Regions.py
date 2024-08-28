@@ -5,14 +5,14 @@ from .Trips import Trip
 from .Options import APGOOptions
 
 
-def create_regions(multiworld: MultiWorld, player: int, options: APGOOptions, trips: List[Trip]) -> Dict[str, Region]:
+def create_regions(multiworld: MultiWorld, player: int, options: APGOOptions, trips: Dict[str, Trip]) -> Dict[str, Region]:
     created_regions = dict()
     created_regions["Menu"] = Region("Menu", player, multiworld)
     created_regions[area_number(0)] = Region(area_number(0), player, multiworld)
     created_regions["Menu"].connect(created_regions[area_number(0)])
 
     max_key = 0
-    for trip in trips:
+    for trip in trips.values():
         if trip.template.key_needed > max_key:
             max_key = trip.template.key_needed
 

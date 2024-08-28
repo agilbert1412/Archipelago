@@ -28,9 +28,8 @@ class APGOLocationFactory(Protocol):
         raise NotImplementedError
 
 
-def create_locations(location_factory: APGOLocationFactory, trips: List[Trip]) -> None:
-    for trip in trips:
-        trip_name = trip.location_name
-        trip_id = location_table[trip_name]
+def create_locations(location_factory: APGOLocationFactory, trips: Dict[str, Trip]) -> None:
+    for location_name, trip in trips.items():
+        trip_id = location_table[location_name]
         trip_region = area_number(trip.template.key_needed)
-        location_factory(trip_name, trip_id, trip_region)
+        location_factory(location_name, trip_id, trip_region)
