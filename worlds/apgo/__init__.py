@@ -3,6 +3,7 @@ from typing import Mapping, Any, Union, Dict, Optional, List
 
 from BaseClasses import Region, Location, Item, ItemClassification, Tutorial
 from worlds.AutoWorld import World, WebWorld
+from .ItemNames import ItemName
 
 from .Regions import create_regions
 from .Options import APGOOptions
@@ -48,10 +49,13 @@ class APGOWorld(World):
     options_dataclass = APGOOptions
     options: APGOOptions
 
-    trips: List[Trip]
+    trips: Dict[str, Trip]
+    number_distance_reductions: int
 
     def generate_early(self):
-        self.trips = generate_trips(self.options.as_dict(*[option_name for option_name in self.options_dataclass.type_hints]), self.random)
+        generated_trips = generate_trips(self.options.as_dict(*[option_name for option_name in self.options_dataclass.type_hints]), self.random)
+        self.trips = {trip.location_name: trip for trip in generated_trips}
+        self.number_distance_reductions = 0
 
     def create_regions(self) -> None:
         world_regions = create_regions(self.multiworld, self.player, self.options, self.trips)
@@ -68,6 +72,9 @@ class APGOWorld(World):
         created_items = create_items(self.create_item, self.trips, self.options, self.random)
         self.multiworld.itempool += created_items
 
+        # This is a weird way to count but it works...
+        self.number_distance_reductions += sum(item.name == ItemName.distance_reduction for item in created_items)
+
     def create_item(self, item: Union[str, APGOItemData]) -> APGOItem:
         if isinstance(item, str):
             item = item_table[item]
@@ -75,7 +82,7 @@ class APGOWorld(World):
         return APGOItem(item.name, item.classification, item.id, self.player)
 
     def fill_slot_data(self) -> Mapping[str, Any]:
-        trips_dictionary = {trip.location_name: trip.as_dict() for trip in self.trips}
+        trips_dictionary = {location_name: trip.as_dict() for location_name, trip in self.trips.items()}
         slot_data = {
             self.options.goal.internal_name: self.options.goal.value,
             self.options.minimum_distance.internal_name: self.options.minimum_distance.value,

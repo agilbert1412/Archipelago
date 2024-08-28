@@ -1,33 +1,32 @@
 from dataclasses import dataclass
 
-from Options import DeathLink, NamedRange, PerGameCommonOptions, Range, Toggle, Choice
+from Options import DeathLink, NamedRange, PerGameCommonOptions, Range, Toggle, Choice, ProgressionBalancing
 
 standard_race_lengths = {
-        "2k": 2000,
-        "5k": 5000,
-        "10k": 10000,
-        "half_marathon": 21098,
-        "marathon": 42195,
-        "50k": 50000,
-        "50_miler": 80467,
-        "100k": 100000,
-        "100_miler": 160934
-    }
-
+    "2k": 2000,
+    "5k": 5000,
+    "10k": 10000,
+    "half_marathon": 21098,
+    "marathon": 42195,
+    "50k": 50000,
+    "50_miler": 80467,
+    "100k": 100000,
+    "100_miler": 160934
+}
 
 standard_race_speeds = {
-        "no_speed_requirements": 0,
-        "slow_walk": 2,
-        "fast_walk": 5,
-        "slow_jog": 7,
-        "fast_jog": 9,
-        "slow_run": 10,
-        "fast_run": 14,
-        "sprint": 16,
-        "slow_bicycle": 15,
-        "medium_bicycle": 22,
-        "fast_bicycle": 30,
-    }
+    "no_speed_requirements": 0,
+    "slow_walk": 2,
+    "fast_walk": 5,
+    "slow_jog": 7,
+    "fast_jog": 9,
+    "slow_run": 10,
+    "fast_run": 14,
+    "sprint": 16,
+    "slow_bicycle": 15,
+    "medium_bicycle": 22,
+    "fast_bicycle": 30,
+}
 
 
 class Goal(Choice):
@@ -151,6 +150,9 @@ class TrapRate(NamedRange):
     }
 
 
+# class ApGoProgressionBalancing(ProgressionBalancing):
+
+
 @dataclass
 class APGOOptions(PerGameCommonOptions):
     goal: Goal
@@ -163,4 +165,5 @@ class APGOOptions(PerGameCommonOptions):
     enable_scouting_distance_bonuses: EnableScoutingDistanceBonuses
     enable_collection_distance_bonuses: EnableCollectionDistanceBonuses
     trap_rate: TrapRate
+    # progression_balancing: ApGoProgressionBalancing
     death_link: DeathLink
