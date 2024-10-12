@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from random import Random
-from typing import Dict, List, Union, Optional
+from typing import Dict, List, Union, Optional, Iterable, Tuple
 
-from .Options import NumberOfChecks, NumberOfLocks, SpeedRequirement
+from .Options import NumberOfTrips, NumberOfLocks, SpeedRequirement
 
 
 @dataclass(frozen=True)
@@ -56,7 +56,7 @@ def generate_trips(options: Dict[str, int], random: Random) -> List[Trip]:
         if trip.key_needed > number_of_keys:
             continue
         valid_trip_templates.append(trip)
-    chosen_trip_templates = random.choices(valid_trip_templates, k=options[NumberOfChecks.internal_name])
+    chosen_trip_templates = random.choices(valid_trip_templates, k=options[NumberOfTrips.internal_name])
 
     make_sure_all_key_tiers_have_at_least_one_trip(chosen_trip_templates, number_of_keys)
 
@@ -95,3 +95,7 @@ def find_trip_with_key_tier(trips: List[TripTemplate], tier: int) -> Optional[Tr
             return trip
 
     return None
+
+
+def get_max_distance_tier(trips: Iterable[Trip]) -> int:
+    return max([trip.template.distance_tier for trip in trips])

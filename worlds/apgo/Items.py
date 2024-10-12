@@ -70,7 +70,7 @@ def create_items(item_factory: APGOItemFactory, trips: Dict[str, Trip], options:
     items = []
     create_goal_items(item_factory, items, options)
     create_keys(item_factory, items, trips, options)
-    number_items_left = options.number_of_checks - len(items)
+    number_items_left = options.number_of_trips - len(items)
     create_traps(item_factory, items, number_items_left, options, random)
     create_additional_items(item_factory, items, options, random)
 
@@ -134,7 +134,7 @@ def create_traps(item_factory: APGOItemFactory, items: List[APGOItem], number_fi
 
 
 def create_additional_items(item_factory: APGOItemFactory, items: List[APGOItem], options: APGOOptions, random: Random) -> None:
-    number_items_left = options.number_of_checks - len(items)
+    number_items_left = options.number_of_trips - len(items)
     if number_items_left <= 0:
         return
     random_items = []

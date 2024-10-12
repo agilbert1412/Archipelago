@@ -45,11 +45,11 @@ class Goal(Choice):
     default = 0
 
 
-class NumberOfChecks(Range):
+class NumberOfTrips(Range):
     """The number of checks to generate in the world.
     Most items in this game are flexible, so the more checks you have, the more of each item you will get, but each will be less powerful.
     If you pick a MacGuffin goal, you need at least enough checks to fit the goal items. If not, they will be placed in your start_inventory"""
-    internal_name = "number_of_checks"
+    internal_name = "number_of_trips"
     display_name = "Number of Checks"
     range_start = 1
     range_end = 1000
@@ -156,7 +156,7 @@ class TrapRate(NamedRange):
 @dataclass
 class APGOOptions(PerGameCommonOptions):
     goal: Goal
-    number_of_checks: NumberOfChecks
+    number_of_trips: NumberOfTrips
     minimum_distance: MinimumDistance
     maximum_distance: MaximumDistance
     speed_requirement: SpeedRequirement

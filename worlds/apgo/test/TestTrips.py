@@ -24,7 +24,7 @@ class TestGenerateTrips(TestCase):
     def test_generates_only_distance_trips(self):
         for desired_trips in range(1, 101, step):
             with self.subTest(f"{desired_trips} trips"):
-                options = {Options.NumberOfChecks.internal_name: desired_trips,
+                options = {Options.NumberOfTrips.internal_name: desired_trips,
                            Options.NumberOfLocks.internal_name: 0,
                            Options.SpeedRequirement.internal_name: 0}
                 trips = generate_trips(options, create_random())
@@ -38,7 +38,7 @@ class TestGenerateTrips(TestCase):
     def test_generates_distance_speed_trips(self):
         for desired_trips in range(1, 101, step):
             with self.subTest(f"{desired_trips} trips"):
-                options = {Options.NumberOfChecks.internal_name: desired_trips,
+                options = {Options.NumberOfTrips.internal_name: desired_trips,
                            Options.NumberOfLocks.internal_name: 0,
                            Options.SpeedRequirement.internal_name: 5}
                 trips = generate_trips(options, create_random())
@@ -53,7 +53,7 @@ class TestGenerateTrips(TestCase):
     def test_generates_distance_keys_trips(self):
         for desired_trips in range(1, 101, step):
             with self.subTest(f"{desired_trips} trips"):
-                options = {Options.NumberOfChecks.internal_name: desired_trips,
+                options = {Options.NumberOfTrips.internal_name: desired_trips,
                            Options.NumberOfLocks.internal_name: 2,
                            Options.SpeedRequirement.internal_name: 0}
                 trips = generate_trips(options, create_random())
