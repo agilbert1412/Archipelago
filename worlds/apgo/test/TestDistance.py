@@ -7,7 +7,7 @@ from BaseClasses import Location
 from . import APGOTestBase
 from .. import Options, APGOWorld
 from ..ItemNames import ItemName
-from ..Trips import generate_trips, Trip
+from ..Trips import generate_trips, Trip, get_max_distance_tier
 from ..distance import get_current_distance, get_reductions_needed_to_be_reachable
 
 FEW_TRIPS = 5
@@ -23,14 +23,6 @@ def create_random(seed: int = 0) -> Random:
     if seed == 0:
         seed = create_seed()
     return Random(seed)
-
-
-def get_max_distance_tier(trips: Iterable[Trip]) -> int:
-    return max([trip.template.distance_tier for trip in trips])
-
-
-def get_distance_reductions_and_tiers(world: APGOWorld) -> Tuple[int, int]:
-    return world.number_distance_reductions, get_max_distance_tier(world.trips.values())
 
 
 def count_trips_below_max_distance_no_reductions(world: APGOWorld, locations: Iterable[Location]):
@@ -53,11 +45,15 @@ def count_trips_below_max_distance(world: APGOWorld, locations: Iterable[Locatio
     return number_available_trips
 
 
+def get_distance_reductions_and_tiers(world: APGOWorld) -> Tuple[int, int]:
+    return world.number_distance_reductions, get_max_distance_tier(world.trips.values())
+
+
 step = 5
 
 
 class TestFewTripsNoDistanceReductions(APGOTestBase):
-    options = {Options.NumberOfChecks.internal_name: FEW_TRIPS,
+    options = {Options.NumberOfTrips.internal_name: FEW_TRIPS,
                Options.EnableDistanceReductions.internal_name: False}
 
     def test_no_reduction_exists(self):
@@ -87,7 +83,7 @@ class TestFewTripsNoDistanceReductions(APGOTestBase):
 
 
 class TestManyTripsNoDistanceReductions(APGOTestBase):
-    options = {Options.NumberOfChecks.internal_name: MANY_TRIPS,
+    options = {Options.NumberOfTrips.internal_name: MANY_TRIPS,
                Options.EnableDistanceReductions.internal_name: False}
 
     def test_no_reduction_exists(self):
@@ -116,7 +112,7 @@ class TestManyTripsNoDistanceReductions(APGOTestBase):
 
 
 class TestFewTripsWithDistanceReductions(APGOTestBase):
-    options = {Options.NumberOfChecks.internal_name: FEW_TRIPS,
+    options = {Options.NumberOfTrips.internal_name: FEW_TRIPS,
                Options.EnableDistanceReductions.internal_name: True}
 
     def test_at_least_one_reduction_exists(self):
@@ -148,7 +144,7 @@ class TestFewTripsWithDistanceReductions(APGOTestBase):
 
 
 class TestManyTripsWithDistanceReductions(APGOTestBase):
-    options = {Options.NumberOfChecks.internal_name: MANY_TRIPS,
+    options = {Options.NumberOfTrips.internal_name: MANY_TRIPS,
                Options.EnableDistanceReductions.internal_name: True}
 
     def test_at_least_one_reduction_exists(self):
@@ -183,7 +179,7 @@ class TestReductionsRequiredFitDistanceAlgorithm(TestCase):
     def test_correct_number_of_reductions_needed(self):
         for desired_trips in range(5, 105, 20):
             for max_distance in range(1000, 20000, 1000):
-                options = {Options.NumberOfChecks.internal_name: desired_trips,
+                options = {Options.NumberOfTrips.internal_name: desired_trips,
                            Options.NumberOfLocks.internal_name: 0,
                            Options.SpeedRequirement.internal_name: 0,
                            Options.MaximumDistance: max_distance,
