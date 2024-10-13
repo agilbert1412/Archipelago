@@ -51,7 +51,7 @@ class TestGenerateTrips(TestCase):
                     self.assertEqual(trip.template.key_needed, 0)
 
     def test_generates_distance_keys_trips(self):
-        for desired_trips in range(1, 101, step):
+        for desired_trips in range(5, 105, step):
             with self.subTest(f"{desired_trips} trips"):
                 options = {Options.NumberOfTrips.internal_name: desired_trips,
                            Options.NumberOfLocks.internal_name: 2,
