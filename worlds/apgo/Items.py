@@ -63,6 +63,7 @@ all_items = [
     APGOItemData(ItemName.macguffin_exclamation, ItemClassification.progression, offset + 213),
 
     APGOItemData(ItemName.hydrate, ItemClassification.filler, offset + 251),
+    APGOItemData(ItemName.take_breather, ItemClassification.filler, offset + 252),
 ]
 
 
