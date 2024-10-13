@@ -10,6 +10,7 @@ from .Options import APGOOptions, Goal
 from .Items import APGOItem, item_table, APGOItemData, create_items
 from .Locations import APGOLocation, location_table, create_locations
 from .Trips import generate_trips, Trip
+from .rules import set_rules
 from ..generic.Rules import set_rule
 
 GAME_NAME = "Archipela-Go!"
@@ -81,6 +82,9 @@ class APGOWorld(World):
         # This is a weird way to count but it works...
         self.number_distance_reductions += sum(item.name == ItemName.distance_reduction for item in created_items)
         self.setup_victory()
+
+    def set_rules(self) -> None:
+        set_rules(self, self.player, self.options)
 
     def create_item(self, item: Union[str, APGOItemData]) -> APGOItem:
         if isinstance(item, str):

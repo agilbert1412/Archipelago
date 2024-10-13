@@ -59,6 +59,7 @@ def generate_trips(options: Dict[str, int], random: Random) -> List[Trip]:
     chosen_trip_templates = random.choices(valid_trip_templates, k=options[NumberOfTrips.internal_name])
 
     make_sure_all_key_tiers_have_at_least_one_trip(chosen_trip_templates, number_of_keys)
+    make_sure_all_distance_tiers_have_at_least_one_trip(chosen_trip_templates, number_of_keys)
 
     trip_counts = dict()
     for trip_template in chosen_trip_templates:
@@ -93,7 +94,30 @@ def find_trip_with_key_tier(trips: List[TripTemplate], tier: int) -> Optional[Tr
     for trip in trips:
         if trip.key_needed == tier:
             return trip
+    return None
 
+
+def make_sure_all_distance_tiers_have_at_least_one_trip(chosen_trip_templates: List[TripTemplate], number_of_distance_reductions: int) -> None:
+    if number_of_distance_reductions <= 0:
+        return
+    for missing_distance_tier in range(0, number_of_distance_reductions + 1):
+        if find_trip_with_distance_tier(chosen_trip_templates, missing_distance_tier):
+            continue
+        for higher_distance_tier in range(number_of_distance_reductions, missing_distance_tier - 1, -1):
+            if missing_distance_tier == higher_distance_tier:
+                return
+            trip_to_downgrade = find_trip_with_key_tier(chosen_trip_templates, higher_distance_tier)
+            if trip_to_downgrade is None:
+                continue
+            chosen_trip_templates.remove(trip_to_downgrade)
+            chosen_trip_templates.append(TripTemplate(missing_distance_tier, trip_to_downgrade.speed_tier, trip_to_downgrade.key_needed))
+            break
+
+
+def find_trip_with_distance_tier(trips: List[TripTemplate], tier: int) -> Optional[TripTemplate]:
+    for trip in trips:
+        if trip.distance_tier == tier:
+            return trip
     return None
 
 
