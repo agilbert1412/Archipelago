@@ -49,6 +49,10 @@ def get_distance_reductions_and_tiers(world: APGOWorld) -> Tuple[int, int]:
     return world.number_distance_reductions, get_max_distance_tier(world.trips.values())
 
 
+def get_real_locations(test_base: APGOTestBase) -> List[Location]:
+    return [location for location in test_base.multiworld.get_locations(test_base.player) if not location.is_event]
+
+
 step = 5
 
 
@@ -62,7 +66,7 @@ class TestFewTripsNoDistanceReductions(APGOTestBase):
     def test_all_trips_are_below_max(self):
         options = self.world.options
         num_distance_reductions, max_distance_tier = get_distance_reductions_and_tiers(self.world)
-        for location in self.multiworld.get_locations(self.player):
+        for location in get_real_locations(self):
             with self.subTest(f"location: {location}"):
                 trip = self.world.trips[location.name]
                 distance = get_current_distance(trip, 0, options.maximum_distance, num_distance_reductions, max_distance_tier)
@@ -71,7 +75,7 @@ class TestFewTripsNoDistanceReductions(APGOTestBase):
     def test_all_distance_reductions_do_something(self):
         options = self.world.options
         num_distance_reductions, max_distance_tier = get_distance_reductions_and_tiers(self.world)
-        for location in self.multiworld.get_locations(self.player):
+        for location in get_real_locations(self):
             trip = self.world.trips[location.name]
             for i in range(0, MAX_EXTRA_REDUCTIONS, 5):
                 with self.subTest(f"Location: {location}, Distance Reduction: {i}"):
@@ -92,7 +96,7 @@ class TestManyTripsNoDistanceReductions(APGOTestBase):
     def test_all_trips_are_below_max(self):
         options = self.world.options
         num_distance_reductions, max_distance_tier = get_distance_reductions_and_tiers(self.world)
-        for location in self.multiworld.get_locations(self.player):
+        for location in get_real_locations(self):
             with self.subTest(f"location: {location}"):
                 trip = self.world.trips[location.name]
                 distance = get_current_distance(trip, 0, options.maximum_distance, num_distance_reductions, max_distance_tier)
@@ -101,7 +105,7 @@ class TestManyTripsNoDistanceReductions(APGOTestBase):
     def test_all_distance_reductions_do_something(self):
         options = self.world.options
         num_distance_reductions, max_distance_tier = get_distance_reductions_and_tiers(self.world)
-        for location in self.multiworld.get_locations(self.player):
+        for location in get_real_locations(self):
             trip = self.world.trips[location.name]
             for i in range(0, MAX_EXTRA_REDUCTIONS, 5):
                 with self.subTest(f"Location: {location}, Distance Reduction: {i}"):
@@ -119,21 +123,21 @@ class TestFewTripsWithDistanceReductions(APGOTestBase):
         self.assertGreater(self.world.number_distance_reductions, 0)
 
     def test_some_trips_are_below_max_with_no_reductions(self):
-        number_available_trips = count_trips_below_max_distance_no_reductions(self.world, self.multiworld.get_locations(self.player))
+        number_available_trips = count_trips_below_max_distance_no_reductions(self.world, get_real_locations(self))
         self.assertGreater(number_available_trips, 0)
 
     def test_not_all_trips_are_below_max_with_no_reductions(self):
-        number_available_trips = count_trips_below_max_distance_no_reductions(self.world, self.multiworld.get_locations(self.player))
+        number_available_trips = count_trips_below_max_distance_no_reductions(self.world, get_real_locations(self))
         self.assertLess(number_available_trips, len(self.world.trips))
 
     def test_all_trips_are_below_max_with_all_reductions(self):
-        number_available_trips = count_trips_below_max_distance_all_reductions(self.world, self.multiworld.get_locations(self.player))
+        number_available_trips = count_trips_below_max_distance_all_reductions(self.world, get_real_locations(self))
         self.assertEqual(number_available_trips, len(self.world.trips))
 
     def test_all_distance_reductions_do_something(self):
         options = self.world.options
         num_distance_reductions, max_distance_tier = get_distance_reductions_and_tiers(self.world)
-        for location in self.multiworld.get_locations(self.player):
+        for location in get_real_locations(self):
             trip = self.world.trips[location.name]
             for i in range(0, self.world.number_distance_reductions * 2, 5):
                 with self.subTest(f"Location: {location}, Distance Reduction: {i}"):
@@ -151,21 +155,21 @@ class TestManyTripsWithDistanceReductions(APGOTestBase):
         self.assertGreater(self.world.number_distance_reductions, 0)
 
     def test_some_trips_are_below_max_with_no_reductions(self):
-        number_available_trips = count_trips_below_max_distance_no_reductions(self.world, self.multiworld.get_locations(self.player))
+        number_available_trips = count_trips_below_max_distance_no_reductions(self.world, get_real_locations(self))
         self.assertGreater(number_available_trips, 0)
 
     def test_not_all_trips_are_below_max_with_no_reductions(self):
-        number_available_trips = count_trips_below_max_distance_no_reductions(self.world, self.multiworld.get_locations(self.player))
+        number_available_trips = count_trips_below_max_distance_no_reductions(self.world, get_real_locations(self))
         self.assertLess(number_available_trips, len(self.world.trips))
 
     def test_all_trips_are_below_max_with_all_reductions(self):
-        number_available_trips = count_trips_below_max_distance_all_reductions(self.world, self.multiworld.get_locations(self.player))
+        number_available_trips = count_trips_below_max_distance_all_reductions(self.world, get_real_locations(self))
         self.assertEqual(number_available_trips, len(self.world.trips))
 
     def test_all_distance_reductions_do_something(self):
         options = self.world.options
         num_distance_reductions, max_distance_tier = get_distance_reductions_and_tiers(self.world)
-        for location in self.multiworld.get_locations(self.player):
+        for location in get_real_locations(self):
             trip = self.world.trips[location.name]
             for i in range(0, self.world.number_distance_reductions * 2, 5):
                 with self.subTest(f"Location: {location}, Distance Reduction: {i}"):

@@ -5,7 +5,7 @@ from attr import dataclass
 
 from BaseClasses import Item, ItemClassification
 from .Options import APGOOptions
-from .ItemNames import ItemName
+from .ItemNames import ItemName, short_macguffins, long_macguffins
 from .Options import Goal, EnableDistanceReductions, EnableCollectionDistanceBonuses, EnableScoutingDistanceBonuses
 from .Trips import Trip
 
@@ -85,30 +85,13 @@ def create_goal_items(item_factory: APGOItemFactory, items: List[APGOItem], opti
 def create_long_macguffin_items(item_factory: APGOItemFactory, items: List[APGOItem], options: APGOOptions) -> None:
     if options.goal != Goal.option_long_macguffin:
         return
-    items.append(item_factory(ItemName.macguffin_A))
-    items.append(item_factory(ItemName.macguffin_r))
-    items.append(item_factory(ItemName.macguffin_c))
-    items.append(item_factory(ItemName.macguffin_h))
-    items.append(item_factory(ItemName.macguffin_i))
-    items.append(item_factory(ItemName.macguffin_p))
-    items.append(item_factory(ItemName.macguffin_e))
-    items.append(item_factory(ItemName.macguffin_l))
-    items.append(item_factory(ItemName.macguffin_a))
-    items.append(item_factory(ItemName.macguffin_hyphen))
-    items.append(item_factory(ItemName.macguffin_G))
-    items.append(item_factory(ItemName.macguffin_o))
-    items.append(item_factory(ItemName.macguffin_exclamation)),
+    items.extend([item_factory(macguffin) for macguffin in long_macguffins])
 
 
 def create_short_macguffin_items(item_factory: APGOItemFactory, items: List[APGOItem], options: APGOOptions) -> None:
     if options.goal != Goal.option_short_macguffin:
         return
-    items.append(item_factory(ItemName.macguffin_A))
-    items.append(item_factory(ItemName.macguffin_p))
-    items.append(item_factory(ItemName.macguffin_hyphen))
-    items.append(item_factory(ItemName.macguffin_G))
-    items.append(item_factory(ItemName.macguffin_o))
-    items.append(item_factory(ItemName.macguffin_exclamation)),
+    items.extend([item_factory(macguffin) for macguffin in short_macguffins])
 
 
 def create_keys(item_factory: APGOItemFactory, items: List[APGOItem], trips: Dict[str, Trip], options: APGOOptions) -> None:
