@@ -46,5 +46,5 @@ long_macguffins = [ItemName.macguffin_A, ItemName.macguffin_r, ItemName.macguffi
                    ItemName.macguffin_a, ItemName.macguffin_hyphen, ItemName.macguffin_G, ItemName.macguffin_o,
                    ItemName.macguffin_exclamation]
 
-honor_fillers = [ItemName.hydrate]
+honor_fillers = [ItemName.hydrate, ItemName.take_breather]
 
