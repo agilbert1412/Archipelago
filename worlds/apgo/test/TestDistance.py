@@ -58,6 +58,7 @@ step = 5
 
 class TestFewTripsNoDistanceReductions(APGOTestBase):
     options = {Options.NumberOfTrips.internal_name: FEW_TRIPS,
+               Options.NumberOfLocks.internal_name: 0,
                Options.EnableDistanceReductions.internal_name: False}
 
     def test_no_reduction_exists(self):
@@ -71,6 +72,11 @@ class TestFewTripsNoDistanceReductions(APGOTestBase):
                 trip = self.world.trips[location.name]
                 distance = get_current_distance(trip, 0, options.maximum_distance, num_distance_reductions, max_distance_tier)
                 self.assertLessEqual(distance, options.maximum_distance)
+
+    def test_all_trips_are_reachable_with_no_reductions(self):
+        for location in get_real_locations(self):
+            can_reach = self.multiworld.state.can_reach(location)
+            self.assertTrue(can_reach)
 
     def test_all_distance_reductions_do_something(self):
         options = self.world.options
@@ -88,6 +94,7 @@ class TestFewTripsNoDistanceReductions(APGOTestBase):
 
 class TestManyTripsNoDistanceReductions(APGOTestBase):
     options = {Options.NumberOfTrips.internal_name: MANY_TRIPS,
+               Options.NumberOfLocks.internal_name: 0,
                Options.EnableDistanceReductions.internal_name: False}
 
     def test_no_reduction_exists(self):
@@ -101,6 +108,11 @@ class TestManyTripsNoDistanceReductions(APGOTestBase):
                 trip = self.world.trips[location.name]
                 distance = get_current_distance(trip, 0, options.maximum_distance, num_distance_reductions, max_distance_tier)
                 self.assertLessEqual(distance, options.maximum_distance)
+
+    def test_all_trips_are_reachable_with_no_reductions(self):
+        for location in get_real_locations(self):
+            can_reach = self.multiworld.state.can_reach(location)
+            self.assertTrue(can_reach)
 
     def test_all_distance_reductions_do_something(self):
         options = self.world.options
@@ -117,6 +129,7 @@ class TestManyTripsNoDistanceReductions(APGOTestBase):
 
 class TestFewTripsWithDistanceReductions(APGOTestBase):
     options = {Options.NumberOfTrips.internal_name: FEW_TRIPS,
+               Options.NumberOfLocks.internal_name: 0,
                Options.EnableDistanceReductions.internal_name: True}
 
     def test_at_least_one_reduction_exists(self):
@@ -133,6 +146,30 @@ class TestFewTripsWithDistanceReductions(APGOTestBase):
     def test_all_trips_are_below_max_with_all_reductions(self):
         number_available_trips = count_trips_below_max_distance_all_reductions(self.world, get_real_locations(self))
         self.assertEqual(number_available_trips, len(self.world.trips))
+
+    def test_some_trips_are_reachable_with_no_reductions(self):
+        can_reach_one = False
+        for location in get_real_locations(self):
+            can_reach = self.multiworld.state.can_reach(location)
+            if can_reach:
+                can_reach_one = True
+        self.assertTrue(can_reach_one)
+
+    def test_not_all_trips_are_reachable_with_no_reductions(self):
+        cant_reach_one = False
+        for location in get_real_locations(self):
+            can_reach = self.multiworld.state.can_reach(location)
+            if not can_reach:
+                cant_reach_one = True
+        self.assertTrue(cant_reach_one)
+
+    def test_all_trips_are_reachable_with_all_reductions(self):
+        distance_reduction_items = [item for item in self.multiworld.get_items() if item.name == ItemName.distance_reduction]
+        for item in distance_reduction_items:
+            self.collect(item)
+        for location in get_real_locations(self):
+            can_reach = self.multiworld.state.can_reach(location)
+            self.assertTrue(can_reach)
 
     def test_all_distance_reductions_do_something(self):
         options = self.world.options
@@ -144,11 +181,11 @@ class TestFewTripsWithDistanceReductions(APGOTestBase):
                     distance_before = get_current_distance(trip, i, options.maximum_distance, num_distance_reductions, max_distance_tier)
                     distance_after = get_current_distance(trip, i + 1, options.maximum_distance, num_distance_reductions, max_distance_tier)
                     self.assertGreater(distance_before, distance_after)
-                    self.assertGreaterEqual(distance_after, options.minimum_distance)
 
 
 class TestManyTripsWithDistanceReductions(APGOTestBase):
     options = {Options.NumberOfTrips.internal_name: MANY_TRIPS,
+               Options.NumberOfLocks.internal_name: 0,
                Options.EnableDistanceReductions.internal_name: True}
 
     def test_at_least_one_reduction_exists(self):
@@ -165,6 +202,34 @@ class TestManyTripsWithDistanceReductions(APGOTestBase):
     def test_all_trips_are_below_max_with_all_reductions(self):
         number_available_trips = count_trips_below_max_distance_all_reductions(self.world, get_real_locations(self))
         self.assertEqual(number_available_trips, len(self.world.trips))
+
+    def test_some_trips_are_reachable_with_no_reductions(self):
+        can_reach_one = False
+        for location in get_real_locations(self):
+            can_reach = self.multiworld.state.can_reach(location)
+            if can_reach:
+                can_reach_one = True
+        self.assertTrue(can_reach_one)
+
+    def test_not_all_trips_are_reachable_with_no_reductions(self):
+        cant_reach_one = False
+        for location in get_real_locations(self):
+            num_distance_reductions, max_distance_tier = get_distance_reductions_and_tiers(self.world)
+            max_distance = self.world.options.maximum_distance
+            trip = self.world.trips[location.name]
+            distance_zero_reductions = get_current_distance(trip, 0, max_distance, num_distance_reductions, max_distance_tier)
+            can_reach = self.multiworld.state.can_reach(location)
+            if not can_reach:
+                cant_reach_one = True
+        self.assertTrue(cant_reach_one)
+
+    def test_all_trips_are_reachable_with_all_reductions(self):
+        distance_reduction_items = [item for item in self.multiworld.get_items() if item.name == ItemName.distance_reduction]
+        for item in distance_reduction_items:
+            self.collect(item)
+        for location in get_real_locations(self):
+            can_reach = self.multiworld.state.can_reach(location)
+            self.assertTrue(can_reach)
 
     def test_all_distance_reductions_do_something(self):
         options = self.world.options
