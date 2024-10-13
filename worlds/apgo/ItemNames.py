@@ -36,6 +36,7 @@ class ItemName:
 
     # Honor System based fillers
     hydrate = "Hydrate!"
+    take_breather = "Take a Breather!"
 
 
 short_macguffins = [ItemName.macguffin_A, ItemName.macguffin_p, ItemName.macguffin_hyphen,
