@@ -34,3 +34,11 @@ class ItemName:
     jumping_jack_trap = "Jumping Jack Trap"
     touch_grass_trap = "Touch Grass Trap"
 
+
+short_macguffins = [ItemName.macguffin_A, ItemName.macguffin_p, ItemName.macguffin_hyphen,
+                    ItemName.macguffin_G, ItemName.macguffin_o, ItemName.macguffin_exclamation]
+long_macguffins = [ItemName.macguffin_A, ItemName.macguffin_r, ItemName.macguffin_c, ItemName.macguffin_h,
+                   ItemName.macguffin_i, ItemName.macguffin_p, ItemName.macguffin_e, ItemName.macguffin_l,
+                   ItemName.macguffin_a, ItemName.macguffin_hyphen, ItemName.macguffin_G, ItemName.macguffin_o,
+                   ItemName.macguffin_exclamation]
+

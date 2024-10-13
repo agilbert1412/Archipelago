@@ -3,13 +3,14 @@ from typing import Mapping, Any, Union, Dict, Optional, List
 
 from BaseClasses import Region, Location, Item, ItemClassification, Tutorial
 from worlds.AutoWorld import World, WebWorld
-from .ItemNames import ItemName
+from .ItemNames import ItemName, long_macguffins, short_macguffins
 
-from .Regions import create_regions
-from .Options import APGOOptions
+from .Regions import create_regions, area_number
+from .Options import APGOOptions, Goal
 from .Items import APGOItem, item_table, APGOItemData, create_items
 from .Locations import APGOLocation, location_table, create_locations
 from .Trips import generate_trips, Trip
+from ..generic.Rules import set_rule
 
 GAME_NAME = "Archipela-Go!"
 
@@ -51,14 +52,19 @@ class APGOWorld(World):
 
     trips: Dict[str, Trip]
     number_distance_reductions: int
+    number_keys: int
 
     def generate_early(self):
         generated_trips = generate_trips(self.options.as_dict(*[option_name for option_name in self.options_dataclass.type_hints]), self.random)
         self.trips = {trip.location_name: trip for trip in generated_trips}
         self.number_distance_reductions = 0
+        self.number_keys = 0
+        for trip in self.trips.values():
+            if trip.template.key_needed > self.number_keys:
+                self.number_keys = trip.template.key_needed
 
     def create_regions(self) -> None:
-        world_regions = create_regions(self.multiworld, self.player, self.options, self.trips)
+        world_regions = create_regions(self)
 
         def create_location(name: str, code: Optional[int], region: str):
             region = world_regions[region]
@@ -74,12 +80,27 @@ class APGOWorld(World):
 
         # This is a weird way to count but it works...
         self.number_distance_reductions += sum(item.name == ItemName.distance_reduction for item in created_items)
+        self.setup_victory()
 
     def create_item(self, item: Union[str, APGOItemData]) -> APGOItem:
         if isinstance(item, str):
             item = item_table[item]
 
         return APGOItem(item.name, item.classification, item.id, self.player)
+
+    def setup_victory(self):
+        last_region = self.multiworld.get_region(area_number(self.number_keys), self.player)
+        victory_location = APGOLocation(self.player, "Goal", None, last_region)
+        last_region.locations.append(victory_location)
+        if self.options.goal == Goal.option_one_hard_travel or self.options.goal == Goal.option_allsanity:
+            set_rule(victory_location, lambda state: state.has(ItemName.distance_reduction, self.player, self.number_distance_reductions))
+        elif self.options.goal == Goal.option_long_macguffin:
+            set_rule(victory_location, lambda state: all([state.has(macguffin, self.player) for macguffin in long_macguffins]))
+        elif self.options.goal == Goal.option_short_macguffin:
+            set_rule(victory_location, lambda state: all([state.has(macguffin, self.player) for macguffin in short_macguffins]))
+
+        victory_location.place_locked_item(APGOItem("Victory", ItemClassification.progression, None, self.player))
+        self.multiworld.completion_condition[self.player] = lambda state: state.has("Victory", self.player)
 
     def fill_slot_data(self) -> Mapping[str, Any]:
         trips_dictionary = {location_name: trip.as_dict() for location_name, trip in self.trips.items()}
