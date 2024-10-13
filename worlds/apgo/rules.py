@@ -17,7 +17,7 @@ def set_key_rules(world, player: int, world_options: Options.APGOOptions):
         return
 
     for lock in range(1, world.number_keys+1):
-        set_rule(world.get_entrance(f"Area {lock-1} -> Area {lock}"), lambda state: state.has(ItemName.key, player, lock))
+        set_rule(world.get_entrance(f"Area {lock-1} -> Area {lock}"), lambda state, i=lock: state.has(ItemName.key, player, i))
 
 
 def set_distance_rules(world, player: int, world_options: Options.APGOOptions):

@@ -18,7 +18,7 @@ location_table = {
 
 i = 1
 for trip_template in all_trip_templates:
-    for unique_identifier in range(1, 10):
+    for unique_identifier in range(1, 101):
         location_table[trip_template.get_name_unique(unique_identifier)] = offset + i
         i += 1
 
