@@ -33,7 +33,7 @@ class ItemTag(enum.Enum):
 
 
 @dataclass(frozen=True)
-class ItemSource(ABC):
+class Source(ABC):
     add_tags: ClassVar[Tuple[ItemTag]] = ()
 
     @property
@@ -47,24 +47,25 @@ class ItemSource(ABC):
 
 
 @dataclass(frozen=True, **kw_only)
-class GenericSource(ItemSource):
+class GenericSource(Source):
     regions: Tuple[str, ...] = ()
     """No region means it's available everywhere."""
     other_requirements: Tuple[Requirement, ...] = ()
 
 
 @dataclass(frozen=True)
-class CustomRuleSource(ItemSource):
+class CustomRuleSource(Source):
     """Hopefully once everything is migrated to sources, we won't need these custom logic anymore."""
     create_rule: Callable[[Any], StardewRule]
 
 
 @dataclass(frozen=True, **kw_only)
-class CompoundSource(ItemSource):
-    sources: Tuple[ItemSource, ...] = ()
+class CompoundSource(Source):
+    """A source that is made up of other sources. Requires all the sources to be available to be available."""
+    sources: Tuple[Source, ...] = ()
 
 
-class Tag(ItemSource):
+class Tag(Source):
     """Not a real source, just a way to add tags to an item. Will be removed from the item sources during unpacking."""
     tag: Tuple[ItemTag, ...]
 
@@ -79,10 +80,10 @@ class Tag(ItemSource):
 @dataclass(frozen=True)
 class GameItem:
     name: str
-    sources: List[ItemSource] = field(default_factory=list)
+    sources: List[Source] = field(default_factory=list)
     tags: Set[ItemTag] = field(default_factory=set)
 
-    def add_sources(self, sources: Iterable[ItemSource]):
+    def add_sources(self, sources: Iterable[Source]):
         self.sources.extend(source for source in sources if type(source) is not Tag)
         for source in sources:
             self.add_tags(source.add_tags)

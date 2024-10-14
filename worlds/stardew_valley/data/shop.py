@@ -1,14 +1,14 @@
 from dataclasses import dataclass
 from typing import Tuple, Optional
 
-from .game_item import ItemSource, kw_only, Requirement
+from .game_item import Source, kw_only, Requirement
 from ..strings.season_names import Season
 
 ItemPrice = Tuple[int, str]
 
 
 @dataclass(frozen=True, **kw_only)
-class ShopSource(ItemSource):
+class ShopSource(Source):
     shop_region: str
     money_price: Optional[int] = None
     items_price: Optional[Tuple[ItemPrice, ...]] = None
@@ -21,20 +21,20 @@ class ShopSource(ItemSource):
 
 
 @dataclass(frozen=True, **kw_only)
-class MysteryBoxSource(ItemSource):
+class MysteryBoxSource(Source):
     amount: int
 
 
 @dataclass(frozen=True, **kw_only)
-class ArtifactTroveSource(ItemSource):
+class ArtifactTroveSource(Source):
     amount: int
 
 
 @dataclass(frozen=True, **kw_only)
-class PrizeMachineSource(ItemSource):
+class PrizeMachineSource(Source):
     amount: int
 
 
 @dataclass(frozen=True, **kw_only)
-class FishingTreasureChestSource(ItemSource):
+class FishingTreasureChestSource(Source):
     amount: int
