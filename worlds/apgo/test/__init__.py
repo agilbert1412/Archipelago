@@ -1,7 +1,7 @@
 from typing import ClassVar
 
 from test.bases import WorldTestBase
-from .. import APGOWorld, GAME_NAME
+from .. import APGOWorld, GAME_NAME, APGOOptions
 
 
 class APGOTestBase(WorldTestBase):
@@ -20,3 +20,13 @@ class APGOTestBase(WorldTestBase):
         is_not_apgo_test = type(self) is not APGOTestBase
         should_run_default_tests = is_not_apgo_test and super().run_default_tests
         return should_run_default_tests
+
+
+def complete_options_with_default(options_to_complete=None) -> APGOOptions:
+    if options_to_complete is None:
+        options_to_complete = {}
+
+    for name, option in APGOOptions.type_hints.items():
+        options_to_complete[name] = option.from_any(options_to_complete.get(name, option.default))
+
+    return APGOOptions(**options_to_complete)

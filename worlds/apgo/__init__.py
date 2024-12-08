@@ -1,4 +1,5 @@
 import json
+import logging
 from typing import Mapping, Any, Union, Dict, Optional, List
 
 from BaseClasses import Region, Location, Item, ItemClassification, Tutorial
@@ -12,6 +13,8 @@ from .Locations import APGOLocation, location_table, create_locations
 from .Trips import generate_trips, Trip
 from .rules import set_rules
 from ..generic.Rules import set_rule
+
+logger = logging.getLogger(__name__)
 
 GAME_NAME = "Archipela-Go!"
 
@@ -56,6 +59,7 @@ class APGOWorld(World):
     number_keys: int
 
     def generate_early(self):
+        self.force_change_options_if_incompatible(self.options, self.player, self.player_name)
         generated_trips = generate_trips(self.options.as_dict(*[option_name for option_name in self.options_dataclass.type_hints]), self.random)
         self.trips = {trip.location_name: trip for trip in generated_trips}
         self.number_distance_reductions = 0
@@ -63,6 +67,21 @@ class APGOWorld(World):
         for trip in self.trips.values():
             if trip.template.key_needed > self.number_keys:
                 self.number_keys = trip.template.key_needed
+
+    @staticmethod
+    def force_change_options_if_incompatible(options: APGOOptions, player, player_name):
+        max_trips = 1210
+        max_trips -= (10 - options.number_of_locks) * 100
+        if options.speed_requirement.value <= 0:
+            max_trips = max_trips // 10
+        if options.number_of_trips > max_trips:
+            options.number_of_trips.value = max_trips
+            logger.warning(
+                f"Too many trips requested by {player} ({player_name}) with their settings. Forced down the number of trips to {max_trips}")
+        if options.number_of_trips < options.number_of_locks * 2:
+            options.number_of_locks.value = options.number_of_trips // 2
+            logger.warning(
+                f"Too many keys requested by {player} ({player_name}) with their number of trips. Forced down the number of keys to {options.number_of_locks.value}")
 
     def create_regions(self) -> None:
         world_regions = create_regions(self)

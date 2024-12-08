@@ -18,9 +18,11 @@ location_table = {
 
 i = 1
 for trip_template in all_trip_templates:
-    for unique_identifier in range(1, 101):
-        location_table[trip_template.get_name_unique(unique_identifier)] = offset + i
+    for unique_name in trip_template.get_unique_names():
+        location_table[unique_name] = offset + i
         i += 1
+
+a = 5
 
 
 class APGOLocationFactory(Protocol):

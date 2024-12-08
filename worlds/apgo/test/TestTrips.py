@@ -22,7 +22,7 @@ step = 5
 class TestGenerateTrips(TestCase):
 
     def test_generates_only_distance_trips(self):
-        for desired_trips in range(1, 101, step):
+        for desired_trips in range(step, 101, step):
             with self.subTest(f"{desired_trips} trips"):
                 options = {Options.NumberOfTrips.internal_name: desired_trips,
                            Options.NumberOfLocks.internal_name: 0,
@@ -36,7 +36,7 @@ class TestGenerateTrips(TestCase):
                     self.assertEqual(trip.template.key_needed, 0)
 
     def test_generates_distance_speed_trips(self):
-        for desired_trips in range(1, 101, step):
+        for desired_trips in range(step, 101, step):
             with self.subTest(f"{desired_trips} trips"):
                 options = {Options.NumberOfTrips.internal_name: desired_trips,
                            Options.NumberOfLocks.internal_name: 0,
@@ -51,7 +51,7 @@ class TestGenerateTrips(TestCase):
                     self.assertEqual(trip.template.key_needed, 0)
 
     def test_generates_distance_keys_trips(self):
-        for desired_trips in range(5, 105, step):
+        for desired_trips in range(step, 105, step):
             with self.subTest(f"{desired_trips} trips"):
                 options = {Options.NumberOfTrips.internal_name: desired_trips,
                            Options.NumberOfLocks.internal_name: 2,
@@ -69,3 +69,55 @@ class TestGenerateTrips(TestCase):
                         at_least_one_tiers.add(trip.template.key_needed)
                 for i in range(highest_key_tier + 1):
                     self.assertIn(i, at_least_one_tiers)
+
+    def test_never_generates_too_many_of_one_type_without_keys_without_speed(self):
+        for desired_trips in range(step, 101, step):
+            with self.subTest(f"{desired_trips} trips"):
+                options = {Options.NumberOfTrips.internal_name: desired_trips,
+                           Options.NumberOfLocks.internal_name: 0,
+                           Options.SpeedRequirement.internal_name: 0}
+                trips = generate_trips(options, create_random())
+                total_trips = len(trips)
+                self.assertEqual(total_trips, desired_trips)
+                for trip in trips:
+                    number = trip.get_number()
+                    self.assertLessEqual(number, trip.template.get_max_number_of_this_trip())
+
+    def test_never_generates_too_many_of_one_type_without_keys_with_speed(self):
+        for desired_trips in range(step, 201, step):
+            with self.subTest(f"{desired_trips} trips"):
+                options = {Options.NumberOfTrips.internal_name: desired_trips,
+                           Options.NumberOfLocks.internal_name: 0,
+                           Options.SpeedRequirement.internal_name: 5}
+                trips = generate_trips(options, create_random())
+                total_trips = len(trips)
+                self.assertEqual(total_trips, desired_trips)
+                for trip in trips:
+                    number = trip.get_number()
+                    self.assertLessEqual(number, trip.template.get_max_number_of_this_trip())
+
+    def test_never_generates_too_many_of_one_type_with_keys_without_speed(self):
+        for desired_trips in range(step, 201, step):
+            with self.subTest(f"{desired_trips} trips"):
+                options = {Options.NumberOfTrips.internal_name: desired_trips,
+                           Options.NumberOfLocks.internal_name: 10,
+                           Options.SpeedRequirement.internal_name: 0}
+                trips = generate_trips(options, create_random())
+                total_trips = len(trips)
+                self.assertEqual(total_trips, desired_trips)
+                for trip in trips:
+                    number = trip.get_number()
+                    self.assertLessEqual(number, trip.template.get_max_number_of_this_trip())
+
+    def test_never_generates_too_many_of_one_type_with_keys_with_speed(self):
+        for desired_trips in range(step, 1001, step):
+            with self.subTest(f"{desired_trips} trips"):
+                options = {Options.NumberOfTrips.internal_name: desired_trips,
+                           Options.NumberOfLocks.internal_name: 10,
+                           Options.SpeedRequirement.internal_name: 5}
+                trips = generate_trips(options, create_random())
+                total_trips = len(trips)
+                self.assertEqual(total_trips, desired_trips)
+                for trip in trips:
+                    number = trip.get_number()
+                    self.assertLessEqual(number, trip.template.get_max_number_of_this_trip())

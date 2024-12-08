@@ -137,12 +137,13 @@ def create_additional_items(item_factory: APGOItemFactory, items: List[APGOItem]
     if number_items_left > len(random_items):
         chosen_items.extend(random_items)
         number_items_left -= len(random_items)
+    elif options.enable_distance_reductions == EnableDistanceReductions.option_true:
+        chosen_items.append(ItemName.distance_reduction)
+        number_items_left -= 1
 
     chosen_items.extend(random.choices(random_items, k=number_items_left))
     allowed_distance_reductions = max(5, int(math.floor(options.number_of_trips * 0.15)))
     num_distance_reductions = chosen_items.count(ItemName.distance_reduction)
-    if num_distance_reductions > 0:
-        random_items.remove(ItemName.distance_reduction)
     while num_distance_reductions > allowed_distance_reductions:
         chosen_items.remove(ItemName.distance_reduction)
         chosen_items.append(random.choice(random_items))
