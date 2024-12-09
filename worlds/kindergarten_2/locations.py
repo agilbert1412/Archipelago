@@ -89,7 +89,7 @@ monstermon_locations = [
     LocationData(MonstermonCard.ofaka_tornado, mission_complete(Mission.things_go_boom)),
     LocationData(MonstermonCard.literally_grass, "Negociated With Monty"),
     LocationData(MonstermonCard.doodoo_bug, "Toilet Paper To Ozzy"),
-    LocationData(MonstermonCard.mystical_tomato, "Obtained Nuggets"),
+    LocationData(MonstermonCard.mystical_tomato, "Behind Lunch Lady Counter"),
     LocationData(MonstermonCard.hissing_fauna, "Monstermon Battle"),  # Monty
     LocationData(MonstermonCard.legendary_sword, "Woods Puzzle"),
     LocationData(MonstermonCard.golden_dewdrop, "Monstermon Battle"),  # Jerome

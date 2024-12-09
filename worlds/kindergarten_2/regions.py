@@ -42,7 +42,7 @@ def create_regions(multiworld: MultiWorld, player: int, world_options: Kindergar
     new_region(multiworld, player, "Handicap Ramp (Monty)", ["Push Monty Up The Ramp"], ["Be Handicapped"])
     new_region(multiworld, player, "Handicap Ramp", ["Be Handicapped", "Nuget is 'Special'"], ["Get Lost In The Woods"])
     new_region(multiworld, player, "Lighter Into School", ["Smuggle Lighter Into The School"], ["Distract Applegate", "Enter Weapons Closet For Nugget Cave Shovel", "Buy All Burgers"])
-    new_region(multiworld, player, "Lunch Lady Gets More Burgers", ["Buy All Burgers"], ["Enter Nugget Cave", "Bury Nugget In Nuggets", "Grab Nuggets While Lunch Lady Gets Burgers"])
+    new_region(multiworld, player, "Lunch Lady Gets More Burgers", ["Buy All Burgers"], ["Enter Nugget Cave", "Bury Nugget In Nuggets", "Grab Nuggets While Lunch Lady Gets Burgers", "Go Behind The Counter While Lunch Lady Gets Burgers"])
     new_region(multiworld, player, "Weapons Closet", ["Enter Weapons Closet For Chainsaw", "Enter Weapons Closet For Murder Shovel",
                                                       "Enter Weapons Closet For Nugget Cave Shovel", "Enter Weapons Closet For Device",
                                                       "Enter Weapons Closet With A Bomb"], [])
@@ -62,8 +62,9 @@ def create_regions(multiworld: MultiWorld, player: int, world_options: Kindergar
     new_region(multiworld, player, "Replace Lounge Flower", ["Replace Yellow Flower With Blue"], [])
     new_region(multiworld, player, "Negociated With Monty", ["Negociate With Monty"], [])
     new_region(multiworld, player, "Toilet Paper To Ozzy", ["Give Toilet Paper To Ozzy"], [])
-    new_region(multiworld, player, "Lunch Lady Cooks Something Vegan", ["Ask For Vegan Lunch"], ["Grab Nuggets While Lunch Lady Cooks"])
-    new_region(multiworld, player, "Obtained Nuggets", ["Grab Nuggets While Lunch Lady Gets Burgers", "Grab Nuggets While Lunch Lady Cooks"], ["Give Tenders To Nugget", "Bring Tenders To Microwave"])
+    new_region(multiworld, player, "Lunch Lady Cooks Something Vegan", ["Ask For Vegan Lunch"], ["Go Behind The Counter While Lunch Lady Cooks"])
+    new_region(multiworld, player, "Behind Lunch Lady Counter", ["Go Behind The Counter While Lunch Lady Gets Burgers", "Go Behind The Counter While Lunch Lady Cooks"], [])
+    new_region(multiworld, player, "Obtained Nuggets", ["Grab Nuggets While Lunch Lady Gets Burgers"], ["Give Tenders To Nugget", "Bring Tenders To Microwave"])
     new_region(multiworld, player, "Tenders", ["Give Tenders To Nugget"], ["Find Tenders A Home"])
     new_region(multiworld, player, "Woods Puzzle", ["Get Lost In The Woods"], [])
     new_region(multiworld, player, "Nugget Fidget Spinner", ["Give Nugget Fidget Spinner"], [])
