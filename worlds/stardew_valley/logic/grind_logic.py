@@ -1,12 +1,12 @@
 from typing import Union, TYPE_CHECKING
 
-from Utils import cache_self1
 from .base_logic import BaseLogic, BaseLogicMixin
 from .book_logic import BookLogicMixin
 from .has_logic import HasLogicMixin
 from .received_logic import ReceivedLogicMixin
 from .region_logic import RegionLogicMixin
 from .time_logic import TimeLogicMixin
+from ..core import cache_self1
 from ..stardew_rule import StardewRule, HasProgressionPercent
 from ..strings.book_names import Book
 from ..strings.craftable_names import Consumable

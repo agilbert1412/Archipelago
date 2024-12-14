@@ -33,7 +33,6 @@ from .strings.ap_names.ap_option_names import WalnutsanityOptionName, Secretsani
 from .strings.ap_names.community_upgrade_names import CommunityUpgrade
 from .strings.ap_names.mods.mod_items import SVEQuestItem, SVERunes
 from .strings.ap_names.transport_names import Transportation
-from .strings.metal_names import Artifact as ArtifactName
 from .strings.artisan_good_names import ArtisanGood
 from .strings.backpack_tiers import Backpack
 from .strings.building_names import Building
@@ -50,7 +49,7 @@ from .strings.generic_names import Generic
 from .strings.geode_names import Geode
 from .strings.machine_names import Machine
 from .strings.material_names import Material
-from .strings.metal_names import MetalBar, Mineral
+from .strings.metal_names import Artifact as ArtifactName, MetalBar, Mineral
 from .strings.monster_drop_names import Loot
 from .strings.monster_names import Monster
 from .strings.performance_names import Performance
@@ -59,7 +58,7 @@ from .strings.region_names import Region, LogicRegion
 from .strings.season_names import Season
 from .strings.skill_names import Skill
 from .strings.special_item_names import SpecialItem
-from .strings.tool_names import Tool, ToolMaterial
+from .strings.tool_names import Tool, ToolMaterial, FishingRod
 from .strings.tv_channel_names import Channel
 from .strings.villager_names import NPC, ModNPC
 from .strings.wallet_item_names import Wallet
@@ -117,7 +116,8 @@ def set_isolated_locations_rules(logic: StardewLogic, multiworld, player):
 
 
 def set_tool_rules(logic: StardewLogic, multiworld, player, content: StardewContent):
-    if not content.features.tool_progression.is_progressive:
+    tool_progression = content.features.tool_progression
+    if not tool_progression.is_progressive:
         return
 
     add_rule(multiworld, player, "Purchase Fiberglass Rod", (logic.skill.has_level(Skill.fishing, 2) & logic.money.can_spend(1800)))
@@ -125,12 +125,20 @@ def set_tool_rules(logic: StardewLogic, multiworld, player, content: StardewCont
 
     add_rule(multiworld, player, "Copper Pan Cutscene", logic.received("Glittering Boulder Removed"))
 
-    materials = [None, "Copper", "Iron", "Gold", "Iridium"]
-    tool = [Tool.hoe, Tool.pickaxe, Tool.axe, Tool.watering_can, Tool.trash_can, Tool.pan]
-    for (previous, material), tool in itertools.product(zip(materials[:4], materials[1:]), tool):
-        if previous is None:
-            continue
-        tool_upgrade_location = multiworld.get_location(f"{material} {tool} Upgrade", player)
+    # Pan has no basic tier, so it is removed from materials.
+    pan_materials = ToolMaterial.materials[1:]
+    for previous, material in itertools.product(pan_materials[:-1], pan_materials[1:]):
+        location_name = tool_progression.to_upgrade_location_name(Tool.pan, material)
+        tool_upgrade_location = multiworld.get_location(location_name, player)
+        # You need to receive the previous tool to be able to upgrade it.
+        MultiWorldRules.set_rule(tool_upgrade_location, logic.tool.has_pan(previous))
+
+    materials = ToolMaterial.materials
+    tool = [Tool.hoe, Tool.pickaxe, Tool.axe, Tool.watering_can, Tool.trash_can]
+    for (previous, material), tool in itertools.product(zip(materials[:-1], materials[1:]), tool):
+        location_name = tool_progression.to_upgrade_location_name(tool, material)
+        tool_upgrade_location = multiworld.get_location(location_name, player)
+        # You need to receive the previous tool to be able to upgrade it.
         MultiWorldRules.set_rule(tool_upgrade_location, logic.tool.has_tool(tool, previous))
 
 
@@ -198,7 +206,7 @@ def set_entrance_rules(logic: StardewLogic, multiworld, player, world_options: S
 
     set_entrance_rule(multiworld, player, Entrance.enter_tide_pools, logic.received("Beach Bridge") | (logic.mod.magic.can_blink()))
     set_entrance_rule(multiworld, player, Entrance.enter_quarry, logic.received("Bridge Repair") | (logic.mod.magic.can_blink()))
-    set_entrance_rule(multiworld, player, Entrance.enter_secret_woods, logic.tool.has_tool(Tool.axe, "Iron") | (logic.mod.magic.can_blink()))
+    set_entrance_rule(multiworld, player, Entrance.enter_secret_woods, logic.tool.has_tool(Tool.axe, ToolMaterial.iron) | (logic.mod.magic.can_blink()))
     set_entrance_rule(multiworld, player, Entrance.forest_to_wizard_tower, logic.region.can_reach(Region.community_center))
     set_entrance_rule(multiworld, player, Entrance.forest_to_sewer, logic.wallet.has_rusty_key())
     set_entrance_rule(multiworld, player, Entrance.town_to_sewer, logic.wallet.has_rusty_key())
@@ -213,7 +221,7 @@ def set_entrance_rules(logic: StardewLogic, multiworld, player, world_options: S
     set_entrance_rule(multiworld, player, LogicEntrance.buy_from_traveling_merchant, logic.traveling_merchant.has_days())
     set_entrance_rule(multiworld, player, LogicEntrance.buy_from_raccoon, logic.quest.has_raccoon_shop())
     set_entrance_rule(multiworld, player, LogicEntrance.fish_in_waterfall,
-                      logic.skill.has_level(Skill.fishing, 5) & logic.tool.has_fishing_rod(2))
+                      logic.skill.has_level(Skill.fishing, 5) & logic.tool.has_fishing_rod(FishingRod.bamboo))
 
     set_farm_buildings_entrance_rules(logic, multiworld, player)
 
@@ -375,11 +383,11 @@ def set_island_entrances_rules(logic: StardewLogic, multiworld, player, content:
         Entrance.island_south_to_southeast: logic.received("Island Resort"),
         Entrance.use_island_resort: logic.received("Island Resort"),
         Entrance.island_west_to_qi_walnut_room: logic.received("Qi Walnut Room"),
-        Entrance.island_north_to_volcano: logic.tool.can_water(0) | logic.received("Volcano Bridge") | logic.mod.magic.can_blink(),
-        Entrance.volcano_to_secret_beach: logic.tool.can_water(2),
-        Entrance.climb_to_volcano_5: logic.ability.can_mine_perfectly() & logic.tool.can_water(1),
+        Entrance.island_north_to_volcano: logic.tool.can_water() | logic.received("Volcano Bridge") | logic.mod.magic.can_blink(),
+        Entrance.volcano_to_secret_beach: logic.tool.can_water(3),
+        Entrance.climb_to_volcano_5: logic.ability.can_mine_perfectly() & logic.tool.can_water(2),
         Entrance.talk_to_volcano_dwarf: logic.wallet.can_speak_dwarf(),
-        Entrance.climb_to_volcano_10: logic.ability.can_mine_perfectly() & logic.tool.can_water(1),
+        Entrance.climb_to_volcano_10: logic.ability.can_mine_perfectly() & logic.tool.can_water(2),
         Entrance.mountain_to_leo_treehouse: logic.received("Treehouse"),
     }
     parrots = [Entrance.parrot_express_docks_to_volcano, Entrance.parrot_express_jungle_to_volcano,
@@ -452,7 +460,7 @@ def set_walnut_puzzle_rules(logic: StardewLogic, multiworld, player, world_optio
     add_rule(multiworld, player, "Purple Flowers Island Survey", logic.walnut.can_start_field_office)
     add_rule(multiworld, player, "Purple Starfish Island Survey", logic.walnut.can_start_field_office)
     add_rule(multiworld, player, "Protruding Tree Walnut", logic.combat.has_slingshot)
-    add_rule(multiworld, player, "Starfish Tide Pool", logic.tool.has_fishing_rod(1))
+    add_rule(multiworld, player, "Starfish Tide Pool", logic.tool.has_fishing_rod())
     add_rule(multiworld, player, "Mermaid Song", logic.has(Furniture.flute_block))
 
 
@@ -480,7 +488,7 @@ def set_walnut_repeatable_rules(logic, multiworld, player, world_options):
     if WalnutsanityOptionName.repeatables not in world_options.walnutsanity:
         return
     for i in range(1, 6):
-        MultiWorldRules.set_rule(multiworld.get_location(f"Fishing Walnut {i}", player), logic.tool.has_fishing_rod(1))
+        MultiWorldRules.set_rule(multiworld.get_location(f"Fishing Walnut {i}", player), logic.tool.has_fishing_rod())
         MultiWorldRules.set_rule(multiworld.get_location(f"Harvesting Walnut {i}", player), logic.skill.can_get_farming_xp)
         MultiWorldRules.set_rule(multiworld.get_location(f"Mussel Node Walnut {i}", player), logic.tool.has_tool(Tool.pickaxe))
         MultiWorldRules.set_rule(multiworld.get_location(f"Volcano Rocks Walnut {i}", player), logic.tool.has_tool(Tool.pickaxe))
@@ -878,7 +886,8 @@ def set_secrets_rules(logic: StardewLogic, multiworld: MultiWorld, player: int, 
         add_rule(multiworld, player, "Meowmere", logic.has(SpecialItem.far_away_stone) & logic.region.can_reach(Region.wizard_basement))
         add_rule(multiworld, player, "A Familiar Tune", logic.relationship.can_meet(NPC.elliott))
         add_rule(multiworld, player, "Flubber Experiment",
-                 logic.relationship.can_get_married() & logic.building.has_building(Building.slime_hutch) & logic.has(Machine.slime_incubator) & logic.has(Loot.green_slime_egg))
+                 logic.relationship.can_get_married() & logic.building.has_building(Building.slime_hutch) & logic.has(Machine.slime_incubator) & logic.has(
+                     Loot.green_slime_egg))
         add_rule(multiworld, player, "Seems Fishy", logic.money.can_spend_at(Region.wizard_basement, 500))
         add_rule(multiworld, player, "What kind of monster is this?", logic.gifts.can_gift_to(NPC.willy, Fish.mutant_carp))
         add_rule(multiworld, player, "My mouth is watering already", logic.gifts.can_gift_to(NPC.abigail, Meal.magic_rock_candy))
@@ -908,7 +917,7 @@ def set_secrets_rules(logic: StardewLogic, multiworld: MultiWorld, player: int, 
         add_rule(multiworld, player, "Strange Sighting", logic.region.can_reach_all((Region.bus_stop, Region.town)) & logic.time.has_lived_months(6))
         add_rule(multiworld, player, "Sea Monster Sighting", logic.region.can_reach(Region.beach) & logic.time.has_lived_months(2))
         add_rule(multiworld, player, "...Bigfoot?", logic.region.can_reach_all((Region.forest, Region.town, Region.secret_woods)) & logic.time.has_lived_months(4))
-        add_rule(multiworld, player, "'Me me me me me me me me me me me me me me me me'", logic.region.can_reach(Region.railroad) & logic.tool.has_tool(Tool.scythe))
+        add_rule(multiworld, player, "'Me me me me me me me me me me me me me me me me'", logic.region.can_reach(Region.railroad) & logic.tool.has_scythe())
         add_rule(multiworld, player, "Secret Iridium Stackmaster Trophy", logic.grind.can_grind_item(10000, Material.wood))
 
     if SecretsanityOptionName.secret_notes in world_options.secretsanity:
@@ -972,8 +981,8 @@ def set_deepwoods_rules(logic: StardewLogic, multiworld: MultiWorld, player: int
     if not content.is_enabled(ModNames.deepwoods):
         return
 
-    add_rule(multiworld, player, "Breaking Up Deep Woods Gingerbread House", logic.tool.has_tool(Tool.axe, "Gold"))
-    add_rule(multiworld, player, "Chop Down a Deep Woods Iridium Tree", logic.tool.has_tool(Tool.axe, "Iridium"))
+    add_rule(multiworld, player, "Breaking Up Deep Woods Gingerbread House", logic.tool.has_tool(Tool.axe, ToolMaterial.gold))
+    add_rule(multiworld, player, "Chop Down a Deep Woods Iridium Tree", logic.tool.has_tool(Tool.axe, ToolMaterial.iridium))
     set_entrance_rule(multiworld, player, DeepWoodsEntrance.use_woods_obelisk, logic.received("Woods Obelisk"))
     for depth in range(10, 100 + 10, 10):
         set_entrance_rule(multiworld, player, move_to_woods_depth(depth), logic.mod.deepwoods.can_chop_to_depth(depth))
@@ -984,12 +993,12 @@ def set_magic_spell_rules(logic: StardewLogic, multiworld: MultiWorld, player: i
     if not content.is_enabled(ModNames.magic):
         return
 
-    add_rule(multiworld, player, "Analyze: Clear Debris", (logic.tool.has_tool("Axe", "Basic") | logic.tool.has_tool("Pickaxe", "Basic")))
-    add_rule(multiworld, player, "Analyze: Till", logic.tool.has_tool("Hoe", "Basic"))
-    add_rule(multiworld, player, "Analyze: Water", logic.tool.has_tool("Watering Can", "Basic"))
+    add_rule(multiworld, player, "Analyze: Clear Debris", logic.tool.has_tool(Tool.axe) | logic.tool.has_tool(Tool.pickaxe))
+    add_rule(multiworld, player, "Analyze: Till", logic.tool.has_tool(Tool.hoe))
+    add_rule(multiworld, player, "Analyze: Water", logic.tool.has_tool(Tool.watering_can))
     add_rule(multiworld, player, "Analyze All Toil School Locations",
-             (logic.tool.has_tool("Watering Can", "Basic") & logic.tool.has_tool("Hoe", "Basic") &
-              (logic.tool.has_tool("Axe", "Basic") | logic.tool.has_tool("Pickaxe", "Basic"))))
+             (logic.tool.has_tool("Watering Can", "Basic") & logic.tool.has_tool(Tool.hoe) &
+              (logic.tool.has_tool("Axe", "Basic") | logic.tool.has_tool(Tool.pickaxe))))
     # Do I *want* to add boots into logic when you get them even in vanilla without effort?  idk
     add_rule(multiworld, player, "Analyze: Evac", logic.ability.can_mine_perfectly())
     add_rule(multiworld, player, "Analyze: Haste", logic.has("Coffee"))
@@ -1011,8 +1020,8 @@ def set_magic_spell_rules(logic: StardewLogic, multiworld: MultiWorld, player: i
              (logic.region.can_reach(Region.witch_hut) & logic.region.can_reach(Region.mines_floor_100) &
               logic.region.can_reach(Region.farm) & logic.time.has_lived_months(12)))
     add_rule(multiworld, player, "Analyze Every Magic School Location",
-             (logic.tool.has_tool("Watering Can", "Basic") & logic.tool.has_tool("Hoe", "Basic") &
-              (logic.tool.has_tool("Axe", "Basic") | logic.tool.has_tool("Pickaxe", "Basic")) &
+             (logic.tool.has_tool("Watering Can", "Basic") & logic.tool.has_tool(Tool.hoe) &
+              (logic.tool.has_tool("Axe", "Basic") | logic.tool.has_tool(Tool.pickaxe)) &
               logic.has("Coffee") & logic.has("Life Elixir") & logic.ability.can_mine_perfectly() & logic.has("Earth Crystal") & logic.has("Fire Quartz") &
               logic.skill.can_fish(difficulty=85) & logic.region.can_reach(Region.witch_hut) & logic.region.can_reach(Region.mines_floor_100) &
               logic.region.can_reach(Region.farm) & logic.time.has_lived_months(12)))

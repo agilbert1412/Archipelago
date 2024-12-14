@@ -1,11 +1,11 @@
 from functools import cached_property
 from typing import Union
 
-from Utils import cache_self1
 from .base_logic import BaseLogicMixin, BaseLogic
 from .has_logic import HasLogicMixin
 from .received_logic import ReceivedLogicMixin
 from .region_logic import RegionLogicMixin
+from ..core import cache_self1
 from ..mods.logic.magic_logic import MagicLogicMixin
 from ..stardew_rule import StardewRule, False_
 from ..strings.ap_names.ap_weapon_names import APWeapon

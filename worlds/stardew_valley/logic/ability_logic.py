@@ -11,7 +11,7 @@ from ..mods.logic.magic_logic import MagicLogicMixin
 from ..stardew_rule import StardewRule
 from ..strings.region_names import Region
 from ..strings.skill_names import Skill, ModSkill
-from ..strings.tool_names import ToolMaterial, Tool
+from ..strings.tool_names import ToolMaterial, Tool, FishingRod
 
 if typing.TYPE_CHECKING:
     from ..mods.logic.mod_logic import ModLogicMixin
@@ -35,12 +35,12 @@ ModLogicMixin]]):
                 self.logic.region.can_reach(Region.skull_cavern))
 
     def can_farm_perfectly(self) -> StardewRule:
-        tool_rule = self.logic.tool.has_tool(Tool.hoe, ToolMaterial.iridium) & self.logic.tool.can_water(4)
+        tool_rule = self.logic.tool.has_tool(Tool.hoe, ToolMaterial.iridium) & self.logic.tool.can_water(5)
         return tool_rule & self.logic.skill.has_farming_level(10)
 
     def can_fish_perfectly(self) -> StardewRule:
         skill_rule = self.logic.skill.has_level(Skill.fishing, 10)
-        return skill_rule & self.logic.tool.has_fishing_rod(4)
+        return skill_rule & self.logic.tool.has_fishing_rod(FishingRod.iridium)
 
     def can_chop_trees(self) -> StardewRule:
         return self.logic.tool.has_tool(Tool.axe) & self.logic.region.can_reach(Region.forest)

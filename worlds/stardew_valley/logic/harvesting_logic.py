@@ -1,7 +1,6 @@
 from functools import cached_property
 from typing import Union
 
-from Utils import cache_self1
 from .base_logic import BaseLogicMixin, BaseLogic
 from .farming_logic import FarmingLogicMixin
 from .has_logic import HasLogicMixin
@@ -10,6 +9,7 @@ from .region_logic import RegionLogicMixin
 from .season_logic import SeasonLogicMixin
 from .time_logic import TimeLogicMixin
 from .tool_logic import ToolLogicMixin
+from ..core import cache_self1
 from ..data.harvest import ForagingSource, HarvestFruitTreeSource, HarvestCropSource
 from ..stardew_rule import StardewRule
 from ..strings.ap_names.community_upgrade_names import CommunityUpgrade

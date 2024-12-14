@@ -1,7 +1,6 @@
 import typing
 from typing import Union
 
-from Utils import cache_self1
 from .base_logic import BaseLogicMixin, BaseLogic
 from .grind_logic import GrindLogicMixin
 from .has_logic import HasLogicMixin
@@ -10,6 +9,7 @@ from .region_logic import RegionLogicMixin
 from .season_logic import SeasonLogicMixin
 from .time_logic import TimeLogicMixin
 from ..content.vanilla.qi_board import qi_board_content_pack
+from ..core import cache_self1
 from ..data.shop import ShopSource
 from ..stardew_rule import StardewRule, True_, HasProgressionPercent, False_, true_
 from ..strings.currency_names import Currency

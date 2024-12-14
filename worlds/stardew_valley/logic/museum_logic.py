@@ -1,6 +1,5 @@
 from typing import Union
 
-from Utils import cache_self1
 from .action_logic import ActionLogicMixin
 from .base_logic import BaseLogic, BaseLogicMixin
 from .has_logic import HasLogicMixin
@@ -9,11 +8,12 @@ from .region_logic import RegionLogicMixin
 from .time_logic import TimeLogicMixin
 from .tool_logic import ToolLogicMixin
 from .. import options
+from ..core import cache_self1
 from ..data.museum_data import MuseumItem, all_museum_items, all_museum_artifacts, all_museum_minerals
 from ..stardew_rule import StardewRule, False_
 from ..strings.metal_names import Mineral
 from ..strings.region_names import Region
-from ..strings.tool_names import Tool, ToolMaterial
+from ..strings.tool_names import ToolMaterial
 
 gems = (Mineral.amethyst, Mineral.aquamarine, Mineral.emerald, Mineral.ruby, Mineral.topaz)
 
@@ -47,7 +47,7 @@ class MuseumLogic(BaseLogic[Union[ReceivedLogicMixin, HasLogicMixin, TimeLogicMi
         time_rule = self.logic.time.has_lived_months(time_needed_to_grind)
         pan_rule = False_()
         if item.item_name == Mineral.earth_crystal or item.item_name == Mineral.fire_quartz or item.item_name == Mineral.frozen_tear:
-            pan_rule = self.logic.tool.has_tool(Tool.pan, ToolMaterial.iridium)
+            pan_rule = self.logic.tool.has_pan(ToolMaterial.iridium)
         return (pan_rule | region_rule | geodes_rule) & time_rule  # & monster_rule & extra_rule
 
     def can_find_museum_artifacts(self, number: int) -> StardewRule:

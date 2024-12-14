@@ -1,12 +1,12 @@
 from functools import cached_property
 from typing import Iterable, Union, Hashable
 
-from Utils import cache_self1
 from .base_logic import BaseLogicMixin, BaseLogic
 from .combat_logic import CombatLogicMixin
 from .has_logic import HasLogicMixin
 from .region_logic import RegionLogicMixin
 from .time_logic import TimeLogicMixin, MAX_MONTHS
+from ..core import cache_self1
 from ..data import monster_data
 from ..data.fish_data import ginger_island_river
 from ..stardew_rule import StardewRule
