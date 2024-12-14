@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Iterable, Set, Any, Mapping, Type, Tuple, Union
 
-from .feature import booksanity, cropsanity, fishsanity, friendsanity, skill_progression, building_progression
+from .feature import booksanity, cropsanity, fishsanity, friendsanity, skill_progression, tool_progression, building_progression
 from ..data.animal import Animal
 from ..data.building import Building
 from ..data.fish_data import FishItem
@@ -59,6 +59,7 @@ class StardewFeatures:
     fishsanity: fishsanity.FishsanityFeature
     friendsanity: friendsanity.FriendsanityFeature
     skill_progression: skill_progression.SkillProgressionFeature
+    tool_progression: tool_progression.ToolProgressionFeature
 
 
 @dataclass(frozen=True)
