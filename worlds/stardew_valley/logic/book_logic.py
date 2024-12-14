@@ -1,9 +1,9 @@
 from typing import Union
 
-from Utils import cache_self1
 from .base_logic import BaseLogicMixin, BaseLogic
 from .has_logic import HasLogicMixin
 from .received_logic import ReceivedLogicMixin
+from ..core import cache_self1
 from ..stardew_rule import StardewRule
 
 

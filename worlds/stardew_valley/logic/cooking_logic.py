@@ -1,7 +1,6 @@
 from functools import cached_property
 from typing import Union
 
-from Utils import cache_self1
 from .action_logic import ActionLogicMixin
 from .base_logic import BaseLogicMixin, BaseLogic
 from .building_logic import BuildingLogicMixin
@@ -12,6 +11,7 @@ from .region_logic import RegionLogicMixin
 from .relationship_logic import RelationshipLogicMixin
 from .season_logic import SeasonLogicMixin
 from .skill_logic import SkillLogicMixin
+from ..core import cache_self1
 from ..data.recipe_data import RecipeSource, StarterSource, ShopSource, SkillSource, FriendshipSource, \
     QueenOfSauceSource, CookingRecipe, ShopFriendshipSource
 from ..data.recipe_source import CutsceneSource, ShopTradeSource

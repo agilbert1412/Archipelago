@@ -2,7 +2,6 @@ import typing
 from functools import cached_property
 from typing import Union, Tuple
 
-from Utils import cache_self1
 from .base_logic import BaseLogicMixin, BaseLogic
 from .combat_logic import CombatLogicMixin
 from .harvesting_logic import HarvestingLogicMixin
@@ -13,6 +12,7 @@ from .season_logic import SeasonLogicMixin
 from .time_logic import TimeLogicMixin
 from .tool_logic import ToolLogicMixin
 from ..content.vanilla.base import base_game
+from ..core import cache_self1
 from ..data.harvest import HarvestCropSource
 from ..mods.logic.magic_logic import MagicLogicMixin
 from ..stardew_rule import StardewRule, true_, True_, False_
@@ -22,7 +22,7 @@ from ..strings.performance_names import Performance
 from ..strings.quality_names import ForageQuality
 from ..strings.region_names import Region
 from ..strings.skill_names import Skill, all_mod_skills, all_vanilla_skills
-from ..strings.tool_names import ToolMaterial, Tool
+from ..strings.tool_names import ToolMaterial, Tool, FishingRod
 from ..strings.wallet_item_names import Wallet
 
 if typing.TYPE_CHECKING:
@@ -44,16 +44,17 @@ CombatLogicMixin, MagicLogicMixin, HarvestingLogicMixin, ModLogicMixin]]):
 
     # Should be cached
     def can_earn_level(self, skill: str, level: int) -> StardewRule:
-        if level <= 0:
-            return True_()
+        assert level > 0, "There is no level before level 0."
 
-        tool_level = min(4, (level - 1) // 2)
+        tool_level = min(5, (level + 1) // 2)
         tool_material = ToolMaterial.tiers[tool_level]
 
         previous_level_rule = self.logic.skill.has_previous_level(skill, level)
 
         if skill == Skill.fishing:
-            xp_rule = self.logic.tool.has_fishing_rod(max(tool_level, 3))
+            # We want to cap the tool level at 4, because the advanced iridium rod is excluded from logic.
+            tool_level = min(4, tool_level)
+            xp_rule = self.logic.tool.has_fishing_rod(FishingRod.tiers[tool_level])
         elif skill == Skill.farming:
             xp_rule = self.can_get_farming_xp & self.logic.tool.has_tool(Tool.hoe, tool_material) & self.logic.tool.can_water(tool_level)
         elif skill == Skill.foraging:
@@ -64,7 +65,8 @@ CombatLogicMixin, MagicLogicMixin, HarvestingLogicMixin, ModLogicMixin]]):
                       self.logic.magic.can_use_clear_debris_instead_of_tool_level(tool_level)
             xp_rule = xp_rule & self.logic.region.can_reach(Region.mines_floor_5)
         elif skill == Skill.combat:
-            combat_tier = Performance.tiers[tool_level]
+            # Tool level starts at 1, so we need to subtract 1 to get the correct performance tier.
+            combat_tier = Performance.tiers[tool_level - 1]
             xp_rule = self.logic.combat.can_fight_at_level(combat_tier)
             xp_rule = xp_rule & self.logic.region.can_reach(Region.mines_floor_5)
         elif skill in all_mod_skills:
@@ -77,7 +79,7 @@ CombatLogicMixin, MagicLogicMixin, HarvestingLogicMixin, ModLogicMixin]]):
 
     # Should be cached
     def has_level(self, skill: str, level: int) -> StardewRule:
-        assert level >= 0, f"There is no level before level 0."
+        assert level >= 0, "There is no level before level 0."
         if level == 0:
             return true_
 
@@ -87,7 +89,7 @@ CombatLogicMixin, MagicLogicMixin, HarvestingLogicMixin, ModLogicMixin]]):
         return self.logic.skill.can_earn_level(skill, level)
 
     def has_previous_level(self, skill: str, level: int) -> StardewRule:
-        assert level > 0, f"There is no level before level 0."
+        assert level > 0, "There is no level before level 0."
         if level == 1:
             return true_
 
@@ -174,8 +176,8 @@ CombatLogicMixin, MagicLogicMixin, HarvestingLogicMixin, ModLogicMixin]]):
         skill_rule = self.logic.skill.has_level(Skill.fishing, skill_required)
         region_rule = self.logic.region.can_reach_any(regions)
         # Training rod only works with fish < 50. Fiberglass does not help you to catch higher difficulty fish, so it's skipped in logic.
-        number_fishing_rod_required = 1 if difficulty < 50 else (2 if difficulty < 80 else 4)
-        return self.logic.tool.has_fishing_rod(number_fishing_rod_required) & skill_rule & region_rule
+        fishing_rod_required = FishingRod.training if difficulty < 50 else (FishingRod.bamboo if difficulty < 80 else FishingRod.iridium)
+        return self.logic.tool.has_fishing_rod(fishing_rod_required) & skill_rule & region_rule
 
     @cache_self1
     def can_crab_pot_at(self, region: str) -> StardewRule:

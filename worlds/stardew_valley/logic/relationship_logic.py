@@ -2,7 +2,6 @@ import math
 import typing
 from typing import Union
 
-from Utils import cache_self1
 from .base_logic import BaseLogic, BaseLogicMixin
 from .building_logic import BuildingLogicMixin
 from .has_logic import HasLogicMixin
@@ -11,6 +10,7 @@ from .region_logic import RegionLogicMixin
 from .season_logic import SeasonLogicMixin
 from .time_logic import TimeLogicMixin
 from ..content.feature import friendsanity
+from ..core import cache_self1
 from ..data.villagers_data import Villager
 from ..stardew_rule import StardewRule, True_, false_, true_
 from ..strings.ap_names.mods.mod_items import SVEQuestItem

@@ -1,7 +1,6 @@
 from functools import cached_property
 from typing import Union, Tuple
 
-from Utils import cache_self1
 from .base_logic import BaseLogicMixin, BaseLogic
 from .has_logic import HasLogicMixin
 from .received_logic import ReceivedLogicMixin
@@ -9,6 +8,7 @@ from .region_logic import RegionLogicMixin
 from .season_logic import SeasonLogicMixin
 from .tool_logic import ToolLogicMixin
 from ..content.vanilla.ginger_island import ginger_island_content_pack
+from ..core import cache_self1
 from ..stardew_rule import StardewRule
 from ..strings.fertilizer_names import Fertilizer
 from ..strings.region_names import Region, LogicRegion
@@ -33,7 +33,7 @@ class FarmingLogic(BaseLogic[Union[HasLogicMixin, ReceivedLogicMixin, RegionLogi
 
     @cached_property
     def has_farming_tools(self) -> StardewRule:
-        return self.logic.tool.has_tool(Tool.hoe) & self.logic.tool.can_water(0)
+        return self.logic.tool.has_tool(Tool.hoe) & self.logic.tool.can_water()
 
     def has_fertilizer(self, tier: int) -> StardewRule:
         assert 0 <= tier <= 3

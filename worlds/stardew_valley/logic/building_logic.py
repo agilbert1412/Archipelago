@@ -2,11 +2,11 @@ import typing
 from functools import cached_property
 from typing import Union
 
-from Utils import cache_self1
 from .base_logic import BaseLogic, BaseLogicMixin
 from .has_logic import HasLogicMixin
 from .received_logic import ReceivedLogicMixin
 from .region_logic import RegionLogicMixin
+from ..core import cache_self1
 from ..stardew_rule import StardewRule, true_
 from ..strings.building_names import Building
 from ..strings.region_names import Region

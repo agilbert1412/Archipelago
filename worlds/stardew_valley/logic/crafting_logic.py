@@ -1,6 +1,5 @@
 from typing import Union
 
-from Utils import cache_self1
 from .base_logic import BaseLogicMixin, BaseLogic
 from .has_logic import HasLogicMixin
 from .money_logic import MoneyLogicMixin
@@ -11,6 +10,7 @@ from .relationship_logic import RelationshipLogicMixin
 from .skill_logic import SkillLogicMixin
 from .special_order_logic import SpecialOrderLogicMixin
 from .. import options
+from ..core import cache_self1
 from ..data.craftable_data import CraftingRecipe
 from ..data.recipe_source import CutsceneSource, ShopTradeSource, ArchipelagoSource, LogicSource, SpecialOrderSource, \
     FestivalShopSource, QuestSource, StarterSource, ShopSource, SkillSource, MasterySource, FriendshipSource, SkillCraftsanitySource
