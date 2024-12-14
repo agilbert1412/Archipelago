@@ -1,8 +1,7 @@
-from typing import Tuple, Union
+from typing import Tuple
 
 from Utils import cache_self1
 from .base_logic import BaseLogic, BaseLogicMixin
-from .has_logic import HasLogicMixin
 from ..options import EntranceRandomization
 from ..stardew_rule import StardewRule, Reach, false_, true_
 from ..strings.region_names import Region

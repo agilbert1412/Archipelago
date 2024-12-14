@@ -164,6 +164,7 @@ class TestSkullCavernLogic(SVTestBase):
         options.ElevatorProgression.internal_name: options.ElevatorProgression.option_vanilla,
         options.ToolProgression.internal_name: options.ToolProgression.option_progressive,
         options.SkillProgression.internal_name: options.SkillProgression.option_progressive,
+        options.BuildingProgression.internal_name: options.BuildingProgression.option_progressive,
     }
 
     def test_given_access_to_floor_115_when_find_more_tools_then_has_access_to_skull_cavern_25(self):
@@ -171,9 +172,9 @@ class TestSkullCavernLogic(SVTestBase):
         items_for_skull_50 = self.generate_items_for_skull_50()
         items_for_skull_100 = self.generate_items_for_skull_100()
         self.collect(items_for_115)
-        floor_115 = self.multiworld.get_region(Region.mines_floor_115, self.player)
-        skull_25 = self.multiworld.get_region(Region.skull_cavern_25, self.player)
-        skull_75 = self.multiworld.get_region(Region.skull_cavern_75, self.player)
+        self.multiworld.get_region(Region.mines_floor_115, self.player)
+        self.multiworld.get_region(Region.skull_cavern_25, self.player)
+        self.multiworld.get_region(Region.skull_cavern_75, self.player)
 
         self.assert_can_reach_region(Region.mines_floor_115)
         self.assert_cannot_reach_region(Region.skull_cavern_25)
@@ -209,7 +210,8 @@ class TestSkullCavernLogic(SVTestBase):
         mining_levels = [self.get_item_by_name("Mining Level")] * 6
         bus = self.get_item_by_name("Bus Repair")
         skull_key = self.get_item_by_name("Skull Key")
-        return [*combat_levels, *mining_levels, *pickaxes, *swords, bus, skull_key]
+        farm_house = self.get_item_by_name("Progressive House")
+        return [*combat_levels, *mining_levels, *pickaxes, *swords, bus, skull_key, farm_house]
 
     def generate_items_for_skull_100(self) -> List[Item]:
         pickaxes = [self.get_item_by_name("Progressive Pickaxe")] * 4
@@ -218,7 +220,8 @@ class TestSkullCavernLogic(SVTestBase):
         mining_levels = [self.get_item_by_name("Mining Level")] * 8
         bus = self.get_item_by_name("Bus Repair")
         skull_key = self.get_item_by_name("Skull Key")
-        return [*combat_levels, *mining_levels, *pickaxes, *swords, bus, skull_key]
+        farm_house = self.get_item_by_name("Progressive House")
+        return [*combat_levels, *mining_levels, *pickaxes, *swords, bus, skull_key, farm_house]
 
 
 class TestShipsanityNone(SVTestBase):
