@@ -8,7 +8,9 @@ from ... import items, Group, ItemClassification, create_content
 from ... import options
 from ...items import items_by_group
 from ...options import SkillProgression, Walnutsanity
-from ...regions import RandomizationFlag, randomize_connections, create_final_connections_and_regions
+from ...regions import create_connections_and_regions
+from ...regions.entrance_rando import randomize_connections
+from ...regions.model import RandomizationFlag
 
 
 class TestGenerateModsOptions(WorldAssertMixin, ModAssertMixin, SVTestCase):
@@ -133,7 +135,7 @@ class TestModEntranceRando(SVTestCase):
             seed = get_seed()
             rand = random.Random(seed)
             with self.subTest(option=option, flag=flag, seed=seed):
-                final_connections, final_regions = create_final_connections_and_regions(sv_options)
+                final_connections, final_regions = create_connections_and_regions(sv_options)
 
                 _, randomized_connections = randomize_connections(rand, sv_options, content, final_regions, final_connections)
 
