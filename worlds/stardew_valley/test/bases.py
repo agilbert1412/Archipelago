@@ -7,7 +7,7 @@ import unittest
 from contextlib import contextmanager
 from typing import Optional, Dict, Union, Any, List, Iterable
 
-from BaseClasses import get_seed, MultiWorld, Location, Item, Region, CollectionState, Entrance
+from BaseClasses import get_seed, MultiWorld, Location, Item, Region, Entrance, CollectionState
 from test.bases import WorldTestBase
 from test.general import gen_steps, setup_solo_multiworld as setup_base_solo_multiworld
 from worlds.AutoWorld import call_all
