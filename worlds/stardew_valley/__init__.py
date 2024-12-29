@@ -22,6 +22,7 @@ from .options.forced_options import force_change_options_if_incompatible
 from .options.option_groups import sv_option_groups
 from .options.presets import sv_options_presets
 from .regions import create_regions
+from .regions.entrance_rando import prepare_mod_data
 from .rules import set_rules
 from .stardew_rule import True_, StardewRule, HasProgressionPercent, true_
 from .strings.ap_names.event_names import Event
@@ -323,7 +324,7 @@ class StardewValleyWorld(World):
     def pre_fill(self) -> None:
         no_target_groups = {0: [0]}
         placement = entrance_rando.randomize_entrances(self, coupled=True, target_group_lookup=no_target_groups)
-        print(placement.pairings)
+        self.randomized_entrances = prepare_mod_data(placement)
 
     def get_filler_item_name(self) -> str:
         if not self.filler_item_pool_names:
