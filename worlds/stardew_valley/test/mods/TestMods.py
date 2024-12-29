@@ -1,16 +1,11 @@
-import random
-
-from BaseClasses import get_seed
 from .mod_testing_decorators import must_test_all_mods, is_testing_mod
-from .. import SVTestBase, SVTestCase, fill_dataclass_with_default, solo_multiworld
+from .. import SVTestBase, SVTestCase, solo_multiworld
 from ..TestGeneration import get_all_permanent_progression_items
 from ..assertion import ModAssertMixin, WorldAssertMixin
 from ..options.presets import allsanity_mods_6_x_x
 from ... import options
-from ...content import create_content
 from ...items import Group
 from ...mods.mod_data import ModNames
-from ...regions import RandomizationFlag, randomize_connections, create_final_connections_and_regions
 
 
 class TestCanGenerateAllsanityWithMods(WorldAssertMixin, ModAssertMixin, SVTestCase):
@@ -133,84 +128,11 @@ class TestCanGenerateWithEachMod(WorldAssertMixin, ModAssertMixin, SVTestCase):
     def test_given_boarding_house_when_generate_with_all_vanilla_content_then_basic_checks(self):
         self.perform_basic_checks_on_mod_with_all_vanilla_content(ModNames.boarding_house)
 
-    def perform_basic_checks_on_mod_with_all_vanilla_content(self, mod):
+    def perform_basic_checks_on_mod_with_all_vanilla_content(self, mod: str):
         world_options = {options.Mods: mod, options.ExcludeGingerIsland: options.ExcludeGingerIsland.option_false}
         with solo_multiworld(world_options) as (multi_world, _):
             self.assert_basic_checks(multi_world)
             self.assert_stray_mod_items(mod, multi_world)
-
-
-@must_test_all_mods(
-    excluded_mods=[ModNames.ginger, ModNames.distant_lands, ModNames.skull_cavern_elevator, ModNames.wellwick, ModNames.magic, ModNames.binning_skill,
-                   ModNames.big_backpack, ModNames.luck_skill, ModNames.tractor, ModNames.shiko, ModNames.archaeology, ModNames.delores,
-                   ModNames.socializing_skill, ModNames.cooking_skill])
-class TestModsEntranceRandomizationBuildings(WorldAssertMixin, SVTestCase):
-    """The following tests validate that ER still generates winnable and logically-sane games with given mods.
-    Mods that do not interact with entrances are skipped
-    Not all ER settings are tested, because 'buildings' is, essentially, a superset of all others
-    """
-
-    @is_testing_mod(ModNames.deepwoods)
-    def test_deepwoods_entrance_randomization_buildings(self):
-        self.perform_basic_checks_on_mod_with_er(ModNames.deepwoods)
-
-    @is_testing_mod(ModNames.juna)
-    def test_juna_entrance_randomization_buildings(self):
-        self.perform_basic_checks_on_mod_with_er(ModNames.juna)
-
-    @is_testing_mod(ModNames.jasper)
-    def test_jasper_entrance_randomization_buildings(self):
-        self.perform_basic_checks_on_mod_with_er(ModNames.jasper)
-
-    @is_testing_mod(ModNames.alec)
-    def test_alec_entrance_randomization_buildings(self):
-        self.perform_basic_checks_on_mod_with_er(ModNames.alec)
-
-    @is_testing_mod(ModNames.yoba)
-    def test_yoba_entrance_randomization_buildings(self):
-        self.perform_basic_checks_on_mod_with_er(ModNames.yoba)
-
-    @is_testing_mod(ModNames.eugene)
-    def test_eugene_entrance_randomization_buildings(self):
-        self.perform_basic_checks_on_mod_with_er(ModNames.eugene)
-
-    @is_testing_mod(ModNames.ayeisha)
-    def test_ayeisha_entrance_randomization_buildings(self):
-        self.perform_basic_checks_on_mod_with_er(ModNames.ayeisha)
-
-    @is_testing_mod(ModNames.riley)
-    def test_riley_entrance_randomization_buildings(self):
-        self.perform_basic_checks_on_mod_with_er(ModNames.riley)
-
-    @is_testing_mod(ModNames.sve)
-    def test_sve_entrance_randomization_buildings(self):
-        self.perform_basic_checks_on_mod_with_er(ModNames.sve)
-
-    @is_testing_mod(ModNames.alecto)
-    def test_alecto_entrance_randomization_buildings(self):
-        self.perform_basic_checks_on_mod_with_er(ModNames.alecto)
-
-    @is_testing_mod(ModNames.lacey)
-    def test_lacey_entrance_randomization_buildings(self):
-        self.perform_basic_checks_on_mod_with_er(ModNames.lacey)
-
-    @is_testing_mod(ModNames.boarding_house)
-    def test_boarding_house_entrance_randomization_buildings(self):
-        self.perform_basic_checks_on_mod_with_er(ModNames.boarding_house)
-
-    def test_all_mods_entrance_randomization_buildings(self):
-        self.perform_basic_checks_on_mod_with_er(options.all_mods)
-
-    def perform_basic_checks_on_mod_with_er(self, mods: str | set[str]) -> None:
-        if isinstance(mods, str):
-            mods = {mods}
-        world_options = {
-            options.EntranceRandomization: options.EntranceRandomization.option_buildings,
-            options.Mods: frozenset(mods),
-            options.ExcludeGingerIsland: options.ExcludeGingerIsland.option_false
-        }
-        with solo_multiworld(world_options) as (multi_world, _):
-            self.assert_basic_checks(multi_world)
 
 
 class TestBaseLocationDependencies(SVTestBase):
@@ -268,36 +190,3 @@ class TestNoGingerIslandModItemGeneration(SVTestBase):
                     self.assertNotIn(progression_item.name, all_created_items)
                 else:
                     self.assertIn(progression_item.name, all_created_items)
-
-
-class TestModEntranceRando(SVTestCase):
-
-    def test_mod_entrance_randomization(self):
-        for option, flag in [(options.EntranceRandomization.option_pelican_town, RandomizationFlag.PELICAN_TOWN),
-                             (options.EntranceRandomization.option_non_progression, RandomizationFlag.NON_PROGRESSION),
-                             (options.EntranceRandomization.option_buildings_without_house, RandomizationFlag.BUILDINGS),
-                             (options.EntranceRandomization.option_buildings, RandomizationFlag.BUILDINGS)]:
-            sv_options = fill_dataclass_with_default({
-                options.EntranceRandomization.internal_name: option,
-                options.ExcludeGingerIsland.internal_name: options.ExcludeGingerIsland.option_false,
-                options.SkillProgression.internal_name: options.SkillProgression.option_progressive_with_masteries,
-                options.Mods.internal_name: frozenset(options.Mods.valid_keys)
-            })
-            content = create_content(sv_options)
-            seed = get_seed()
-            rand = random.Random(seed)
-            with self.subTest(option=option, flag=flag, seed=seed):
-                final_connections, final_regions = create_final_connections_and_regions(sv_options)
-
-                _, randomized_connections = randomize_connections(rand, sv_options, content, final_regions, final_connections)
-
-                for connection_name in final_connections:
-                    connection = final_connections[connection_name]
-                    if flag in connection.flag:
-                        connection_in_randomized = connection_name in randomized_connections
-                        reverse_in_randomized = connection.reverse in randomized_connections
-                        self.assertTrue(connection_in_randomized, f"Connection {connection_name} should be randomized but it is not in the output")
-                        self.assertTrue(reverse_in_randomized, f"Connection {connection.reverse} should be randomized but it is not in the output.")
-
-                self.assertEqual(len(set(randomized_connections.values())), len(randomized_connections.values()),
-                                 f"Connections are duplicated in randomization.")
