@@ -357,7 +357,6 @@ def extend_backpack_locations(randomized_locations: List[LocationData], options:
     if options.backpack_progression == BackpackProgression.option_vanilla:
         return
 
-
     if options.backpack_size == BackpackSize.option_12:
         backpack_locations = [location for location in locations_by_tag[LocationTags.BACKPACK_TIER]]
     else:
@@ -365,7 +364,7 @@ def extend_backpack_locations(randomized_locations: List[LocationData], options:
         backpack_tier_names = Backpack.get_purchasable_tiers(ModNames.big_backpack in options.mods)
         backpack_locations = []
         for tier in backpack_tier_names:
-            for i in range(1, num_per_tier+1):
+            for i in range(1, num_per_tier + 1):
                 backpack_locations.append(location_table[f"{tier} {i}"])
                 i += 1
 
