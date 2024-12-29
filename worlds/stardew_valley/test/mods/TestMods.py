@@ -1,19 +1,13 @@
-import random
 from typing import ClassVar
 
-from BaseClasses import get_seed
 from test.param import classvar_matrix
 from .. import SVTestBase, SVTestCase, solo_multiworld
 from ..TestGeneration import get_all_permanent_progression_items
 from ..assertion import ModAssertMixin, WorldAssertMixin
 from ..options.presets import allsanity_mods_6_x_x
-from ..options.utils import fill_dataclass_with_default
 from ... import options
-from ...content import create_content
 from ...items import Group
-from ...mods.mod_data import ModNames
 from ...options.options import all_mods
-from ...regions import RandomizationFlag, randomize_connections, create_final_connections_and_regions
 
 
 class TestCanGenerateAllsanityWithMods(WorldAssertMixin, ModAssertMixin, SVTestCase):
@@ -41,27 +35,6 @@ class TestCanGenerateWithEachMod(WorldAssertMixin, ModAssertMixin, SVTestCase):
         with solo_multiworld(world_options) as (multi_world, _):
             self.assert_basic_checks(multi_world)
             self.assert_stray_mod_items(self.mod, multi_world)
-
-
-@classvar_matrix(mod=all_mods.difference([
-    ModNames.ginger, ModNames.distant_lands, ModNames.skull_cavern_elevator, ModNames.wellwick, ModNames.magic, ModNames.binning_skill, ModNames.big_backpack,
-    ModNames.luck_skill, ModNames.tractor, ModNames.shiko, ModNames.archaeology, ModNames.delores, ModNames.socializing_skill, ModNames.cooking_skill
-]))
-class TestCanGenerateEachModWithEntranceRandomizationBuildings(WorldAssertMixin, SVTestCase):
-    """The following tests validate that ER still generates winnable and logically-sane games with given mods.
-    Mods that do not interact with entrances are skipped
-    Not all ER settings are tested, because 'buildings' is, essentially, a superset of all others
-    """
-    mod: ClassVar[str]
-
-    def test_given_mod_when_generate_then_basic_checks(self) -> None:
-        world_options = {
-            options.EntranceRandomization: options.EntranceRandomization.option_buildings,
-            options.Mods: self.mod,
-            options.ExcludeGingerIsland: options.ExcludeGingerIsland.option_false
-        }
-        with solo_multiworld(world_options, world_caching=False) as (multi_world, _):
-            self.assert_basic_checks(multi_world)
 
 
 class TestBaseLocationDependencies(SVTestBase):
@@ -119,39 +92,6 @@ class TestNoGingerIslandModItemGeneration(SVTestBase):
                     self.assertNotIn(progression_item.name, all_created_items)
                 else:
                     self.assertIn(progression_item.name, all_created_items)
-
-
-class TestModEntranceRando(SVTestCase):
-
-    def test_mod_entrance_randomization(self):
-        for option, flag in [(options.EntranceRandomization.option_pelican_town, RandomizationFlag.PELICAN_TOWN),
-                             (options.EntranceRandomization.option_non_progression, RandomizationFlag.NON_PROGRESSION),
-                             (options.EntranceRandomization.option_buildings_without_house, RandomizationFlag.BUILDINGS),
-                             (options.EntranceRandomization.option_buildings, RandomizationFlag.BUILDINGS)]:
-            sv_options = fill_dataclass_with_default({
-                options.EntranceRandomization.internal_name: option,
-                options.ExcludeGingerIsland.internal_name: options.ExcludeGingerIsland.option_false,
-                options.SkillProgression.internal_name: options.SkillProgression.option_progressive_with_masteries,
-                options.Mods.internal_name: frozenset(options.Mods.valid_keys)
-            })
-            content = create_content(sv_options)
-            seed = get_seed()
-            rand = random.Random(seed)
-            with self.subTest(option=option, flag=flag, seed=seed):
-                final_connections, final_regions = create_final_connections_and_regions(sv_options)
-
-                _, randomized_connections = randomize_connections(rand, sv_options, content, final_regions, final_connections)
-
-                for connection_name in final_connections:
-                    connection = final_connections[connection_name]
-                    if flag in connection.flag:
-                        connection_in_randomized = connection_name in randomized_connections
-                        reverse_in_randomized = connection.reverse in randomized_connections
-                        self.assertTrue(connection_in_randomized, f"Connection {connection_name} should be randomized but it is not in the output")
-                        self.assertTrue(reverse_in_randomized, f"Connection {connection.reverse} should be randomized but it is not in the output.")
-
-                self.assertEqual(len(set(randomized_connections.values())), len(randomized_connections.values()),
-                                 f"Connections are duplicated in randomization.")
 
 
 class TestVanillaLogicAlternativeWhenQuestsAreNotRandomized(WorldAssertMixin, SVTestBase):

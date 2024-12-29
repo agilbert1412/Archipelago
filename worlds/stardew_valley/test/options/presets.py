@@ -172,7 +172,7 @@ def allsanity_mods_7_x_x():
 
 def allsanity_mods_7_x_x_exclude_disabled():
     allsanity = allsanity_no_mods_7_x_x()
-    allsanity.update({options.Mods.internal_name: frozenset(enabled_mods)})
+    allsanity.update({options.Mods.internal_name: frozenset(options.enabled_mods)})
     return allsanity
 
 
