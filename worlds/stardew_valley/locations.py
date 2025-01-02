@@ -106,8 +106,8 @@ class LocationTags(enum.Enum):
     BOOKSANITY_POWER = enum.auto()
     BOOKSANITY_SKILL = enum.auto()
     BOOKSANITY_LOST = enum.auto()
-    RANDOMIZED_SECRETS = enum.auto()
-    EASY_SECRET = enum.auto()
+    SECRETSANITY = enum.auto()
+    SIMPLE_SECRET = enum.auto()
     FISHING_SECRET = enum.auto()
     DIFFICULT_SECRET = enum.auto()
 
@@ -502,9 +502,9 @@ def extend_secrets_locations(randomized_locations: List[LocationData], options: 
         return
 
     locations = []
-    if options.secretsanity >= Secretsanity.option_reasonable:
-        locations.extend(locations_by_tag[LocationTags.EASY_SECRET])
-    if options.secretsanity >= Secretsanity.option_reasonable_fish:
+    if options.secretsanity >= Secretsanity.option_simple:
+        locations.extend(locations_by_tag[LocationTags.SIMPLE_SECRET])
+    if options.secretsanity >= Secretsanity.option_simple_and_fishing:
         locations.extend(locations_by_tag[LocationTags.FISHING_SECRET])
     if options.secretsanity >= Secretsanity.option_all:
         locations.extend(locations_by_tag[LocationTags.DIFFICULT_SECRET])
