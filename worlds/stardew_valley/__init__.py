@@ -159,6 +159,7 @@ class StardewValleyWorld(World):
                                                 self.options)
 
         def add_location(name: str, code: Optional[int], region: str):
+            assert region in world_regions, f"Location {name} cannot be created in region {region}, because the region does not exist in this slot"
             region: Region = world_regions[region]
             location = StardewLocation(self.player, name, code, region)
             region.locations.append(location)

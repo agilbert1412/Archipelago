@@ -21,13 +21,16 @@ from .logic.tool_logic import tool_upgrade_prices
 from .mods.mod_data import ModNames
 from .options import ExcludeGingerIsland, SpecialOrderLocations, Museumsanity, BackpackProgression, Shipsanity, \
     Monstersanity, Chefsanity, Craftsanity, ArcadeMachineLocations, Cooksanity, StardewValleyOptions, Walnutsanity
+from .options.options import Secretsanity, FarmType
 from .stardew_rule import And, StardewRule, true_
 from .stardew_rule.indirect_connection import look_for_indirect_connection
 from .stardew_rule.rule_explain import explain
+from .strings.animal_product_names import AnimalProduct
 from .strings.ap_names.ap_option_names import WalnutsanityOptionName
 from .strings.ap_names.community_upgrade_names import CommunityUpgrade
 from .strings.ap_names.mods.mod_items import SVEQuestItem, SVERunes
 from .strings.ap_names.transport_names import Transportation
+from .strings.metal_names import Artifact as ArtifactName
 from .strings.artisan_good_names import ArtisanGood
 from .strings.backpack_tiers import Backpack
 from .strings.building_names import Building
@@ -37,9 +40,12 @@ from .strings.craftable_names import Bomb, Furniture
 from .strings.crop_names import Fruit, Vegetable
 from .strings.entrance_names import dig_to_mines_floor, dig_to_skull_floor, Entrance, move_to_woods_depth, DeepWoodsEntrance, AlecEntrance, \
     SVEEntrance, LaceyEntrance, BoardingHouseEntrance, LogicEntrance
+from .strings.fish_names import Fish
+from .strings.food_names import Meal
 from .strings.forageable_names import Forageable
 from .strings.generic_names import Generic
 from .strings.geode_names import Geode
+from .strings.machine_names import Machine
 from .strings.material_names import Material
 from .strings.metal_names import MetalBar, Mineral
 from .strings.monster_names import Monster
@@ -48,6 +54,7 @@ from .strings.quest_names import Quest
 from .strings.region_names import Region
 from .strings.season_names import Season
 from .strings.skill_names import Skill
+from .strings.special_item_names import SpecialItem
 from .strings.tool_names import Tool, ToolMaterial
 from .strings.tv_channel_names import Channel
 from .strings.villager_names import NPC, ModNPC
@@ -92,6 +99,7 @@ def set_rules(world):
     set_isolated_locations_rules(logic, multiworld, player)
     set_traveling_merchant_day_rules(logic, multiworld, player)
     set_arcade_machine_rules(logic, multiworld, player, world_options)
+    set_secrets_rules(logic, multiworld, player, world_options)
 
     set_deepwoods_rules(logic, multiworld, player, world_options)
     set_magic_spell_rules(logic, multiworld, player, world_options)
@@ -99,16 +107,12 @@ def set_rules(world):
 
 
 def set_isolated_locations_rules(logic: StardewLogic, multiworld, player):
-    MultiWorldRules.add_rule(multiworld.get_location("Old Master Cannoli", player),
-                             logic.has(Fruit.sweet_gem_berry))
     MultiWorldRules.add_rule(multiworld.get_location("Galaxy Sword Shrine", player),
                              logic.has("Prismatic Shard"))
     MultiWorldRules.add_rule(multiworld.get_location("Krobus Stardrop", player),
                              logic.money.can_spend(20000))
     MultiWorldRules.add_rule(multiworld.get_location("Demetrius's Breakthrough", player),
                              logic.money.can_have_earned_total(25000))
-    MultiWorldRules.add_rule(multiworld.get_location("Pot Of Gold", player),
-                             logic.season.has(Season.spring))
 
 
 def set_tool_rules(logic: StardewLogic, multiworld, player, content: StardewContent):
@@ -865,6 +869,68 @@ def set_arcade_machine_rules(logic: StardewLogic, multiworld: MultiWorld, player
     set_entrance_rule(multiworld, player, Entrance.reach_jotpk_world_3, logic.has("JotPK Big Buff"))
     MultiWorldRules.add_rule(multiworld.get_location("Journey of the Prairie King Victory", player),
                              logic.has("JotPK Max Buff"))
+
+
+def set_secrets_rules(logic: StardewLogic, multiworld: MultiWorld, player: int, world_options: StardewValleyOptions):
+    if world_options.secretsanity == Secretsanity.option_none:
+        return
+
+    if world_options.secretsanity >= Secretsanity.option_reasonable:
+        MultiWorldRules.add_rule(multiworld.get_location("Old Master Cannoli", player), logic.has(Fruit.sweet_gem_berry))
+        MultiWorldRules.add_rule(multiworld.get_location("Pot Of Gold", player), logic.season.has(Season.spring))
+        MultiWorldRules.add_rule(multiworld.get_location("Poison The Governor", player), logic.has(SpecialItem.lucky_purple_shorts))
+        MultiWorldRules.add_rule(multiworld.get_location("Grange Display Bribe", player), logic.has(SpecialItem.lucky_purple_shorts))
+        MultiWorldRules.add_rule(multiworld.get_location("Purple Lettuce", player), logic.has(SpecialItem.lucky_purple_shorts))
+        MultiWorldRules.add_rule(multiworld.get_location("Make Marnie Laugh", player),
+                                 logic.has(SpecialItem.trimmed_purple_shorts) &
+                                 logic.relationship.can_meet(NPC.marnie))
+        MultiWorldRules.add_rule(multiworld.get_location("Jumpscare Lewis", player),
+                                 logic.has(SpecialItem.trimmed_purple_shorts) &
+                                 logic.relationship.can_meet(NPC.lewis))
+        MultiWorldRules.add_rule(multiworld.get_location("Fine Purple Silk", player),
+                                 logic.has(SpecialItem.lucky_purple_shorts) &
+                                 logic.relationship.can_meet(NPC.marnie))
+        MultiWorldRules.add_rule(multiworld.get_location("Lucky Purple Bobber", player), logic.fishing.can_use_tackle(SpecialItem.lucky_purple_shorts))
+        MultiWorldRules.add_rule(multiworld.get_location("Something For Santa", player), logic.season.has(Season.winter) & logic.has_any(AnimalProduct.any_milk, Meal.cookie))
+        MultiWorldRules.add_rule(multiworld.get_location("Take In The Nature", player), logic.action.can_speak_junimo())
+        MultiWorldRules.add_rule(multiworld.get_location("??HMTGF??", player), logic.has(Fish.super_cucumber))
+        MultiWorldRules.add_rule(multiworld.get_location("??Pinky Lemon??", player), logic.has(ArtisanGood.duck_mayonnaise))
+        MultiWorldRules.add_rule(multiworld.get_location("??Foroguemon??", player), logic.has(Meal.strange_bun) & logic.relationship.has_hearts(NPC.vincent, 2))
+        MultiWorldRules.add_rule(multiworld.get_location("Galaxies Will Heed Your Cry", player), logic.wallet.can_speak_dwarf())
+        MultiWorldRules.add_rule(multiworld.get_location("Junimo Plush", player), logic.has(Forageable.secret_note) & logic.time.has_lived_months(1))
+        MultiWorldRules.add_rule(multiworld.get_location("Summon Bone Serpent", player), logic.has(ArtifactName.ancient_doll))
+        MultiWorldRules.add_rule(multiworld.get_location("Meowmere", player), logic.has(SpecialItem.far_away_stone) & logic.region.can_reach(Region.wizard_basement))
+        MultiWorldRules.add_rule(multiworld.get_location("A Familiar Tune", player), logic.relationship.can_meet(NPC.elliott))
+        MultiWorldRules.add_rule(multiworld.get_location("Flubber Experiment", player), logic.relationship.can_get_married() & logic.building.has_building(Building.slime_hutch) & logic.has(Machine.slime_incubator))
+        MultiWorldRules.add_rule(multiworld.get_location("Seems Fishy", player), logic.money.can_spend_at(Region.wizard_basement, 500))
+
+    if world_options.secretsanity >= Secretsanity.option_reasonable_fish:
+        if world_options.farm_type == FarmType.option_beach:
+            MultiWorldRules.add_rule(multiworld.get_location("'Boat'", player), logic.skill.can_fish(Region.farm))
+        if world_options.exclude_ginger_island == ExcludeGingerIsland.option_false:
+            MultiWorldRules.add_rule(multiworld.get_location("Foliage Print", player), logic.skill.can_fish(Region.island_north))
+            MultiWorldRules.add_rule(multiworld.get_location("Frog Hat", player), logic.skill.can_fish(Region.gourmand_frog_cave))
+            MultiWorldRules.add_rule(multiworld.get_location("Gourmand Statue", player), logic.skill.can_fish(Region.pirate_cove))
+            MultiWorldRules.add_rule(multiworld.get_location("'Physics 101'", player), logic.skill.can_fish(Region.volcano_floor_10))
+            MultiWorldRules.add_rule(multiworld.get_location("Lifesaver", player), logic.skill.can_fish(Region.boat_tunnel))
+            MultiWorldRules.add_rule(multiworld.get_location("Squirrel Figurine", player), logic.skill.can_fish(Region.volcano_secret_beach))
+        MultiWorldRules.add_rule(multiworld.get_location("Decorative Trash Can", player), logic.skill.can_fish(Region.town))
+        MultiWorldRules.add_rule(multiworld.get_location("Iridium Krobus", player), logic.skill.can_fish(Region.forest))
+        MultiWorldRules.add_rule(multiworld.get_location("Pyramid Decal", player), logic.skill.can_fish(Region.desert))
+        MultiWorldRules.add_rule(multiworld.get_location("'Vista'", player), logic.skill.can_fish(Region.railroad))
+        MultiWorldRules.add_rule(multiworld.get_location("Wall Basket", player), logic.skill.can_fish(Region.secret_woods))
+
+    if world_options.secretsanity >= Secretsanity.option_all:
+        MultiWorldRules.add_rule(multiworld.get_location("Free The Forsaken Souls", player), logic.action.can_watch(Channel.sinister_signal))
+        MultiWorldRules.add_rule(multiworld.get_location("Thank the Devs", player), logic.received("Stardrop") & logic.money.can_spend_at(Region.wizard_basement, 500))
+        MultiWorldRules.add_rule(multiworld.get_location("Annoy the Moon Man", player), logic.shipping.can_use_shipping_bin & logic.time.has_lived_months(6))
+        MultiWorldRules.add_rule(multiworld.get_location("Strange Sighting", player), logic.region.can_reach_all((Region.bus_stop, Region.town)) & logic.time.has_lived_months(6))
+        MultiWorldRules.add_rule(multiworld.get_location("Merperson Sighting", player), logic.region.can_reach(Region.beach) & logic.time.has_lived_months(2))
+        MultiWorldRules.add_rule(multiworld.get_location("...Bigfoot?", player), logic.region.can_reach_all((Region.forest, Region.town, Region.secret_woods)) & logic.time.has_lived_months(4))
+        MultiWorldRules.add_rule(multiworld.get_location("'Me me me me me me me me me me me me me me me me'", player), logic.region.can_reach(Region.railroad) & logic.tool.has_tool(Tool.scythe))
+        MultiWorldRules.add_rule(multiworld.get_location("Secret Iridium Stackmaster Trophy", player), logic.grind.can_grind_item(10000, Material.wood))
+
+
 
 
 def set_friendsanity_rules(logic: StardewLogic, multiworld: MultiWorld, player: int, content: StardewContent):

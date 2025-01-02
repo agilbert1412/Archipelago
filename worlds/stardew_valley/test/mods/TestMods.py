@@ -8,7 +8,7 @@ from ..options.presets import allsanity_mods_6_x_x
 from ... import Group, create_content
 from ... import options
 from ...mods.mod_data import ModNames
-from ...options import SkillProgression, Walnutsanity
+from ...options import SkillProgression, Walnutsanity, Secretsanity
 from ...options.options import all_mods
 from ...regions import RandomizationFlag, randomize_connections, create_final_connections_and_regions
 
@@ -106,6 +106,7 @@ class TestBaseItemGeneration(SVTestBase):
         options.Craftsanity.internal_name: options.Craftsanity.option_all,
         options.Booksanity.internal_name: options.Booksanity.option_all,
         Walnutsanity.internal_name: Walnutsanity.preset_all,
+        Secretsanity.internal_name: Secretsanity.option_all,
         options.Mods.internal_name: frozenset(options.Mods.valid_keys)
     }
 
@@ -126,6 +127,7 @@ class TestNoGingerIslandModItemGeneration(SVTestBase):
         options.Chefsanity.internal_name: options.Chefsanity.option_all,
         options.Craftsanity.internal_name: options.Craftsanity.option_all,
         options.Booksanity.internal_name: options.Booksanity.option_all,
+        options.Secretsanity.internal_name: options.Secretsanity.option_all,
         options.ExcludeGingerIsland.internal_name: options.ExcludeGingerIsland.option_true,
         options.Mods.internal_name: frozenset(options.Mods.valid_keys)
     }
