@@ -1,6 +1,7 @@
 from functools import cached_property
 from typing import Union, List
 
+from .action_logic import ActionLogicMixin
 from .base_logic import BaseLogicMixin, BaseLogic
 from .fishing_logic import FishingLogicMixin
 from .has_logic import HasLogicMixin
@@ -28,13 +29,13 @@ class BundleLogicMixin(BaseLogicMixin):
 
 
 class BundleLogic(BaseLogic[Union[ReceivedLogicMixin, HasLogicMixin, TimeLogicMixin, RegionLogicMixin, MoneyLogicMixin, QualityLogicMixin, FishingLogicMixin,
-SkillLogicMixin, QuestLogicMixin]]):
+SkillLogicMixin, QuestLogicMixin, ActionLogicMixin]]):
     # Should be cached
     def can_complete_bundle(self, bundle: Bundle) -> StardewRule:
         item_rules = []
         qualities = []
         time_to_grind = 0
-        can_speak_junimo = self.logic.region.can_reach(Region.wizard_tower)
+        can_speak_junimo = self.logic.action.can_speak_junimo()
         for bundle_item in bundle.items:
             if Currency.is_currency(bundle_item.get_item()):
                 return can_speak_junimo & self.logic.money.can_trade(bundle_item.get_item(), bundle_item.amount)

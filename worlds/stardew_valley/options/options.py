@@ -647,6 +647,22 @@ class Moviesanity(Choice):
     option_all = 2
 
 
+class Secretsanity(Choice):
+    """Add checks for the various secrets and easter eggs present in Stardew Valley. Some of them can be very obscure. If you enable this setting, you should expect to need the wiki a lot.
+    None: None of the in-game secrets are checks
+    Reasonable: Only secrets that can reasonably be obtained quickly if you know what to do, are included
+    Reasonable + Fishing: Also includes the various secret fishable items around the world
+    All: All secrets are included. This includes some very difficult ones, generally due to very low odds of something purely RNG-based. Expect lots of grinding and hoping
+    """
+    internal_name = "secretsanity"
+    display_name = "Secretsanity"
+    default = 0
+    option_none = 0
+    option_reasonable = 1
+    option_reasonable_fish = 2
+    option_all = 3
+
+
 class NumberOfMovementBuffs(Range):
     """Number of movement speed buffs to the player that exist as items in the pool.
     Each movement speed buff is a +25% multiplier that stacks additively"""
@@ -876,6 +892,7 @@ class StardewValleyOptions(PerGameCommonOptions):
     friendsanity_heart_size: FriendsanityHeartSize
     booksanity: Booksanity
     walnutsanity: Walnutsanity
+    secretsanity: Secretsanity
     exclude_ginger_island: ExcludeGingerIsland
     quick_start: QuickStart
     starting_money: StartingMoney
