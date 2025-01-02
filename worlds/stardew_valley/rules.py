@@ -887,7 +887,7 @@ def set_secrets_rules(logic: StardewLogic, multiworld: MultiWorld, player: int, 
         MultiWorldRules.add_rule(multiworld.get_location("Jumpscare Lewis", player),
                                  logic.has(SpecialItem.trimmed_purple_shorts) &
                                  logic.relationship.can_meet(NPC.lewis))
-        MultiWorldRules.add_rule(multiworld.get_location("Fine Purple Silk", player),
+        MultiWorldRules.add_rule(multiworld.get_location("Confront Marnie", player),
                                  logic.has(SpecialItem.lucky_purple_shorts) &
                                  logic.relationship.can_meet(NPC.marnie))
         MultiWorldRules.add_rule(multiworld.get_location("Lucky Purple Bobber", player), logic.fishing.can_use_tackle(SpecialItem.lucky_purple_shorts))
