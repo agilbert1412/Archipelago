@@ -90,7 +90,7 @@ class Group(enum.Enum):
     BOOK_POWER = enum.auto()
     LOST_BOOK = enum.auto()
     PLAYER_BUFF = enum.auto()
-    EASY_SECRET = enum.auto()
+    SIMPLE_SECRET = enum.auto()
     FISHING_SECRET = enum.auto()
     # Mods
     MAGIC_SPELL = enum.auto()
@@ -642,9 +642,9 @@ def create_secrets_items(item_factory: StardewItemFactory, options: StardewValle
     if options.secretsanity == Secretsanity.option_none:
         return
 
-    if options.secretsanity >= Secretsanity.option_reasonable:
-        items.extend(item_factory(item) for item in items_by_group[Group.EASY_SECRET])
-    if options.secretsanity >= Secretsanity.option_reasonable_fish:
+    if options.secretsanity >= Secretsanity.option_simple:
+        items.extend(item_factory(item) for item in items_by_group[Group.SIMPLE_SECRET])
+    if options.secretsanity >= Secretsanity.option_simple_and_fishing:
         items.extend(item_factory(item) for item in items_by_group[Group.FISHING_SECRET])
 
 

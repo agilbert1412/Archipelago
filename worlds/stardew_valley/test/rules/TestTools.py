@@ -12,7 +12,7 @@ class TestProgressiveToolsLogic(SVTestBase):
     options = {
         ToolProgression.internal_name: ToolProgression.option_progressive,
         SeasonRandomization.internal_name: SeasonRandomization.option_randomized,
-        Secretsanity.internal_name: Secretsanity.option_reasonable,
+        Secretsanity.internal_name: Secretsanity.option_simple,
     }
 
     def test_sturgeon(self):

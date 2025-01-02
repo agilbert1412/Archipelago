@@ -875,7 +875,7 @@ def set_secrets_rules(logic: StardewLogic, multiworld: MultiWorld, player: int, 
     if world_options.secretsanity == Secretsanity.option_none:
         return
 
-    if world_options.secretsanity >= Secretsanity.option_reasonable:
+    if world_options.secretsanity >= Secretsanity.option_simple:
         MultiWorldRules.add_rule(multiworld.get_location("Old Master Cannoli", player), logic.has(Fruit.sweet_gem_berry))
         MultiWorldRules.add_rule(multiworld.get_location("Pot Of Gold", player), logic.season.has(Season.spring))
         MultiWorldRules.add_rule(multiworld.get_location("Poison The Governor", player), logic.has(SpecialItem.lucky_purple_shorts))
@@ -904,7 +904,7 @@ def set_secrets_rules(logic: StardewLogic, multiworld: MultiWorld, player: int, 
         MultiWorldRules.add_rule(multiworld.get_location("Flubber Experiment", player), logic.relationship.can_get_married() & logic.building.has_building(Building.slime_hutch) & logic.has(Machine.slime_incubator))
         MultiWorldRules.add_rule(multiworld.get_location("Seems Fishy", player), logic.money.can_spend_at(Region.wizard_basement, 500))
 
-    if world_options.secretsanity >= Secretsanity.option_reasonable_fish:
+    if world_options.secretsanity >= Secretsanity.option_simple_and_fishing:
         if world_options.farm_type == FarmType.option_beach:
             MultiWorldRules.add_rule(multiworld.get_location("'Boat'", player), logic.skill.can_fish(Region.farm))
         if world_options.exclude_ginger_island == ExcludeGingerIsland.option_false:

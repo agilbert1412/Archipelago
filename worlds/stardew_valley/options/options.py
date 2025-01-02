@@ -650,16 +650,16 @@ class Moviesanity(Choice):
 class Secretsanity(Choice):
     """Add checks for the various secrets and easter eggs present in Stardew Valley. Some of them can be very obscure. If you enable this setting, you should expect to need the wiki a lot.
     None: None of the in-game secrets are checks
-    Reasonable: Only secrets that can reasonably be obtained quickly if you know what to do, are included
-    Reasonable + Fishing: Also includes the various secret fishable items around the world
+    Simple: Only secrets that can be obtained quickly and easily, if you know what to do, are included
+    Simple and Fishing: Also includes the various secret fishable items around the world
     All: All secrets are included. This includes some very difficult ones, generally due to very low odds of something purely RNG-based. Expect lots of grinding and hoping
     """
     internal_name = "secretsanity"
     display_name = "Secretsanity"
     default = 0
     option_none = 0
-    option_reasonable = 1
-    option_reasonable_fish = 2
+    option_simple = 1
+    option_simple_and_fishing = 2
     option_all = 3
 
 
