@@ -210,3 +210,6 @@ ReceivedLogicMixin, HasLogicMixin, ModLogicMixin]]):
                 rules.append(self.logic.relationship.can_date(npc))
 
         return self.logic.and_(*rules)
+
+    def can_gift_to(self, item: str, npc: str) -> StardewRule:
+        return self.logic.has(item) & self.logic.relationship.can_meet(npc)
