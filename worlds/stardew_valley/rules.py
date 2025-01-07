@@ -1052,5 +1052,5 @@ def set_many_island_entrances_rules(multiworld, player, entrance_rules: Dict[str
         set_entrance_rule(multiworld, player, entrance, rule)
 
 
-def add_rule(multiworld, player: int, location: str, rule: StardewRule) -> None:
-    MultiWorldRules.add_rule(multiworld.get_location(location, player), rule)
+def add_rule(multiworld, player: int, location_name: str, rule: StardewRule) -> None:
+    MultiWorldRules.add_rule(multiworld.get_location(location_name, player), rule)
