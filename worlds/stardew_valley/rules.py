@@ -36,7 +36,7 @@ from .strings.backpack_tiers import Backpack
 from .strings.building_names import Building
 from .strings.bundle_names import CCRoom
 from .strings.calendar_names import Weekday
-from .strings.craftable_names import Bomb, Furniture
+from .strings.craftable_names import Bomb, Furniture, Consumable
 from .strings.crop_names import Fruit, Vegetable
 from .strings.entrance_names import dig_to_mines_floor, dig_to_skull_floor, Entrance, move_to_woods_depth, DeepWoodsEntrance, AlecEntrance, \
     SVEEntrance, LaceyEntrance, BoardingHouseEntrance, LogicEntrance
@@ -887,9 +887,7 @@ def set_secrets_rules(logic: StardewLogic, multiworld: MultiWorld, player: int, 
         MultiWorldRules.add_rule(multiworld.get_location("Jumpscare Lewis", player),
                                  logic.has(SpecialItem.trimmed_purple_shorts) &
                                  logic.relationship.can_meet(NPC.lewis))
-        MultiWorldRules.add_rule(multiworld.get_location("Confront Marnie", player),
-                                 logic.has(SpecialItem.lucky_purple_shorts) &
-                                 logic.relationship.can_meet(NPC.marnie))
+        MultiWorldRules.add_rule(multiworld.get_location("Confront Marnie", player), logic.relationship.can_gift_to(SpecialItem.lucky_purple_shorts, NPC.marnie))
         MultiWorldRules.add_rule(multiworld.get_location("Lucky Purple Bobber", player), logic.fishing.can_use_tackle(SpecialItem.lucky_purple_shorts))
         MultiWorldRules.add_rule(multiworld.get_location("Something For Santa", player), logic.season.has(Season.winter) & logic.has_any(AnimalProduct.any_milk, Meal.cookie))
         MultiWorldRules.add_rule(multiworld.get_location("Take In The Nature", player), logic.action.can_speak_junimo())
@@ -903,6 +901,10 @@ def set_secrets_rules(logic: StardewLogic, multiworld: MultiWorld, player: int, 
         MultiWorldRules.add_rule(multiworld.get_location("A Familiar Tune", player), logic.relationship.can_meet(NPC.elliott))
         MultiWorldRules.add_rule(multiworld.get_location("Flubber Experiment", player), logic.relationship.can_get_married() & logic.building.has_building(Building.slime_hutch) & logic.has(Machine.slime_incubator))
         MultiWorldRules.add_rule(multiworld.get_location("Seems Fishy", player), logic.money.can_spend_at(Region.wizard_basement, 500))
+        MultiWorldRules.add_rule(multiworld.get_location("What kind of monster is this?", player), logic.relationship.can_gift_to(Fish.mutant_carp, NPC.willy))
+        MultiWorldRules.add_rule(multiworld.get_location("My mouth is watering already", player), logic.relationship.can_gift_to(Meal.magic_rock_candy, NPC.abigail))
+        MultiWorldRules.add_rule(multiworld.get_location("A gift of lovely perfume", player), logic.relationship.can_gift_to(Consumable.monster_musk, NPC.krobus))
+        MultiWorldRules.add_rule(multiworld.get_location("Where exactly does this juice come from?", player), logic.relationship.can_gift_to(AnimalProduct.cow_milk, NPC.dwarf))
 
     if world_options.secretsanity >= Secretsanity.option_simple_and_fishing:
         if world_options.farm_type == FarmType.option_beach:
