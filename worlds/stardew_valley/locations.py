@@ -205,7 +205,7 @@ def extend_cropsanity_locations(randomized_locations: List[LocationData], conten
 
 
 def extend_quests_locations(randomized_locations: List[LocationData], options: StardewValleyOptions, content: StardewContent):
-    if options.quest_locations < 0:
+    if options.quest_locations.has_no_story_quests():
         return
 
     story_quest_locations = locations_by_tag[LocationTags.STORY_QUEST]
@@ -344,7 +344,7 @@ def extend_mandatory_locations(randomized_locations: List[LocationData], options
 
 
 def extend_situational_quest_locations(randomized_locations: List[LocationData], options: StardewValleyOptions):
-    if options.quest_locations < 0:
+    if options.quest_locations.has_no_story_quests():
         return
     if ModNames.distant_lands in options.mods:
         if ModNames.alecto in options.mods:
