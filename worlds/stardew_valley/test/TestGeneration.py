@@ -2,9 +2,9 @@ from typing import List
 
 from BaseClasses import ItemClassification, Item
 from . import SVTestBase
-from .. import items, location_table, options
-from ..items import Group, ItemData
-from ..locations import LocationTags
+from .. import options
+from ..items import item_data, ItemData, Group
+from ..locations import location_table, LocationTags
 from ..options import Friendsanity, SpecialOrderLocations, Shipsanity, Chefsanity, SeasonRandomization, Craftsanity, ExcludeGingerIsland, SkillProgression, \
     Booksanity, Walnutsanity, Secretsanity
 from ..strings.region_names import Region
@@ -15,14 +15,14 @@ def get_all_permanent_progression_items() -> List[ItemData]:
     """
     return [
         item
-        for item in items.all_items
+        for item in item_data.all_items
         if ItemClassification.progression in item.classification
         if item.mod_name is None
-        if item.name not in {event.name for event in items.events}
-        if item.name not in {deprecated.name for deprecated in items.items_by_group[Group.DEPRECATED]}
-        if item.name not in {season.name for season in items.items_by_group[Group.SEASON]}
-        if item.name not in {weapon.name for weapon in items.items_by_group[Group.WEAPON]}
-        if item.name not in {baby.name for baby in items.items_by_group[Group.BABY]}
+        if item.name not in {event.name for event in item_data.events}
+        if item.name not in {deprecated.name for deprecated in item_data.items_by_group[Group.DEPRECATED]}
+        if item.name not in {season.name for season in item_data.items_by_group[Group.SEASON]}
+        if item.name not in {weapon.name for weapon in item_data.items_by_group[Group.WEAPON]}
+        if item.name not in {baby.name for baby in item_data.items_by_group[Group.BABY]}
         if item.name != "The Gateway Gazette"
     ]
 
@@ -55,19 +55,19 @@ class TestBaseItemGeneration(SVTestBase):
 
     def test_does_not_create_deprecated_items(self):
         all_created_items = set(self.get_all_created_items())
-        for deprecated_item in items.items_by_group[items.Group.DEPRECATED]:
+        for deprecated_item in item_data.items_by_group[item_data.Group.DEPRECATED]:
             with self.subTest(f"{deprecated_item.name}"):
                 self.assertNotIn(deprecated_item.name, all_created_items)
 
     def test_does_not_create_more_than_one_maximum_one_items(self):
         all_created_items = self.get_all_created_items()
-        for maximum_one_item in items.items_by_group[items.Group.MAXIMUM_ONE]:
+        for maximum_one_item in item_data.items_by_group[item_data.Group.MAXIMUM_ONE]:
             with self.subTest(f"{maximum_one_item.name}"):
                 self.assertLessEqual(all_created_items.count(maximum_one_item.name), 1)
 
     def test_does_not_create_or_create_two_of_exactly_two_items(self):
         all_created_items = self.get_all_created_items()
-        for exactly_two_item in items.items_by_group[items.Group.EXACTLY_TWO]:
+        for exactly_two_item in item_data.items_by_group[item_data.Group.EXACTLY_TWO]:
             with self.subTest(f"{exactly_two_item.name}"):
                 count = all_created_items.count(exactly_two_item.name)
                 self.assertTrue(count == 0 or count == 2)
@@ -104,19 +104,19 @@ class TestNoGingerIslandItemGeneration(SVTestBase):
 
     def test_does_not_create_deprecated_items(self):
         all_created_items = self.get_all_created_items()
-        for deprecated_item in items.items_by_group[items.Group.DEPRECATED]:
+        for deprecated_item in item_data.items_by_group[item_data.Group.DEPRECATED]:
             with self.subTest(f"Deprecated item: {deprecated_item.name}"):
                 self.assertNotIn(deprecated_item.name, all_created_items)
 
     def test_does_not_create_more_than_one_maximum_one_items(self):
         all_created_items = self.get_all_created_items()
-        for maximum_one_item in items.items_by_group[items.Group.MAXIMUM_ONE]:
+        for maximum_one_item in item_data.items_by_group[item_data.Group.MAXIMUM_ONE]:
             with self.subTest(f"{maximum_one_item.name}"):
                 self.assertLessEqual(all_created_items.count(maximum_one_item.name), 1)
 
     def test_does_not_create_exactly_two_items(self):
         all_created_items = self.get_all_created_items()
-        for exactly_two_item in items.items_by_group[items.Group.EXACTLY_TWO]:
+        for exactly_two_item in item_data.items_by_group[item_data.Group.EXACTLY_TWO]:
             with self.subTest(f"{exactly_two_item.name}"):
                 count = all_created_items.count(exactly_two_item.name)
                 self.assertTrue(count == 0 or count == 2)
