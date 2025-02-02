@@ -11,4 +11,4 @@ def apply_most_restrictive_options(group_option: StardewValleyOptions, world_opt
     group_option.exclude_ginger_island.value = max(o.exclude_ginger_island.value for o in world_options)
 
     # If at least one world disabled traps, disabling them for the whole group
-    group_option.trap_items.value = min(o.trap_items.value for o in world_options)
+    group_option.trap_difficulty.value = min(o.trap_difficulty.value for o in world_options)
