@@ -864,7 +864,7 @@ def set_secrets_rules(logic: StardewLogic, multiworld: MultiWorld, player: int, 
         add_rule(multiworld, player, "Confront Marnie", logic.relationship.can_gift_to(SpecialItem.lucky_purple_shorts, NPC.marnie))
         add_rule(multiworld, player, "Lucky Purple Bobber", logic.fishing.can_use_tackle(SpecialItem.lucky_purple_shorts))
         add_rule(multiworld, player, "Something For Santa", logic.season.has(Season.winter) & logic.has_any(AnimalProduct.any_milk, Meal.cookie))
-        add_rule(multiworld, player, "Take In The Nature", logic.action.can_speak_junimo())
+        add_rule(multiworld, player, "Jungle Junimo", logic.action.can_speak_junimo())
         add_rule(multiworld, player, "??HMTGF??", logic.has(Fish.super_cucumber))
         add_rule(multiworld, player, "??Pinky Lemon??", logic.has(ArtisanGood.duck_mayonnaise))
         add_rule(multiworld, player, "??Foroguemon??", logic.has(Meal.strange_bun) & logic.relationship.has_hearts(NPC.vincent, 2))
