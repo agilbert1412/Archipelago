@@ -7,7 +7,7 @@ import unittest
 from contextlib import contextmanager
 from typing import Optional, Dict, Union, Any, List, Iterable
 
-from BaseClasses import get_seed, MultiWorld, Location, Item, CollectionState, Entrance
+from BaseClasses import get_seed, MultiWorld, Location, Item, Region, CollectionState, Entrance
 from test.bases import WorldTestBase
 from test.general import gen_steps, setup_solo_multiworld as setup_base_solo_multiworld
 from worlds.AutoWorld import call_all
@@ -18,6 +18,7 @@ from ..logic.time_logic import MONTH_COEFFICIENT
 from ..options import StardewValleyOption, options
 
 logger = logging.getLogger(__name__)
+
 DEFAULT_TEST_SEED = get_seed()
 logger.info(f"Default Test Seed: {DEFAULT_TEST_SEED}")
 
@@ -178,6 +179,16 @@ class SVTestBase(RuleAssertMixin, WorldTestBase, SVTestCase):
         if state is None:
             state = self.multiworld.state
         super().assert_cannot_reach_location(location, state)
+
+    def assert_can_reach_region(self, region: Region | str, state: CollectionState | None = None) -> None:
+        if state is None:
+            state = self.multiworld.state
+        super().assert_can_reach_region(region, state)
+
+    def assert_cannot_reach_region(self, region: Region | str, state: CollectionState | None = None) -> None:
+        if state is None:
+            state = self.multiworld.state
+        super().assert_cannot_reach_region(region, state)
 
     def assert_can_reach_entrance(self, entrance: Entrance | str, state: CollectionState | None = None) -> None:
         if state is None:
