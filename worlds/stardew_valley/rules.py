@@ -48,6 +48,7 @@ from .strings.geode_names import Geode
 from .strings.machine_names import Machine
 from .strings.material_names import Material
 from .strings.metal_names import MetalBar, Mineral
+from .strings.monster_drop_names import Loot
 from .strings.monster_names import Monster
 from .strings.performance_names import Performance
 from .strings.quest_names import Quest
@@ -874,7 +875,7 @@ def set_secrets_rules(logic: StardewLogic, multiworld: MultiWorld, player: int, 
         add_rule(multiworld, player, "Meowmere", logic.has(SpecialItem.far_away_stone) & logic.region.can_reach(Region.wizard_basement))
         add_rule(multiworld, player, "A Familiar Tune", logic.relationship.can_meet(NPC.elliott))
         add_rule(multiworld, player, "Flubber Experiment",
-                 logic.relationship.can_get_married() & logic.building.has_building(Building.slime_hutch) & logic.has(Machine.slime_incubator))
+                 logic.relationship.can_get_married() & logic.building.has_building(Building.slime_hutch) & logic.has(Machine.slime_incubator) & logic.has(Loot.green_slime_egg))
         add_rule(multiworld, player, "Seems Fishy", logic.money.can_spend_at(Region.wizard_basement, 500))
         add_rule(multiworld, player, "What kind of monster is this?", logic.relationship.can_gift_to(Fish.mutant_carp, NPC.willy))
         add_rule(multiworld, player, "My mouth is watering already", logic.relationship.can_gift_to(Meal.magic_rock_candy, NPC.abigail))
