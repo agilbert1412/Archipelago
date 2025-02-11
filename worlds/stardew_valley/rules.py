@@ -902,7 +902,7 @@ def set_secrets_rules(logic: StardewLogic, multiworld: MultiWorld, player: int, 
         add_rule(multiworld, player, "Thank the Devs", logic.received("Stardrop") & logic.money.can_spend_at(Region.wizard_basement, 500))
         add_rule(multiworld, player, "Annoy the Moon Man", logic.shipping.can_use_shipping_bin & logic.time.has_lived_months(6))
         add_rule(multiworld, player, "Strange Sighting", logic.region.can_reach_all((Region.bus_stop, Region.town)) & logic.time.has_lived_months(6))
-        add_rule(multiworld, player, "Merperson Sighting", logic.region.can_reach(Region.beach) & logic.time.has_lived_months(2))
+        add_rule(multiworld, player, "Sea Monster Sighting", logic.region.can_reach(Region.beach) & logic.time.has_lived_months(2))
         add_rule(multiworld, player, "...Bigfoot?", logic.region.can_reach_all((Region.forest, Region.town, Region.secret_woods)) & logic.time.has_lived_months(4))
         add_rule(multiworld, player, "'Me me me me me me me me me me me me me me me me'", logic.region.can_reach(Region.railroad) & logic.tool.has_tool(Tool.scythe))
         add_rule(multiworld, player, "Secret Iridium Stackmaster Trophy", logic.grind.can_grind_item(10000, Material.wood))
