@@ -30,7 +30,6 @@ from .strings.ap_names.ap_option_names import WalnutsanityOptionName
 from .strings.ap_names.community_upgrade_names import CommunityUpgrade
 from .strings.ap_names.mods.mod_items import SVEQuestItem, SVERunes
 from .strings.ap_names.transport_names import Transportation
-from .strings.metal_names import Artifact as ArtifactName
 from .strings.artisan_good_names import ArtisanGood
 from .strings.backpack_tiers import Backpack
 from .strings.building_names import Building
@@ -47,11 +46,11 @@ from .strings.generic_names import Generic
 from .strings.geode_names import Geode
 from .strings.machine_names import Machine
 from .strings.material_names import Material
-from .strings.metal_names import MetalBar, Mineral
+from .strings.metal_names import Artifact as ArtifactName, MetalBar, Mineral
 from .strings.monster_drop_names import Loot
 from .strings.monster_names import Monster
 from .strings.performance_names import Performance
-from .strings.quest_names import Quest, ModQuest
+from .strings.quest_names import Quest
 from .strings.region_names import Region
 from .strings.season_names import Season
 from .strings.skill_names import Skill
@@ -407,8 +406,7 @@ def set_island_parrot_rules(logic: StardewLogic, multiworld, player):
     add_rule(multiworld, player, Transportation.farm_obelisk, has_20_walnut & logic.received("Island Mailbox"))
     add_rule(multiworld, player, "Dig Site Bridge", has_10_walnut & logic.received("Island West Turtle"))
     add_rule(multiworld, player, "Island Trader", has_10_walnut & logic.received("Island Farmhouse"))
-    add_rule(multiworld, player, "Volcano Bridge", has_5_walnut & logic.received("Island West Turtle") &
-                             logic.region.can_reach(Region.volcano_floor_10))
+    add_rule(multiworld, player, "Volcano Bridge", has_5_walnut & logic.received("Island West Turtle") & logic.region.can_reach(Region.volcano_floor_10))
     add_rule(multiworld, player, "Volcano Exit Shortcut", has_5_walnut & logic.received("Island West Turtle"))
     add_rule(multiworld, player, "Island Resort", has_20_walnut & logic.received("Island Farmhouse"))
     add_rule(multiworld, player, Transportation.parrot_express, has_10_walnut)
@@ -431,14 +429,14 @@ def set_walnut_puzzle_rules(logic: StardewLogic, multiworld, player, world_optio
     add_rule(multiworld, player, "Open Golden Coconut", logic.has(Geode.golden_coconut))
     add_rule(multiworld, player, "Banana Altar", logic.has(Fruit.banana))
     add_rule(multiworld, player, "Leo's Tree", logic.tool.has_tool(Tool.axe))
-    add_rule(multiworld, player, "Gem Birds Shrine", logic.has(Mineral.amethyst) & logic.has(Mineral.aquamarine) &
-                             logic.has(Mineral.emerald) & logic.has(Mineral.ruby) & logic.has(Mineral.topaz) &
-                             logic.region.can_reach_all((Region.island_north, Region.island_west, Region.island_east, Region.island_south)))
+    add_rule(multiworld, player, "Gem Birds Shrine",
+             logic.has(Mineral.amethyst) & logic.has(Mineral.aquamarine) & logic.has(Mineral.emerald) & logic.has(Mineral.ruby) & logic.has(Mineral.topaz)
+             & logic.region.can_reach_all((Region.island_north, Region.island_west, Region.island_east, Region.island_south)))
     add_rule(multiworld, player, "Gourmand Frog Melon", logic.has(Fruit.melon) & logic.region.can_reach(Region.island_west))
-    add_rule(multiworld, player, "Gourmand Frog Wheat", logic.has(Vegetable.wheat) &
-                             logic.region.can_reach(Region.island_west) & logic.region.can_reach_location("Gourmand Frog Melon"))
-    add_rule(multiworld, player, "Gourmand Frog Garlic", logic.has(Vegetable.garlic) &
-                             logic.region.can_reach(Region.island_west) & logic.region.can_reach_location("Gourmand Frog Wheat"))
+    add_rule(multiworld, player, "Gourmand Frog Wheat",
+             logic.has(Vegetable.wheat) & logic.region.can_reach(Region.island_west) & logic.region.can_reach_location("Gourmand Frog Melon"))
+    add_rule(multiworld, player, "Gourmand Frog Garlic",
+             logic.has(Vegetable.garlic) & logic.region.can_reach(Region.island_west) & logic.region.can_reach_location("Gourmand Frog Wheat"))
     add_rule(multiworld, player, "Whack A Mole", logic.tool.has_tool(Tool.watering_can, ToolMaterial.iridium))
     add_rule(multiworld, player, "Complete Large Animal Collection", logic.walnut.can_complete_large_animal_collection())
     add_rule(multiworld, player, "Complete Snake Collection", logic.walnut.can_complete_snake_collection())
@@ -648,7 +646,7 @@ def set_backpack_rules(logic: StardewLogic, multiworld: MultiWorld, player: int,
     backpack_tier_names = Backpack.get_purchasable_tiers(ModNames.big_backpack in world_options.mods)
     previous_backpacks = 0
     for tier in backpack_tier_names:
-        for i in range(1, num_per_tier+1):
+        for i in range(1, num_per_tier + 1):
             loc_name = f"{tier} {i}"
             if num_per_tier == 1:
                 loc_name = tier
@@ -876,7 +874,8 @@ def set_secrets_rules(logic: StardewLogic, multiworld: MultiWorld, player: int, 
         add_rule(multiworld, player, "Meowmere", logic.has(SpecialItem.far_away_stone) & logic.region.can_reach(Region.wizard_basement))
         add_rule(multiworld, player, "A Familiar Tune", logic.relationship.can_meet(NPC.elliott))
         add_rule(multiworld, player, "Flubber Experiment",
-                 logic.relationship.can_get_married() & logic.building.has_building(Building.slime_hutch) & logic.has(Machine.slime_incubator) & logic.has(Loot.green_slime_egg))
+                 logic.relationship.can_get_married() & logic.building.has_building(Building.slime_hutch) & logic.has(Machine.slime_incubator) &
+                 logic.has(Loot.green_slime_egg))
         add_rule(multiworld, player, "Seems Fishy", logic.money.can_spend_at(Region.wizard_basement, 500))
         add_rule(multiworld, player, "What kind of monster is this?", logic.relationship.can_gift_to(Fish.mutant_carp, NPC.willy))
         add_rule(multiworld, player, "My mouth is watering already", logic.relationship.can_gift_to(Meal.magic_rock_candy, NPC.abigail))
@@ -905,11 +904,11 @@ def set_secrets_rules(logic: StardewLogic, multiworld: MultiWorld, player: int, 
         add_rule(multiworld, player, "Annoy the Moon Man", logic.shipping.can_use_shipping_bin & logic.time.has_lived_months(6))
         add_rule(multiworld, player, "Strange Sighting", logic.region.can_reach_all((Region.bus_stop, Region.town)) & logic.time.has_lived_months(6))
         add_rule(multiworld, player, "Sea Monster Sighting", logic.region.can_reach(Region.beach) & logic.time.has_lived_months(2))
-        add_rule(multiworld, player, "...Bigfoot?", logic.region.can_reach_all((Region.forest, Region.town, Region.secret_woods)) & logic.time.has_lived_months(4))
-        add_rule(multiworld, player, "'Me me me me me me me me me me me me me me me me'", logic.region.can_reach(Region.railroad) & logic.tool.has_tool(Tool.scythe))
+        add_rule(multiworld, player, "...Bigfoot?",
+                 logic.region.can_reach_all((Region.forest, Region.town, Region.secret_woods)) & logic.time.has_lived_months(4))
+        add_rule(multiworld, player, "'Me me me me me me me me me me me me me me me me'",
+                 logic.region.can_reach(Region.railroad) & logic.tool.has_tool(Tool.scythe))
         add_rule(multiworld, player, "Secret Iridium Stackmaster Trophy", logic.grind.can_grind_item(10000, Material.wood))
-
-
 
 
 def set_friendsanity_rules(logic: StardewLogic, multiworld: MultiWorld, player: int, content: StardewContent):
@@ -960,7 +959,8 @@ def set_magic_spell_rules(logic: StardewLogic, multiworld: MultiWorld, player: i
     add_rule(multiworld, player, "Analyze: Descend", logic.region.can_reach(Region.mines))
     add_rule(multiworld, player, "Analyze: Fireball", logic.has("Fire Quartz"))
     add_rule(multiworld, player, "Analyze: Frostbolt", logic.region.can_reach(Region.mines_floor_60) & logic.skill.can_fish(difficulty=85))
-    add_rule(multiworld, player, "Analyze All Elemental School Locations", logic.has("Fire Quartz") & logic.region.can_reach(Region.mines_floor_60) & logic.skill.can_fish(difficulty=85))
+    add_rule(multiworld, player, "Analyze All Elemental School Locations",
+             logic.has("Fire Quartz") & logic.region.can_reach(Region.mines_floor_60) & logic.skill.can_fish(difficulty=85))
     # add_rule(multiworld, player, "Analyze: Lantern", player),)
     add_rule(multiworld, player, "Analyze: Tendrils", logic.region.can_reach(Region.farm))
     add_rule(multiworld, player, "Analyze: Shockwave", logic.has("Earth Crystal"))
@@ -1002,7 +1002,7 @@ def set_sve_rules(logic: StardewLogic, multiworld: MultiWorld, player: int, worl
     set_entrance_rule(multiworld, player, SVEEntrance.use_bear_shop, (logic.mod.sve.can_buy_bear_recipe()))
     set_entrance_rule(multiworld, player, SVEEntrance.railroad_to_grampleton_station, logic.received(SVEQuestItem.scarlett_job_offer))
     set_entrance_rule(multiworld, player, SVEEntrance.museum_to_gunther_bedroom, logic.relationship.has_hearts(ModNPC.gunther, 2))
-    set_entrance_rule(multiworld, player, SVEEntrance.to_aurora_basement, logic.received(SVEQuestItem.aurora_vineyard_reclamation))
+    set_entrance_rule(multiworld, player, SVEEntrance.to_aurora_basement, logic.mod.quest.has_completed_aurora_vineyard_bundle())
     logic.mod.sve.initialize_rules()
     for location in logic.registry.sve_location_rules:
         MultiWorldRules.set_rule(multiworld.get_location(location, player),
