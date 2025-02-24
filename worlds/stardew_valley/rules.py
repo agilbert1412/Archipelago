@@ -8,6 +8,8 @@ from . import locations
 from .bundles.bundle_room import BundleRoom
 from .content import StardewContent
 from .content.feature import friendsanity
+from .content.vanilla.ginger_island import ginger_island_content_pack
+from .content.vanilla.qi_board import qi_board_content_pack
 from .data.craftable_data import all_crafting_recipes_by_name
 from .data.game_item import ItemTag
 from .data.harvest import HarvestCropSource, HarvestFruitTreeSource
@@ -20,7 +22,7 @@ from .logic.logic import StardewLogic
 from .logic.time_logic import MAX_MONTHS
 from .logic.tool_logic import tool_upgrade_prices
 from .mods.mod_data import ModNames
-from .options import ExcludeGingerIsland, SpecialOrderLocations, Museumsanity, BackpackProgression, Shipsanity, \
+from .options import SpecialOrderLocations, Museumsanity, BackpackProgression, Shipsanity, \
     Monstersanity, Chefsanity, Craftsanity, ArcadeMachineLocations, Cooksanity, StardewValleyOptions, Walnutsanity
 from .options.options import FarmType
 from .stardew_rule import And, StardewRule, true_
@@ -75,8 +77,8 @@ def set_rules(world):
 
     all_location_names = set(location.name for location in multiworld.get_locations(player))
 
-    set_entrance_rules(logic, multiworld, player, world_options)
-    set_ginger_island_rules(logic, multiworld, player, world_options)
+    set_entrance_rules(logic, multiworld, player, world_options, world_content)
+    set_ginger_island_rules(logic, multiworld, player, world_options, world_content)
 
     set_tool_rules(logic, multiworld, player, world_content)
     set_skills_rules(logic, multiworld, player, world_content)
@@ -84,13 +86,13 @@ def set_rules(world):
     set_building_rules(logic, multiworld, player, world_content)
     set_cropsanity_rules(logic, multiworld, player, world_content)
     set_story_quests_rules(all_location_names, logic, multiworld, player, world_options)
-    set_special_order_rules(all_location_names, logic, multiworld, player, world_options)
+    set_special_order_rules(all_location_names, logic, multiworld, player, world_options, world_content)
     set_help_wanted_quests_rules(logic, multiworld, player, world_options)
     set_fishsanity_rules(all_location_names, logic, multiworld, player)
     set_museumsanity_rules(all_location_names, logic, multiworld, player, world_options)
 
     set_friendsanity_rules(logic, multiworld, player, world_content)
-    set_backpack_rules(logic, multiworld, player, world_options)
+    set_backpack_rules(logic, multiworld, player, world_options, world_content)
     set_festival_rules(all_location_names, logic, multiworld, player)
     set_monstersanity_rules(all_location_names, logic, multiworld, player, world_options)
     set_shipsanity_rules(all_location_names, logic, multiworld, player, world_options)
@@ -101,11 +103,11 @@ def set_rules(world):
     set_isolated_locations_rules(logic, multiworld, player)
     set_traveling_merchant_day_rules(logic, multiworld, player)
     set_arcade_machine_rules(logic, multiworld, player, world_options)
-    set_secrets_rules(logic, multiworld, player, world_options)
+    set_secrets_rules(logic, multiworld, player, world_options, world_content)
 
-    set_deepwoods_rules(logic, multiworld, player, world_options)
-    set_magic_spell_rules(logic, multiworld, player, world_options)
-    set_sve_rules(logic, multiworld, player, world_options)
+    set_deepwoods_rules(logic, multiworld, player, world_content)
+    set_magic_spell_rules(logic, multiworld, player, world_content)
+    set_sve_rules(logic, multiworld, player, world_content)
 
 
 def set_isolated_locations_rules(logic: StardewLogic, multiworld, player):
@@ -186,13 +188,13 @@ def set_skills_rules(logic: StardewLogic, multiworld: MultiWorld, player: int, c
             MultiWorldRules.set_rule(location, rule)
 
 
-def set_entrance_rules(logic: StardewLogic, multiworld, player, world_options: StardewValleyOptions):
+def set_entrance_rules(logic: StardewLogic, multiworld, player, world_options: StardewValleyOptions, content: StardewContent):
     set_mines_floor_entrance_rules(logic, multiworld, player)
     set_skull_cavern_floor_entrance_rules(logic, multiworld, player)
     set_blacksmith_entrance_rules(logic, multiworld, player)
-    set_skill_entrance_rules(logic, multiworld, player, world_options)
+    set_skill_entrance_rules(logic, multiworld, player, content)
     set_traveling_merchant_day_rules(logic, multiworld, player)
-    set_dangerous_mine_rules(logic, multiworld, player, world_options)
+    set_dangerous_mine_rules(logic, multiworld, player, content)
 
     set_entrance_rule(multiworld, player, Entrance.enter_tide_pools, logic.received("Beach Bridge") | (logic.mod.magic.can_blink()))
     set_entrance_rule(multiworld, player, Entrance.enter_quarry, logic.received("Bridge Repair") | (logic.mod.magic.can_blink()))
@@ -223,12 +225,13 @@ def set_entrance_rules(logic: StardewLogic, multiworld, player, world_options: S
                           NPC.krobus)) | logic.mod.magic.can_blink())
     set_entrance_rule(multiworld, player, Entrance.enter_casino, logic.quest.has_club_card())
 
-    set_bedroom_entrance_rules(logic, multiworld, player, world_options)
+    set_bedroom_entrance_rules(logic, multiworld, player, content)
     set_festival_entrance_rules(logic, multiworld, player)
-    set_island_entrance_rule(multiworld, player, LogicEntrance.island_cooking, logic.cooking.can_cook_in_kitchen, world_options)
+    set_island_entrance_rule(multiworld, player, LogicEntrance.island_cooking, logic.cooking.can_cook_in_kitchen, content)
     set_entrance_rule(multiworld, player, LogicEntrance.farmhouse_cooking, logic.cooking.can_cook_in_kitchen)
     set_entrance_rule(multiworld, player, LogicEntrance.shipping, logic.shipping.can_use_shipping_bin)
-    set_entrance_rule(multiworld, player, LogicEntrance.find_secret_notes, logic.quest.has_magnifying_glass() & (logic.ability.can_chop_trees() | logic.mine.can_mine_in_the_mines_floor_1_40()))
+    set_entrance_rule(multiworld, player, LogicEntrance.find_secret_notes,
+                      logic.quest.has_magnifying_glass() & (logic.ability.can_chop_trees() | logic.mine.can_mine_in_the_mines_floor_1_40()))
     set_entrance_rule(multiworld, player, LogicEntrance.watch_queen_of_sauce, logic.action.can_watch(Channel.queen_of_sauce))
     set_entrance_rule(multiworld, player, Entrance.forest_to_mastery_cave, logic.skill.can_enter_mastery_cave)
     set_entrance_rule(multiworld, player, LogicEntrance.buy_experience_books, logic.time.has_lived_months(2))
@@ -237,8 +240,8 @@ def set_entrance_rules(logic: StardewLogic, multiworld, player, world_options: S
     set_entrance_rule(multiworld, player, Entrance.adventurer_guild_to_bedroom, logic.monster.can_kill_max(Generic.any))
 
 
-def set_dangerous_mine_rules(logic, multiworld, player, world_options: StardewValleyOptions):
-    if world_options.exclude_ginger_island == ExcludeGingerIsland.option_true:
+def set_dangerous_mine_rules(logic, multiworld, player, content: StardewContent):
+    if not content.is_enabled(ginger_island_content_pack):
         return
     dangerous_mine_rule = logic.mine.has_mine_elevator_to_floor(120) & logic.region.can_reach(Region.qi_walnut_room)
     set_entrance_rule(multiworld, player, Entrance.dig_to_dangerous_mines_20, dangerous_mine_rule)
@@ -258,7 +261,7 @@ def set_farm_buildings_entrance_rules(logic, multiworld, player):
     set_entrance_rule(multiworld, player, Entrance.enter_slime_hutch, logic.building.has_building(Building.slime_hutch))
 
 
-def set_bedroom_entrance_rules(logic, multiworld, player, world_options: StardewValleyOptions):
+def set_bedroom_entrance_rules(logic, multiworld, player, content: StardewContent):
     set_entrance_rule(multiworld, player, Entrance.enter_harvey_room, logic.relationship.has_hearts(NPC.harvey, 2))
     set_entrance_rule(multiworld, player, Entrance.mountain_to_maru_room, logic.relationship.has_hearts(NPC.maru, 2))
     set_entrance_rule(multiworld, player, Entrance.enter_sebastian_room, (logic.relationship.has_hearts(NPC.sebastian, 2) | logic.mod.magic.can_blink()))
@@ -266,9 +269,9 @@ def set_bedroom_entrance_rules(logic, multiworld, player, world_options: Stardew
     set_entrance_rule(multiworld, player, Entrance.enter_elliott_house, logic.relationship.has_hearts(NPC.elliott, 2))
     set_entrance_rule(multiworld, player, Entrance.enter_sunroom, logic.relationship.has_hearts(NPC.caroline, 2))
     set_entrance_rule(multiworld, player, Entrance.enter_wizard_basement, logic.relationship.has_hearts(NPC.wizard, 4))
-    if ModNames.alec in world_options.mods:
+    if content.is_enabled(ModNames.alec):
         set_entrance_rule(multiworld, player, AlecEntrance.petshop_to_bedroom, (logic.relationship.has_hearts(ModNPC.alec, 2) | logic.mod.magic.can_blink()))
-    if ModNames.lacey in world_options.mods:
+    if content.is_enabled(ModNames.lacey):
         set_entrance_rule(multiworld, player, LaceyEntrance.forest_to_hat_house, logic.relationship.has_hearts(ModNPC.lacey, 2))
 
 
@@ -288,7 +291,7 @@ def set_skull_cavern_floor_entrance_rules(logic, multiworld, player):
         set_entrance_rule(multiworld, player, dig_to_skull_floor(floor), rule)
 
 
-def set_skill_entrance_rules(logic, multiworld, player, world_options: StardewValleyOptions):
+def set_skill_entrance_rules(logic, multiworld, player, content: StardewContent):
     set_entrance_rule(multiworld, player, LogicEntrance.grow_spring_crops, logic.farming.has_farming_tools & logic.season.has_spring)
     set_entrance_rule(multiworld, player, LogicEntrance.grow_summer_crops, logic.farming.has_farming_tools & logic.season.has_summer)
     set_entrance_rule(multiworld, player, LogicEntrance.grow_fall_crops, logic.farming.has_farming_tools & logic.season.has_fall)
@@ -296,10 +299,10 @@ def set_skill_entrance_rules(logic, multiworld, player, world_options: StardewVa
     set_entrance_rule(multiworld, player, LogicEntrance.grow_summer_crops_in_greenhouse, logic.farming.has_farming_tools)
     set_entrance_rule(multiworld, player, LogicEntrance.grow_fall_crops_in_greenhouse, logic.farming.has_farming_tools)
     set_entrance_rule(multiworld, player, LogicEntrance.grow_indoor_crops_in_greenhouse, logic.farming.has_farming_tools)
-    set_island_entrance_rule(multiworld, player, LogicEntrance.grow_spring_crops_on_island, logic.farming.has_farming_tools, world_options)
-    set_island_entrance_rule(multiworld, player, LogicEntrance.grow_summer_crops_on_island, logic.farming.has_farming_tools, world_options)
-    set_island_entrance_rule(multiworld, player, LogicEntrance.grow_fall_crops_on_island, logic.farming.has_farming_tools, world_options)
-    set_island_entrance_rule(multiworld, player, LogicEntrance.grow_indoor_crops_on_island, logic.farming.has_farming_tools, world_options)
+    set_island_entrance_rule(multiworld, player, LogicEntrance.grow_spring_crops_on_island, logic.farming.has_farming_tools, content)
+    set_island_entrance_rule(multiworld, player, LogicEntrance.grow_summer_crops_on_island, logic.farming.has_farming_tools, content)
+    set_island_entrance_rule(multiworld, player, LogicEntrance.grow_fall_crops_on_island, logic.farming.has_farming_tools, content)
+    set_island_entrance_rule(multiworld, player, LogicEntrance.grow_indoor_crops_on_island, logic.farming.has_farming_tools, content)
     set_entrance_rule(multiworld, player, LogicEntrance.grow_summer_fall_crops_in_summer, true_)
     set_entrance_rule(multiworld, player, LogicEntrance.grow_summer_fall_crops_in_fall, true_)
 
@@ -336,9 +339,9 @@ def set_festival_entrance_rules(logic, multiworld, player):
     set_entrance_rule(multiworld, player, LogicEntrance.attend_winter_star, logic.season.has(Season.winter))
 
 
-def set_ginger_island_rules(logic: StardewLogic, multiworld, player, world_options: StardewValleyOptions):
-    set_island_entrances_rules(logic, multiworld, player, world_options)
-    if world_options.exclude_ginger_island == ExcludeGingerIsland.option_true:
+def set_ginger_island_rules(logic: StardewLogic, multiworld, player, world_options: StardewValleyOptions, content: StardewContent):
+    set_island_entrances_rules(logic, multiworld, player, content)
+    if not content.is_enabled(ginger_island_content_pack):
         return
 
     set_boat_repair_rules(logic, multiworld, player)
@@ -354,7 +357,7 @@ def set_boat_repair_rules(logic: StardewLogic, multiworld, player):
     add_rule(multiworld, player, "Repair Ticket Machine", logic.has(ArtisanGood.battery_pack))
 
 
-def set_island_entrances_rules(logic: StardewLogic, multiworld, player, world_options: StardewValleyOptions):
+def set_island_entrances_rules(logic: StardewLogic, multiworld, player, content: StardewContent):
     boat_repaired = logic.received(Transportation.boat_repair)
     dig_site_rule = logic.received("Dig Site Bridge")
     entrance_rules = {
@@ -393,7 +396,7 @@ def set_island_entrances_rules(logic: StardewLogic, multiworld, player, world_op
         else:
             entrance_rules[parrot] = parrot_express_rule
 
-    set_many_island_entrances_rules(multiworld, player, entrance_rules, world_options)
+    set_many_island_entrances_rules(multiworld, player, entrance_rules, content)
 
 
 def set_island_parrot_rules(logic: StardewLogic, multiworld, player):
@@ -500,13 +503,13 @@ def set_story_quests_rules(all_location_names: Set[str], logic: StardewLogic, mu
     if world_options.quest_locations.has_no_story_quests():
         return
     for quest in locations.locations_by_tag[LocationTags.STORY_QUEST]:
-        if quest.name in all_location_names and (quest.mod_name is None or quest.mod_name in world_options.mods):
+        if quest.name in all_location_names:
             MultiWorldRules.set_rule(multiworld.get_location(quest.name, player),
                                      logic.registry.quest_rules[quest.name])
 
 
 def set_special_order_rules(all_location_names: Set[str], logic: StardewLogic, multiworld, player,
-                            world_options: StardewValleyOptions):
+                            world_options: StardewValleyOptions, content: StardewContent):
     if world_options.special_order_locations & SpecialOrderLocations.option_board:
         board_rule = logic.received("Special Order Board") & logic.time.has_lived_months(4)
         for board_order in locations.locations_by_tag[LocationTags.SPECIAL_ORDER_BOARD]:
@@ -514,9 +517,7 @@ def set_special_order_rules(all_location_names: Set[str], logic: StardewLogic, m
                 order_rule = board_rule & logic.registry.special_order_rules[board_order.name]
                 MultiWorldRules.set_rule(multiworld.get_location(board_order.name, player), order_rule)
 
-    if world_options.exclude_ginger_island == ExcludeGingerIsland.option_true:
-        return
-    if world_options.special_order_locations & SpecialOrderLocations.value_qi:
+    if content.is_enabled(qi_board_content_pack):
         qi_rule = logic.region.can_reach(Region.qi_walnut_room) & logic.time.has_lived_months(8)
         for qi_order in locations.locations_by_tag[LocationTags.SPECIAL_ORDER_QI]:
             if qi_order.name in all_location_names:
@@ -642,12 +643,12 @@ def get_museum_item_count_rule(logic: StardewLogic, suffix, milestone_name, acce
     return rule
 
 
-def set_backpack_rules(logic: StardewLogic, multiworld: MultiWorld, player: int, world_options: StardewValleyOptions):
+def set_backpack_rules(logic: StardewLogic, multiworld: MultiWorld, player: int, world_options: StardewValleyOptions, content: StardewContent):
     if world_options.backpack_progression == BackpackProgression.option_vanilla:
         return
 
     num_per_tier = world_options.backpack_size.count_per_tier()
-    backpack_tier_names = Backpack.get_purchasable_tiers(ModNames.big_backpack in world_options.mods)
+    backpack_tier_names = Backpack.get_purchasable_tiers(content.is_enabled(ModNames.big_backpack))
     previous_backpacks = 0
     for tier in backpack_tier_names:
         for i in range(1, num_per_tier+1):
@@ -853,7 +854,7 @@ def set_arcade_machine_rules(logic: StardewLogic, multiworld: MultiWorld, player
     add_rule(multiworld, player, "Journey of the Prairie King Victory", logic.has("JotPK Max Buff"))
 
 
-def set_secrets_rules(logic: StardewLogic, multiworld: MultiWorld, player: int, world_options: StardewValleyOptions):
+def set_secrets_rules(logic: StardewLogic, multiworld: MultiWorld, player: int, world_options: StardewValleyOptions, content: StardewContent):
     if not world_options.secretsanity:
         return
 
@@ -887,7 +888,7 @@ def set_secrets_rules(logic: StardewLogic, multiworld: MultiWorld, player: int, 
     if SecretsanityOptionName.fishing in world_options.secretsanity:
         if world_options.farm_type == FarmType.option_beach:
             add_rule(multiworld, player, "'Boat'", logic.skill.can_fish(Region.farm))
-        if world_options.exclude_ginger_island == ExcludeGingerIsland.option_false:
+        if content.is_enabled(ginger_island_content_pack):
             add_rule(multiworld, player, "Foliage Print", logic.skill.can_fish(Region.island_north))
             add_rule(multiworld, player, "Frog Hat", logic.skill.can_fish(Region.gourmand_frog_cave))
             add_rule(multiworld, player, "Gourmand Statue", logic.skill.can_fish(Region.pirate_cove))
@@ -936,7 +937,8 @@ def set_secrets_rules(logic: StardewLogic, multiworld: MultiWorld, player: int, 
         add_rule(multiworld, player, SecretNote.note_22, logic.registry.quest_rules[Quest.the_mysterious_qi])
         add_rule(multiworld, player, SecretNote.note_23, logic.registry.quest_rules[Quest.strange_note])
         add_rule(multiworld, player, SecretNote.note_24, logic.building.has_building(Building.junimo_hut) & logic.has(Mineral.any_gem))
-        add_rule(multiworld, player, SecretNote.note_25, logic.season.has_any(Season.not_winter) & logic.fishing.can_fish_at(Region.railroad) & logic.relationship.can_meet_any(*(NPC.abigail, NPC.caroline,)))
+        add_rule(multiworld, player, SecretNote.note_25, logic.season.has_any(Season.not_winter) & logic.fishing.can_fish_at(Region.railroad)
+                 & logic.relationship.can_meet_any(*(NPC.abigail, NPC.caroline,)))
         add_rule(multiworld, player, SecretNote.note_26, logic.building.has_building(Building.junimo_hut) & logic.has(ArtisanGood.raisins))
         add_rule(multiworld, player, SecretNote.note_27, logic.region.can_reach(Region.mastery_cave))
 
@@ -966,18 +968,20 @@ def set_friendsanity_rules(logic: StardewLogic, multiworld: MultiWorld, player: 
         MultiWorldRules.set_rule(multiworld.get_location(location_name, player), rule)
 
 
-def set_deepwoods_rules(logic: StardewLogic, multiworld: MultiWorld, player: int, world_options: StardewValleyOptions):
-    if ModNames.deepwoods in world_options.mods:
-        add_rule(multiworld, player, "Breaking Up Deep Woods Gingerbread House", logic.tool.has_tool(Tool.axe, "Gold"))
-        add_rule(multiworld, player, "Chop Down a Deep Woods Iridium Tree", logic.tool.has_tool(Tool.axe, "Iridium"))
-        set_entrance_rule(multiworld, player, DeepWoodsEntrance.use_woods_obelisk, logic.received("Woods Obelisk"))
-        for depth in range(10, 100 + 10, 10):
-            set_entrance_rule(multiworld, player, move_to_woods_depth(depth), logic.mod.deepwoods.can_chop_to_depth(depth))
-        add_rule(multiworld, player, "The Sword in the Stone", logic.mod.deepwoods.can_pull_sword() & logic.mod.deepwoods.can_chop_to_depth(100))
+def set_deepwoods_rules(logic: StardewLogic, multiworld: MultiWorld, player: int, content: StardewContent):
+    if not content.is_enabled(ModNames.deepwoods):
+        return
+
+    add_rule(multiworld, player, "Breaking Up Deep Woods Gingerbread House", logic.tool.has_tool(Tool.axe, "Gold"))
+    add_rule(multiworld, player, "Chop Down a Deep Woods Iridium Tree", logic.tool.has_tool(Tool.axe, "Iridium"))
+    set_entrance_rule(multiworld, player, DeepWoodsEntrance.use_woods_obelisk, logic.received("Woods Obelisk"))
+    for depth in range(10, 100 + 10, 10):
+        set_entrance_rule(multiworld, player, move_to_woods_depth(depth), logic.mod.deepwoods.can_chop_to_depth(depth))
+    add_rule(multiworld, player, "The Sword in the Stone", logic.mod.deepwoods.can_pull_sword() & logic.mod.deepwoods.can_chop_to_depth(100))
 
 
-def set_magic_spell_rules(logic: StardewLogic, multiworld: MultiWorld, player: int, world_options: StardewValleyOptions):
-    if ModNames.magic not in world_options.mods:
+def set_magic_spell_rules(logic: StardewLogic, multiworld: MultiWorld, player: int, content: StardewContent):
+    if not content.is_enabled(ModNames.magic):
         return
 
     add_rule(multiworld, player, "Analyze: Clear Debris", (logic.tool.has_tool("Axe", "Basic") | logic.tool.has_tool("Pickaxe", "Basic")))
@@ -1014,9 +1018,10 @@ def set_magic_spell_rules(logic: StardewLogic, multiworld: MultiWorld, player: i
               logic.region.can_reach(Region.farm) & logic.time.has_lived_months(12)))
 
 
-def set_sve_rules(logic: StardewLogic, multiworld: MultiWorld, player: int, world_options: StardewValleyOptions):
-    if ModNames.sve not in world_options.mods:
+def set_sve_rules(logic: StardewLogic, multiworld: MultiWorld, player: int, content: StardewContent):
+    if not content.is_enabled(ModNames.sve):
         return
+
     set_entrance_rule(multiworld, player, SVEEntrance.forest_to_lost_woods, logic.bundle.can_complete_community_center)
     set_entrance_rule(multiworld, player, SVEEntrance.enter_summit, logic.mod.sve.has_iridium_bomb())
     set_entrance_rule(multiworld, player, SVEEntrance.backwoods_to_grove, logic.mod.sve.has_any_rune())
@@ -1042,12 +1047,12 @@ def set_sve_rules(logic: StardewLogic, multiworld: MultiWorld, player: int, worl
     for location in logic.registry.sve_location_rules:
         MultiWorldRules.set_rule(multiworld.get_location(location, player),
                                  logic.registry.sve_location_rules[location])
-    set_sve_ginger_island_rules(logic, multiworld, player, world_options)
-    set_boarding_house_rules(logic, multiworld, player, world_options)
+    set_sve_ginger_island_rules(logic, multiworld, player, content)
+    set_boarding_house_rules(logic, multiworld, player, content)
 
 
-def set_sve_ginger_island_rules(logic: StardewLogic, multiworld: MultiWorld, player: int, world_options: StardewValleyOptions):
-    if world_options.exclude_ginger_island == ExcludeGingerIsland.option_true:
+def set_sve_ginger_island_rules(logic: StardewLogic, multiworld: MultiWorld, player: int, content: StardewContent):
+    if not content.is_enabled(ginger_island_content_pack):
         return
     set_entrance_rule(multiworld, player, SVEEntrance.summit_to_highlands, logic.mod.sve.has_marlon_boat())
     set_entrance_rule(multiworld, player, SVEEntrance.wizard_to_fable_reef, logic.received(SVEQuestItem.fable_reef_portal))
@@ -1056,8 +1061,8 @@ def set_sve_ginger_island_rules(logic: StardewLogic, multiworld: MultiWorld, pla
     set_entrance_rule(multiworld, player, SVEEntrance.highlands_to_pond, logic.tool.has_tool(Tool.axe, ToolMaterial.iron))
 
 
-def set_boarding_house_rules(logic: StardewLogic, multiworld: MultiWorld, player: int, world_options: StardewValleyOptions):
-    if ModNames.boarding_house not in world_options.mods:
+def set_boarding_house_rules(logic: StardewLogic, multiworld: MultiWorld, player: int, content: StardewContent):
+    if not content.is_enabled(ModNames.boarding_house):
         return
     set_entrance_rule(multiworld, player, BoardingHouseEntrance.the_lost_valley_to_lost_valley_ruins, logic.tool.has_tool(Tool.axe, ToolMaterial.iron))
 
@@ -1076,14 +1081,14 @@ def set_entrance_rule(multiworld, player, entrance: str, rule: StardewRule):
         raise ex
 
 
-def set_island_entrance_rule(multiworld, player, entrance: str, rule: StardewRule, world_options: StardewValleyOptions):
-    if world_options.exclude_ginger_island == ExcludeGingerIsland.option_true:
+def set_island_entrance_rule(multiworld, player, entrance: str, rule: StardewRule, content: StardewContent):
+    if not content.is_enabled(ginger_island_content_pack):
         return
     set_entrance_rule(multiworld, player, entrance, rule)
 
 
-def set_many_island_entrances_rules(multiworld, player, entrance_rules: Dict[str, StardewRule], world_options: StardewValleyOptions):
-    if world_options.exclude_ginger_island == ExcludeGingerIsland.option_true:
+def set_many_island_entrances_rules(multiworld, player, entrance_rules: Dict[str, StardewRule], content: StardewContent):
+    if not content.is_enabled(ginger_island_content_pack):
         return
     for entrance, rule in entrance_rules.items():
         set_entrance_rule(multiworld, player, entrance, rule)
