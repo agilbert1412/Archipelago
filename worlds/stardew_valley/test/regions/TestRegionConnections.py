@@ -49,7 +49,7 @@ class TestModsConnections(unittest.TestCase):
 
     def test_region_exits_lead_somewhere(self):
         for mod_region_data in region_data_by_content_pack.values():
-            with self.subTest(mod=mod_region_data.mod_name):
+            with self.subTest(mod=mod_region_data.content_pack):
                 for region in mod_region_data.regions:
                     if region.flag == MergeFlag.REMOVE_EXITS:
                         continue
@@ -61,7 +61,7 @@ class TestModsConnections(unittest.TestCase):
 
     def test_connection_lead_somewhere(self):
         for mod_region_data in region_data_by_content_pack.values():
-            with self.subTest(mod=mod_region_data.mod_name):
+            with self.subTest(mod=mod_region_data.content_pack):
                 for connection in mod_region_data.connections:
                     with self.subTest(connection=connection.name):
                         self.assertIn(connection.destination, self.all_regions_by_name,
