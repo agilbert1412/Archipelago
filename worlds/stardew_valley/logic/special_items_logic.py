@@ -8,6 +8,7 @@ from .relationship_logic import RelationshipLogicMixin
 from .season_logic import SeasonLogicMixin
 from ..options.options import Secretsanity
 from ..stardew_rule import StardewRule
+from ..strings.ap_names.ap_option_names import SecretsanityOptionName
 from ..strings.craftable_names import Consumable
 from ..strings.metal_names import Artifact
 from ..strings.region_names import Region
@@ -33,7 +34,7 @@ class SpecialItemsLogic(BaseLogic[Union[ReceivedLogicMixin, SeasonLogicMixin, Re
 
     def has_far_away_stone(self) -> StardewRule:
         sacrifice_rule = self.logic.has(Artifact.ancient_doll) & self.logic.region.can_reach_any((Region.mines_floor_100, Region.volcano_floor_10))
-        if self.options.secretsanity == Secretsanity.option_none:
-            return sacrifice_rule
+        if SecretsanityOptionName.easy in self.options.secretsanity:
+            return sacrifice_rule & self.logic.received(SpecialItem.far_away_stone)
+        return sacrifice_rule
 
-        return sacrifice_rule & self.logic.received(SpecialItem.far_away_stone)
