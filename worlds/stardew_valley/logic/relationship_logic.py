@@ -5,7 +5,6 @@ from typing import Union
 from Utils import cache_self1
 from .base_logic import BaseLogic, BaseLogicMixin
 from .building_logic import BuildingLogicMixin
-from .gift_logic import GiftLogicMixin
 from .has_logic import HasLogicMixin
 from .received_logic import ReceivedLogicMixin
 from .region_logic import RegionLogicMixin
@@ -43,7 +42,7 @@ class RelationshipLogicMixin(BaseLogicMixin):
         self.relationship = RelationshipLogic(*args, **kwargs)
 
 
-class RelationshipLogic(BaseLogic[Union[RelationshipLogicMixin, BuildingLogicMixin, SeasonLogicMixin, TimeLogicMixin, GiftLogicMixin, RegionLogicMixin,
+class RelationshipLogic(BaseLogic[Union[RelationshipLogicMixin, BuildingLogicMixin, SeasonLogicMixin, TimeLogicMixin, RegionLogicMixin,
 ReceivedLogicMixin, HasLogicMixin, ModLogicMixin]]):
 
     def can_date(self, npc: str) -> StardewRule:
@@ -164,16 +163,11 @@ ReceivedLogicMixin, HasLogicMixin, ModLogicMixin]]):
 
         return self.logic.and_(*rules)
 
-    def can_give_loved_gifts_to_everyone(self) -> StardewRule:
-        rules = []
+    def can_meet_all(self, *npcs: str) -> StardewRule:
+        return self.logic.and_(*[self.can_meet(npc) for npc in npcs])
 
-        for npc in self.content.villagers:
-            meet_rule = self.logic.relationship.can_meet(npc)
-            rules.append(meet_rule)
-
-        rules.append(self.logic.gifts.has_any_universal_love)
-
-        return self.logic.and_(*rules)
+    def can_meet_any(self, *npcs: str) -> StardewRule:
+        return self.logic.or_(*[self.can_meet(npc) for npc in npcs])
 
     # Should be cached
     def can_earn_relationship(self, npc: str, hearts: int = 0) -> StardewRule:
@@ -210,6 +204,3 @@ ReceivedLogicMixin, HasLogicMixin, ModLogicMixin]]):
                 rules.append(self.logic.relationship.can_date(npc))
 
         return self.logic.and_(*rules)
-
-    def can_gift_to(self, item: str, npc: str) -> StardewRule:
-        return self.logic.has(item) & self.logic.relationship.can_meet(npc)

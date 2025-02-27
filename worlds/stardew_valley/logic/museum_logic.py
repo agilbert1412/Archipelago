@@ -15,6 +15,8 @@ from ..strings.metal_names import Mineral
 from ..strings.region_names import Region
 from ..strings.tool_names import Tool, ToolMaterial
 
+gems = (Mineral.amethyst, Mineral.aquamarine, Mineral.emerald, Mineral.ruby, Mineral.topaz)
+
 
 class MuseumLogicMixin(BaseLogicMixin):
     def __init__(self, *args, **kwargs):
@@ -83,3 +85,9 @@ class MuseumLogic(BaseLogic[Union[ReceivedLogicMixin, HasLogicMixin, TimeLogicMi
 
     def can_donate(self, item: str) -> StardewRule:
         return self.logic.has(item) & self.logic.region.can_reach(Region.museum)
+
+    def has_any_gem(self) -> StardewRule:
+        return self.logic.has_any(*gems)
+
+    def has_all_gems(self) -> StardewRule:
+        return self.logic.has_all(*gems)
