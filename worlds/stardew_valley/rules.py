@@ -14,6 +14,7 @@ from .data.harvest import HarvestCropSource, HarvestFruitTreeSource
 from .data.museum_data import all_museum_items, dwarf_scrolls, skeleton_front, skeleton_middle, skeleton_back, all_museum_items_by_name, all_museum_minerals, \
     all_museum_artifacts, Artifact
 from .data.recipe_data import all_cooking_recipes_by_name
+from .data.secret_note_data import gift_requirements, SecretNote
 from .locations import LocationTags
 from .logic.logic import StardewLogic
 from .logic.time_logic import MAX_MONTHS
@@ -52,7 +53,7 @@ from .strings.monster_drop_names import Loot
 from .strings.monster_names import Monster
 from .strings.performance_names import Performance
 from .strings.quest_names import Quest
-from .strings.region_names import Region
+from .strings.region_names import Region, LogicRegion
 from .strings.season_names import Season
 from .strings.skill_names import Skill
 from .strings.special_item_names import SpecialItem
@@ -864,7 +865,7 @@ def set_secrets_rules(logic: StardewLogic, multiworld: MultiWorld, player: int, 
         add_rule(multiworld, player, "Purple Lettuce", logic.has(SpecialItem.lucky_purple_shorts))
         add_rule(multiworld, player, "Make Marnie Laugh", logic.has(SpecialItem.trimmed_purple_shorts) & logic.relationship.can_meet(NPC.marnie))
         add_rule(multiworld, player, "Jumpscare Lewis", logic.has(SpecialItem.trimmed_purple_shorts) & logic.relationship.can_meet(NPC.lewis))
-        add_rule(multiworld, player, "Confront Marnie", logic.relationship.can_gift_to(SpecialItem.lucky_purple_shorts, NPC.marnie))
+        add_rule(multiworld, player, "Confront Marnie", logic.gifts.can_gift_to(NPC.marnie, SpecialItem.lucky_purple_shorts))
         add_rule(multiworld, player, "Lucky Purple Bobber", logic.fishing.can_use_tackle(SpecialItem.lucky_purple_shorts))
         add_rule(multiworld, player, "Something For Santa", logic.season.has(Season.winter) & logic.has_any(AnimalProduct.any_milk, Meal.cookie))
         add_rule(multiworld, player, "Jungle Junimo", logic.action.can_speak_junimo())
@@ -872,17 +873,16 @@ def set_secrets_rules(logic: StardewLogic, multiworld: MultiWorld, player: int, 
         add_rule(multiworld, player, "??Pinky Lemon??", logic.has(ArtisanGood.duck_mayonnaise))
         add_rule(multiworld, player, "??Foroguemon??", logic.has(Meal.strange_bun) & logic.relationship.has_hearts(NPC.vincent, 2))
         add_rule(multiworld, player, "Galaxies Will Heed Your Cry", logic.wallet.can_speak_dwarf())
-        add_rule(multiworld, player, "Junimo Plush", logic.has(Forageable.secret_note) & logic.time.has_lived_months(1))
         add_rule(multiworld, player, "Summon Bone Serpent", logic.has(ArtifactName.ancient_doll))
         add_rule(multiworld, player, "Meowmere", logic.has(SpecialItem.far_away_stone) & logic.region.can_reach(Region.wizard_basement))
         add_rule(multiworld, player, "A Familiar Tune", logic.relationship.can_meet(NPC.elliott))
         add_rule(multiworld, player, "Flubber Experiment",
                  logic.relationship.can_get_married() & logic.building.has_building(Building.slime_hutch) & logic.has(Machine.slime_incubator) & logic.has(Loot.green_slime_egg))
         add_rule(multiworld, player, "Seems Fishy", logic.money.can_spend_at(Region.wizard_basement, 500))
-        add_rule(multiworld, player, "What kind of monster is this?", logic.relationship.can_gift_to(Fish.mutant_carp, NPC.willy))
-        add_rule(multiworld, player, "My mouth is watering already", logic.relationship.can_gift_to(Meal.magic_rock_candy, NPC.abigail))
-        add_rule(multiworld, player, "A gift of lovely perfume", logic.relationship.can_gift_to(Consumable.monster_musk, NPC.krobus))
-        add_rule(multiworld, player, "Where exactly does this juice come from?", logic.relationship.can_gift_to(AnimalProduct.cow_milk, NPC.dwarf))
+        add_rule(multiworld, player, "What kind of monster is this?", logic.gifts.can_gift_to(NPC.willy, Fish.mutant_carp))
+        add_rule(multiworld, player, "My mouth is watering already", logic.gifts.can_gift_to(NPC.abigail, Meal.magic_rock_candy))
+        add_rule(multiworld, player, "A gift of lovely perfume", logic.gifts.can_gift_to(NPC.krobus, Consumable.monster_musk))
+        add_rule(multiworld, player, "Where exactly does this juice come from?", logic.gifts.can_gift_to(NPC.dwarf, AnimalProduct.cow_milk))
 
     if SecretsanityOptionName.fishing in world_options.secretsanity:
         if world_options.farm_type == FarmType.option_beach:
@@ -909,6 +909,40 @@ def set_secrets_rules(logic: StardewLogic, multiworld: MultiWorld, player: int, 
         add_rule(multiworld, player, "...Bigfoot?", logic.region.can_reach_all((Region.forest, Region.town, Region.secret_woods)) & logic.time.has_lived_months(4))
         add_rule(multiworld, player, "'Me me me me me me me me me me me me me me me me'", logic.region.can_reach(Region.railroad) & logic.tool.has_tool(Tool.scythe))
         add_rule(multiworld, player, "Secret Iridium Stackmaster Trophy", logic.grind.can_grind_item(10000, Material.wood))
+
+    if SecretsanityOptionName.secret_notes in world_options.secretsanity:
+        set_secret_note_gift_rule(logic, multiworld, player, SecretNote.note_1)
+        set_secret_note_gift_rule(logic, multiworld, player, SecretNote.note_2)
+        set_secret_note_gift_rule(logic, multiworld, player, SecretNote.note_3)
+        set_secret_note_gift_rule(logic, multiworld, player, SecretNote.note_4)
+        set_secret_note_gift_rule(logic, multiworld, player, SecretNote.note_5)
+        set_secret_note_gift_rule(logic, multiworld, player, SecretNote.note_6)
+        set_secret_note_gift_rule(logic, multiworld, player, SecretNote.note_7)
+        set_secret_note_gift_rule(logic, multiworld, player, SecretNote.note_8)
+        set_secret_note_gift_rule(logic, multiworld, player, SecretNote.note_9)
+        add_rule(multiworld, player, SecretNote.note_10, logic.registry.quest_rules[Quest.cryptic_note])
+        add_rule(multiworld, player, SecretNote.note_11, logic.relationship.can_meet_all(*(NPC.marnie, NPC.jas,)))
+        add_rule(multiworld, player, SecretNote.note_12, logic.region.can_reach(Region.town))
+        add_rule(multiworld, player, SecretNote.note_13, logic.time.has_lived_months(1) & logic.region.can_reach(Region.town))
+        add_rule(multiworld, player, SecretNote.note_14, logic.region.can_reach(Region.town))
+        add_rule(multiworld, player, SecretNote.note_15, logic.region.can_reach(LogicRegion.night_market))
+        add_rule(multiworld, player, SecretNote.note_16, logic.tool.can_use_tool_at(Tool.hoe, ToolMaterial.basic, Region.railroad))
+        add_rule(multiworld, player, SecretNote.note_17, logic.tool.can_use_tool_at(Tool.hoe, ToolMaterial.basic, Region.town))
+        add_rule(multiworld, player, SecretNote.note_18, logic.tool.can_use_tool_at(Tool.hoe, ToolMaterial.basic, Region.desert))
+        add_rule(multiworld, player, SecretNote.note_19_part_1, logic.region.can_reach(Region.town))
+        add_rule(multiworld, player, SecretNote.note_19_part_2, logic.region.can_reach(Region.town) & logic.has(SpecialItem.solid_gold_lewis))
+        add_rule(multiworld, player, SecretNote.note_20, logic.region.can_reach(Region.town) & logic.has(AnimalProduct.rabbit_foot))
+        add_rule(multiworld, player, SecretNote.note_21, logic.region.can_reach(Region.town))
+        add_rule(multiworld, player, SecretNote.note_22, logic.registry.quest_rules[Quest.the_mysterious_qi])
+        add_rule(multiworld, player, SecretNote.note_23, logic.registry.quest_rules[Quest.strange_note])
+        add_rule(multiworld, player, SecretNote.note_24, logic.building.has_building(Building.junimo_hut) & logic.has(Mineral.any_gem))
+        add_rule(multiworld, player, SecretNote.note_25, logic.season.has_any(Season.not_winter) & logic.fishing.can_fish_at(Region.railroad) & logic.relationship.can_meet_any(*(NPC.abigail, NPC.caroline,)))
+        add_rule(multiworld, player, SecretNote.note_26, logic.building.has_building(Building.junimo_hut) & logic.has(ArtisanGood.raisins))
+        add_rule(multiworld, player, SecretNote.note_27, logic.region.can_reach(Region.mastery_cave))
+
+
+def set_secret_note_gift_rule(logic: StardewLogic, multiworld: MultiWorld, player: int, secret_note_location: str) -> None:
+    add_rule(multiworld, player, secret_note_location, logic.gifts.can_fulfill(gift_requirements[secret_note_location]))
 
 
 
