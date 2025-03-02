@@ -2,13 +2,14 @@ import sys
 import typing
 from dataclasses import dataclass
 from typing import Protocol, ClassVar
+
 from schema import And, Schema
 
 from Options import Range, NamedRange, Toggle, Choice, OptionSet, PerGameCommonOptions, DeathLink, OptionList, Visibility, OptionDict, Removed
-from ..items import items_by_group, Group
 from ..mods.mod_data import ModNames
 from ..strings.ap_names.ap_option_names import BuffOptionName, WalnutsanityOptionName, SecretsanityOptionName
 from ..strings.bundle_names import all_cc_bundle_names
+from ..strings.trap_names import all_traps
 
 
 class StardewValleyOption(Protocol):
@@ -752,6 +753,9 @@ class TrapDifficulty(Choice):
     option_hell = 4
     option_nightmare = 5
 
+    def include_traps(self) -> bool:
+        return self.value > 0
+
 
 trap_default_weight = 100
 
@@ -767,14 +771,12 @@ class TrapDistribution(OptionDict):
     display_name = "Trap Distribution"
     default_weight = trap_default_weight
     schema = Schema({
-        trap_data.name: And(int, lambda n: 0 <= n <= 1000)
-        for trap_data in items_by_group[Group.TRAP]
-        if Group.DEPRECATED not in trap_data.groups
+        trap: And(int, lambda n: 0 <= n <= 1000)
+        for trap in all_traps
     })
     default = {
-        trap_data.name: trap_default_weight
-        for trap_data in items_by_group[Group.TRAP]
-        if Group.DEPRECATED not in trap_data.groups
+        trap: trap_default_weight
+        for trap in all_traps
     }
 
 
@@ -968,4 +970,3 @@ class StardewValleyOptions(PerGameCommonOptions):
 
     # removed:
     trap_items: TrapItems
-    
