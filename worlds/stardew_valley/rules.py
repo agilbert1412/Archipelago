@@ -877,7 +877,8 @@ def set_secrets_rules(logic: StardewLogic, multiworld: MultiWorld, player: int, 
         add_rule(multiworld, player, "Confront Marnie", logic.gifts.can_gift_to(NPC.marnie, SpecialItem.lucky_purple_shorts))
         add_rule(multiworld, player, "Lucky Purple Bobber", logic.fishing.can_use_tackle(SpecialItem.lucky_purple_shorts))
         add_rule(multiworld, player, "Something For Santa", logic.season.has(Season.winter) & logic.has_any(AnimalProduct.any_milk, Meal.cookie))
-        add_rule(multiworld, player, "Jungle Junimo", logic.action.can_speak_junimo())
+        cc_rewards = ["Bridge Repair", "Greenhouse", "Glittering Boulder Removed", "Minecarts Repair", "Bus Repair", "Friendship Bonus (2 <3)"]
+        add_rule(multiworld, player, "Jungle Junimo", logic.action.can_speak_junimo() & logic.and_(*[logic.received(reward) for reward in cc_rewards]))
         add_rule(multiworld, player, "??HMTGF??", logic.has(Fish.super_cucumber))
         add_rule(multiworld, player, "??Pinky Lemon??", logic.has(ArtisanGood.duck_mayonnaise))
         add_rule(multiworld, player, "??Foroguemon??", logic.has(Meal.strange_bun) & logic.relationship.has_hearts(NPC.vincent, 2))
@@ -934,7 +935,7 @@ def set_secrets_rules(logic: StardewLogic, multiworld: MultiWorld, player: int, 
         add_rule(multiworld, player, SecretNote.note_11, logic.relationship.can_meet_all(*(NPC.marnie, NPC.jas,)))
         add_rule(multiworld, player, SecretNote.note_12, logic.region.can_reach(Region.town))
         add_rule(multiworld, player, SecretNote.note_13, logic.time.has_lived_months(1) & logic.region.can_reach(Region.town))
-        add_rule(multiworld, player, SecretNote.note_14, logic.region.can_reach(Region.town))
+        add_rule(multiworld, player, SecretNote.note_14, logic.region.can_reach(Region.town) & logic.season.has(Season.spring))
         add_rule(multiworld, player, SecretNote.note_15, logic.region.can_reach(LogicRegion.night_market))
         add_rule(multiworld, player, SecretNote.note_16, logic.tool.can_use_tool_at(Tool.hoe, ToolMaterial.basic, Region.railroad))
         add_rule(multiworld, player, SecretNote.note_17, logic.tool.can_use_tool_at(Tool.hoe, ToolMaterial.basic, Region.town))
@@ -945,10 +946,10 @@ def set_secrets_rules(logic: StardewLogic, multiworld: MultiWorld, player: int, 
         add_rule(multiworld, player, SecretNote.note_21, logic.region.can_reach(Region.town))
         add_rule(multiworld, player, SecretNote.note_22, logic.registry.quest_rules[Quest.the_mysterious_qi])
         add_rule(multiworld, player, SecretNote.note_23, logic.registry.quest_rules[Quest.strange_note])
-        add_rule(multiworld, player, SecretNote.note_24, logic.building.has_building(Building.junimo_hut) & logic.has(Mineral.any_gem))
-        add_rule(multiworld, player, SecretNote.note_25, logic.season.has_any(Season.not_winter) & logic.fishing.can_fish_at(Region.railroad)
+        add_rule(multiworld, player, SecretNote.note_24, logic.building.has_building(Building.junimo_hut) & logic.has(Mineral.any_gem) & logic.season.has_any_not_winter())
+        add_rule(multiworld, player, SecretNote.note_25, logic.season.has_any_not_winter() & logic.fishing.can_fish_at(Region.railroad)
                  & logic.relationship.can_meet_any(*(NPC.abigail, NPC.caroline,)))
-        add_rule(multiworld, player, SecretNote.note_26, logic.building.has_building(Building.junimo_hut) & logic.has(ArtisanGood.raisins))
+        add_rule(multiworld, player, SecretNote.note_26, logic.building.has_building(Building.junimo_hut) & logic.has(ArtisanGood.raisins) & logic.season.has_any_not_winter())
         add_rule(multiworld, player, SecretNote.note_27, logic.region.can_reach(Region.mastery_cave))
 
 
