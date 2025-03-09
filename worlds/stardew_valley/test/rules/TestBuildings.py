@@ -1,4 +1,4 @@
-from ...options import BuildingProgression, FarmType
+from ...options import BuildingProgression, FarmType, ToolProgression
 from ...test import SVTestBase
 
 
@@ -6,6 +6,7 @@ class TestBuildingLogic(SVTestBase):
     options = {
         FarmType.internal_name: FarmType.option_standard,
         BuildingProgression.internal_name: BuildingProgression.option_progressive,
+        ToolProgression.internal_name: ToolProgression.option_progressive,
     }
 
     def test_coop_blueprint(self):
