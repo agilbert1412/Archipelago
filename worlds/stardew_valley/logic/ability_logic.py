@@ -29,7 +29,7 @@ class AbilityLogic(BaseLogic[Union[AbilityLogicMixin, RegionLogicMixin, Received
 ModLogicMixin]]):
 
     def can_mine_stone(self) -> StardewRule:
-        regions = (Region.mines_floor_5, Region.skull_cavern, Region.volcano, Region.quarry_mine,)
+        regions = (Region.mines, Region.skull_cavern, Region.volcano, Region.quarry_mine,)
         return self.logic.tool.has_tool(Tool.pickaxe) & self.logic.region.can_reach_any(regions)
 
     def can_mine_perfectly(self) -> StardewRule:
