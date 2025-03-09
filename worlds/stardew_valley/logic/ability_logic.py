@@ -27,6 +27,11 @@ class AbilityLogicMixin(BaseLogicMixin):
 
 class AbilityLogic(BaseLogic[Union[AbilityLogicMixin, RegionLogicMixin, ReceivedLogicMixin, ToolLogicMixin, SkillLogicMixin, MineLogicMixin, MagicLogicMixin,
 ModLogicMixin]]):
+
+    def can_mine_stone(self) -> StardewRule:
+        regions = [Region.mines_floor_5, Region.skull_cavern, Region.volcano, Region.quarry_mine]
+        return self.logic.tool.has_tool(Tool.pickaxe) & self.logic.region.can_reach_any(regions)
+
     def can_mine_perfectly(self) -> StardewRule:
         return self.logic.mine.can_progress_in_the_mines_from_floor(160)
 
@@ -43,7 +48,8 @@ ModLogicMixin]]):
         return skill_rule & self.logic.tool.has_fishing_rod(FishingRod.iridium)
 
     def can_chop_trees(self) -> StardewRule:
-        return self.logic.tool.has_tool(Tool.axe) & self.logic.region.can_reach(Region.forest)
+        regions = [Region.forest, Region.backwoods, Region.bus_stop, Region.mountain, Region.desert, Region.island_west, Region.island_north]
+        return self.logic.tool.has_tool(Tool.axe) & self.logic.region.can_reach_any(regions)
 
     def can_chop_perfectly(self) -> StardewRule:
         magic_rule = (self.logic.magic.can_use_clear_debris_instead_of_tool_level(3)) & self.logic.mod.skill.has_mod_level(ModSkill.magic, 10)
