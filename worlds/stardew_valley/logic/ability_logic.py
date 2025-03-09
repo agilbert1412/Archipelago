@@ -29,7 +29,7 @@ class AbilityLogic(BaseLogic[Union[AbilityLogicMixin, RegionLogicMixin, Received
 ModLogicMixin]]):
 
     def can_mine_stone(self) -> StardewRule:
-        regions = [Region.mines_floor_5, Region.skull_cavern, Region.volcano, Region.quarry_mine]
+        regions = (Region.mines_floor_5, Region.skull_cavern, Region.volcano, Region.quarry_mine,)
         return self.logic.tool.has_tool(Tool.pickaxe) & self.logic.region.can_reach_any(regions)
 
     def can_mine_perfectly(self) -> StardewRule:
@@ -48,7 +48,7 @@ ModLogicMixin]]):
         return skill_rule & self.logic.tool.has_fishing_rod(FishingRod.iridium)
 
     def can_chop_trees(self) -> StardewRule:
-        regions = [Region.forest, Region.backwoods, Region.bus_stop, Region.mountain, Region.desert, Region.island_west, Region.island_north]
+        regions = (Region.forest, Region.backwoods, Region.bus_stop, Region.mountain, Region.desert, Region.island_west, Region.island_north,)
         return self.logic.tool.has_tool(Tool.axe) & self.logic.region.can_reach_any(regions)
 
     def can_chop_perfectly(self) -> StardewRule:
@@ -57,3 +57,7 @@ ModLogicMixin]]):
         foraging_rule = self.logic.skill.has_level(Skill.foraging, 10)
         region_rule = self.logic.region.can_reach(Region.forest)
         return region_rule & ((tool_rule & foraging_rule) | magic_rule)
+
+    def can_scythe_vines(self) -> StardewRule:
+        regions = (Region.forest, Region.railroad,)
+        return self.logic.tool.has_scythe() & self.logic.region.can_reach_any(regions)
