@@ -44,6 +44,16 @@ class ToolLogicMixin(BaseLogicMixin):
 
 class ToolLogic(BaseLogic[StardewLogic]):
 
+    def has_tool_generic(self, tool: str, material: str) -> StardewRule:
+        """I hope you know what you're doing..."""
+        if tool == Tool.fishing_rod:
+            return self.has_fishing_rod(material)
+        if tool == Tool.scythe:
+            return self.has_scythe(material)
+        if tool == Tool.pan:
+            return self.has_pan(material)
+        return self.has_tool(tool, material)
+
     # Should be cached
     def has_tool(self, tool: str, material: str = ToolMaterial.basic) -> StardewRule:
         assert tool != Tool.fishing_rod, "Use has_fishing_rod instead of has_tool for fishing rods."
