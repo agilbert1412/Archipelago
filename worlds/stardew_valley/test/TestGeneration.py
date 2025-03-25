@@ -3,6 +3,7 @@ from typing import List
 from BaseClasses import ItemClassification, Item
 from . import SVTestBase
 from .. import options
+from ..content.content_packs import vanilla_content_pack_names
 from ..items import item_data, ItemData, Group
 from ..locations import location_table, LocationTags
 from ..options import Friendsanity, SpecialOrderLocations, Shipsanity, Chefsanity, SeasonRandomization, Craftsanity, ExcludeGingerIsland, SkillProgression, \
@@ -17,7 +18,7 @@ def get_all_permanent_progression_items() -> List[ItemData]:
         item
         for item in item_data.all_items
         if ItemClassification.progression in item.classification
-        if not item.content_packs
+        if item.content_packs.issubset(vanilla_content_pack_names)
         if item.name not in {event.name for event in item_data.events}
         if item.name not in {deprecated.name for deprecated in item_data.items_by_group[Group.DEPRECATED]}
         if item.name not in {season.name for season in item_data.items_by_group[Group.SEASON]}
