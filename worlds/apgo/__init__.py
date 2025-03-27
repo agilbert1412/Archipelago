@@ -49,6 +49,11 @@ class APGOWorld(World):
     item_name_to_id = {name: data.id for name, data in item_table.items()}
     location_name_to_id = {name: id for name, id in location_table.items()}
 
+    item_name_groups = {
+        "MacGuffins": set(long_macguffins),
+        "Letters": set(long_macguffins),
+    }
+
     data_version = 0
 
     options_dataclass = APGOOptions
