@@ -64,7 +64,7 @@ class SnackCategory:
 class SnackName:
     apple_slices = snack("Apple Slices", SnackCategory.sweet, [NPC.harvey])
     black_licorice = snack("Black Licorice", SnackCategory.sweet, [NPC.george, NPC.krobus, NPC.wizard])
-    cappucino_mousse_cake = snack("Cappuccino Mousse Cake", SnackCategory.sweet, [NPC.elliott, NPC.evelyn, NPC.gus, NPC.haley])
+    cappuccino_mousse_cake = snack("Cappuccino Mousse Cake", SnackCategory.sweet, [NPC.elliott, NPC.evelyn, NPC.gus, NPC.haley])
     chocolate_popcorn = snack("Chocolate Popcorn", SnackCategory.sweet, [NPC.jodi])
     cotton_candy = snack("Cotton Candy", SnackCategory.sweet, [NPC.penny, NPC.sandy])
     fries = snack("Fries", SnackCategory.salty, [NPC.clint])
