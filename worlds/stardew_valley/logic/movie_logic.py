@@ -5,6 +5,7 @@ from .mine_logic import MineLogicMixin
 from .received_logic import ReceivedLogicMixin
 from .region_logic import RegionLogicMixin
 from .relationship_logic import RelationshipLogicMixin
+from .season_logic import SeasonLogicMixin
 from .skill_logic import SkillLogicMixin
 from ..data.movies import movies_by_name, npc_snacks, Snack
 from ..stardew_rule import StardewRule, Or
@@ -16,11 +17,11 @@ class MovieLogicMixin(BaseLogicMixin):
         self.movie = MovieLogic(*args, **kwargs)
 
 
-class MovieLogic(BaseLogic[Union[MovieLogicMixin, RegionLogicMixin, ReceivedLogicMixin, RelationshipLogicMixin, SkillLogicMixin, MineLogicMixin]]):
+class MovieLogic(BaseLogic[Union[MovieLogicMixin, RegionLogicMixin, ReceivedLogicMixin, SeasonLogicMixin, RelationshipLogicMixin, SkillLogicMixin, MineLogicMixin]]):
 
     def can_watch_movie_with_loving_npc(self, movie_name: str) -> StardewRule:
         movie = movies_by_name[movie_name]
-        return self.logic.relationship.can_meet_any(movie.loving_npcs)
+        return self.logic.season.has(movie.season) & self.logic.relationship.can_meet_any(movie.loving_npcs)
 
     def can_watch_movie_with_loving_npc_and_snack(self, movie_name: str) -> StardewRule:
         movie = movies_by_name[movie_name]
