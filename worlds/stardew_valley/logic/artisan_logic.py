@@ -6,6 +6,7 @@ from .time_logic import TimeLogicMixin
 from ..data.artisan import MachineSource
 from ..data.game_item import ItemTag
 from ..stardew_rule import StardewRule
+from ..strings.animal_product_names import AnimalProduct
 from ..strings.artisan_good_names import ArtisanGood
 from ..strings.crop_names import Vegetable, Fruit
 from ..strings.fish_names import Fish, all_fish
@@ -25,6 +26,8 @@ class ArtisanLogic(BaseLogic[Union[ArtisanLogicMixin, TimeLogicMixin, HasLogicMi
         # TODO remove this one too once fish are converted to sources
         self.registry.artisan_good_rules.update({ArtisanGood.specific_smoked_fish(fish): self.can_smoke(fish) for fish in all_fish})
         self.registry.artisan_good_rules.update({ArtisanGood.specific_bait(fish): self.can_bait(fish) for fish in all_fish})
+        self.registry.artisan_good_rules.update({AnimalProduct.specific_roe(fish): self.can_smoke(fish) for fish in all_fish})
+        self.registry.artisan_good_rules.update({ArtisanGood.specific_aged_roe(fish): self.can_preserves_jar(AnimalProduct.specific_roe(fish)) for fish in all_fish})
 
     def has_jelly(self) -> StardewRule:
         return self.logic.artisan.can_preserves_jar(Fruit.any)

@@ -6,6 +6,7 @@ from .book_logic import BookLogicMixin
 from .combat_logic import CombatLogicMixin
 from .fishing_logic import FishingLogicMixin
 from .has_logic import HasLogicMixin
+from .money_logic import MoneyLogicMixin
 from .quest_logic import QuestLogicMixin
 from .received_logic import ReceivedLogicMixin
 from .region_logic import RegionLogicMixin
@@ -17,7 +18,7 @@ from .tool_logic import ToolLogicMixin
 from .walnut_logic import WalnutLogicMixin
 from ..data.game_item import Requirement
 from ..data.requirement import ToolRequirement, BookRequirement, SkillRequirement, SeasonRequirement, YearRequirement, CombatRequirement, QuestRequirement, \
-    RelationshipRequirement, FishingRequirement, WalnutRequirement, RegionRequirement
+    RelationshipRequirement, FishingRequirement, WalnutRequirement, RegionRequirement, TotalEarningsRequirement
 
 
 class RequirementLogicMixin(BaseLogicMixin):
@@ -26,7 +27,7 @@ class RequirementLogicMixin(BaseLogicMixin):
         self.requirement = RequirementLogic(*args, **kwargs)
 
 
-class RequirementLogic(BaseLogic[Union[RequirementLogicMixin, HasLogicMixin, ReceivedLogicMixin, ToolLogicMixin, SkillLogicMixin, BookLogicMixin,
+class RequirementLogic(BaseLogic[Union[RequirementLogicMixin, HasLogicMixin, ReceivedLogicMixin, MoneyLogicMixin, ToolLogicMixin, SkillLogicMixin, BookLogicMixin,
 SeasonLogicMixin, TimeLogicMixin, CombatLogicMixin, QuestLogicMixin, RelationshipLogicMixin, FishingLogicMixin, WalnutLogicMixin, RegionLogicMixin]]):
 
     def meet_all_requirements(self, requirements: Iterable[Requirement]):
@@ -81,3 +82,7 @@ SeasonLogicMixin, TimeLogicMixin, CombatLogicMixin, QuestLogicMixin, Relationshi
     @meet_requirement.register
     def _(self, requirement: FishingRequirement):
         return self.logic.fishing.can_fish_at(requirement.region)
+
+    @meet_requirement.register
+    def _(self, requirement: TotalEarningsRequirement):
+        return self.logic.money.can_have_earned_total(requirement.amount)
