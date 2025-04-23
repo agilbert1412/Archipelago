@@ -1,12 +1,7 @@
 from functools import cached_property
-from typing import Union
 
 from .base_logic import BaseLogicMixin, BaseLogic
-from .has_logic import HasLogicMixin
-from .received_logic import ReceivedLogicMixin
-from .region_logic import RegionLogicMixin
 from ..core import cache_self1
-from ..mods.logic.magic_logic import MagicLogicMixin
 from ..options import Monstersanity
 from ..stardew_rule import StardewRule, False_
 from ..strings.ap_names.ap_weapon_names import APWeapon
@@ -23,7 +18,7 @@ class CombatLogicMixin(BaseLogicMixin):
         self.combat = CombatLogic(*args, **kwargs)
 
 
-class CombatLogic(BaseLogic[Union[HasLogicMixin, CombatLogicMixin, RegionLogicMixin, ReceivedLogicMixin, MagicLogicMixin]]):
+class CombatLogic(BaseLogic):
     @cache_self1
     def can_fight_at_level(self, level: str) -> StardewRule:
         if level == Performance.basic:

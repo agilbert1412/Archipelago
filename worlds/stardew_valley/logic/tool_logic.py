@@ -1,4 +1,3 @@
-import typing
 from typing import Union, Iterable
 
 from .base_logic import BaseLogicMixin, BaseLogic
@@ -9,11 +8,6 @@ from ..strings.region_names import Region, LogicRegion
 from ..strings.skill_names import Skill
 from ..strings.spells import MagicSpell
 from ..strings.tool_names import ToolMaterial, Tool, FishingRod
-
-if typing.TYPE_CHECKING:
-    from .logic import StardewLogic
-else:
-    StardewLogic = object
 
 fishing_rod_prices = {
     FishingRod.fiberglass: 1800,
@@ -42,7 +36,7 @@ class ToolLogicMixin(BaseLogicMixin):
         self.tool = ToolLogic(*args, **kwargs)
 
 
-class ToolLogic(BaseLogic[StardewLogic]):
+class ToolLogic(BaseLogic):
 
     def has_tool_generic(self, tool: str, material: str) -> StardewRule:
         """I hope you know what you're doing..."""

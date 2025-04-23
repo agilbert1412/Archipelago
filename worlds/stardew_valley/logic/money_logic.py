@@ -1,13 +1,6 @@
 import typing
-from typing import Union
 
 from .base_logic import BaseLogicMixin, BaseLogic
-from .grind_logic import GrindLogicMixin
-from .has_logic import HasLogicMixin
-from .received_logic import ReceivedLogicMixin
-from .region_logic import RegionLogicMixin
-from .season_logic import SeasonLogicMixin
-from .time_logic import TimeLogicMixin
 from ..content.vanilla.qi_board import qi_board_content_pack
 from ..core import cache_self1
 from ..data.shop import ShopSource
@@ -16,7 +9,7 @@ from ..strings.currency_names import Currency, MemeCurrency
 from ..strings.region_names import Region, LogicRegion
 
 if typing.TYPE_CHECKING:
-    from .shipping_logic import ShippingLogicMixin
+    pass
 else:
     ShippingLogicMixin = object
 
@@ -30,8 +23,7 @@ class MoneyLogicMixin(BaseLogicMixin):
         self.money = MoneyLogic(*args, **kwargs)
 
 
-class MoneyLogic(BaseLogic[Union[RegionLogicMixin, MoneyLogicMixin, TimeLogicMixin, RegionLogicMixin, ReceivedLogicMixin, HasLogicMixin, SeasonLogicMixin,
-GrindLogicMixin, ShippingLogicMixin]]):
+class MoneyLogic(BaseLogic):
 
     @cache_self1
     def can_have_earned_total(self, amount: int) -> StardewRule:

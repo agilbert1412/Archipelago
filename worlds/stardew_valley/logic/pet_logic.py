@@ -1,16 +1,10 @@
 import math
-import typing
 
 from .base_logic import BaseLogicMixin, BaseLogic
 from ..content.feature.friendsanity import pet_heart_item_name
 from ..stardew_rule import StardewRule, True_
 from ..strings.building_names import Building
 from ..strings.region_names import Region
-
-if typing.TYPE_CHECKING:
-    from .logic import StardewLogic
-else:
-    StardewLogic = object
 
 
 class PetLogicMixin(BaseLogicMixin):
@@ -19,7 +13,7 @@ class PetLogicMixin(BaseLogicMixin):
         self.pet = PetLogic(*args, **kwargs)
 
 
-class PetLogic(BaseLogic[StardewLogic]):
+class PetLogic(BaseLogic):
     def has_pet_hearts(self, hearts: int = 1) -> StardewRule:
         assert hearts >= 0, "You can't have negative hearts with a pet."
         if hearts == 0:

@@ -1,11 +1,4 @@
-from typing import Union
-
 from .base_logic import BaseLogic, BaseLogicMixin
-from .has_logic import HasLogicMixin
-from .received_logic import ReceivedLogicMixin
-from .region_logic import RegionLogicMixin
-from .relationship_logic import RelationshipLogicMixin
-from .tool_logic import ToolLogicMixin
 from ..core import cache_self1
 from ..stardew_rule import StardewRule, True_
 from ..strings.generic_names import Generic
@@ -21,7 +14,7 @@ class ActionLogicMixin(BaseLogicMixin):
         self.action = ActionLogic(*args, **kwargs)
 
 
-class ActionLogic(BaseLogic[Union[ActionLogicMixin, RegionLogicMixin, ReceivedLogicMixin, HasLogicMixin, ToolLogicMixin, RelationshipLogicMixin]]):
+class ActionLogic(BaseLogic):
 
     def can_watch(self, channel: str = None):
         tv_rule = True_()

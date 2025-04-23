@@ -17,7 +17,7 @@ class MovieLogicMixin(BaseLogicMixin):
         self.movie = MovieLogic(*args, **kwargs)
 
 
-class MovieLogic(BaseLogic[Union[MovieLogicMixin, RegionLogicMixin, ReceivedLogicMixin, SeasonLogicMixin, RelationshipLogicMixin, SkillLogicMixin, MineLogicMixin]]):
+class MovieLogic(BaseLogic):
 
     def can_watch_movie_with_loving_npc(self, movie_name: str) -> StardewRule:
         movie = movies_by_name[movie_name]

@@ -15,7 +15,7 @@ class HatLogicMixin(BaseLogicMixin):
         self.hat = HatLogic(*args, **kwargs)
 
 
-class HatLogic(BaseLogic[Union[ReceivedLogicMixin, HasLogicMixin, RegionLogicMixin, TimeLogicMixin]]):
+class HatLogic(BaseLogic):
 
     def initialize_rules(self):
         self.registry.meme_item_rules.update({

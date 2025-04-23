@@ -23,7 +23,7 @@ class SpecialItemsLogicMixin(BaseLogicMixin):
         self.special_items = SpecialItemsLogic(*args, **kwargs)
 
 
-class SpecialItemsLogic(BaseLogic[Union[ReceivedLogicMixin, SeasonLogicMixin, RegionLogicMixin, HasLogicMixin, RelationshipLogicMixin]]):
+class SpecialItemsLogic(BaseLogic):
 
     def has_purple_shorts(self) -> StardewRule:
         has_first_shorts = self.logic.season.has(Season.summer) & self.logic.relationship.has_hearts(NPC.marnie, 2)
@@ -42,4 +42,3 @@ class SpecialItemsLogic(BaseLogic[Union[ReceivedLogicMixin, SeasonLogicMixin, Re
         if SecretsanityOptionName.secret_notes in self.options.secretsanity:
             return self.logic.received(SpecialItem.solid_gold_lewis) & self.logic.region.can_reach(Region.town)
         return self.logic.has(Forageable.secret_note) & self.logic.region.can_reach(Region.town)
-

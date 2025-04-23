@@ -17,7 +17,7 @@ class MemeItemsLogicMixin(BaseLogicMixin):
         self.meme = MemeItemsLogic(*args, **kwargs)
 
 
-class MemeItemsLogic(BaseLogic[Union[ReceivedLogicMixin, HasLogicMixin, ToolLogicMixin]]):
+class MemeItemsLogic(BaseLogic):
 
     def initialize_rules(self):
         self.registry.meme_item_rules.update({

@@ -16,7 +16,7 @@ class GiftLogicMixin(BaseLogicMixin):
         self.gifts = GiftLogic(*args, **kwargs)
 
 
-class GiftLogic(BaseLogic[Union[HasLogicMixin, RelationshipLogicMixin]]):
+class GiftLogic(BaseLogic):
 
     @cached_property
     def has_any_universal_love(self) -> StardewRule:

@@ -1,17 +1,7 @@
 from functools import cached_property
-from typing import Union, List
+from typing import List
 
-from .action_logic import ActionLogicMixin
 from .base_logic import BaseLogicMixin, BaseLogic
-from .fishing_logic import FishingLogicMixin
-from .has_logic import HasLogicMixin
-from .money_logic import MoneyLogicMixin
-from .quality_logic import QualityLogicMixin
-from .quest_logic import QuestLogicMixin
-from .received_logic import ReceivedLogicMixin
-from .region_logic import RegionLogicMixin
-from .skill_logic import SkillLogicMixin
-from .time_logic import TimeLogicMixin
 from ..bundles.bundle import Bundle
 from ..stardew_rule import StardewRule, True_
 from ..strings.ap_names.community_upgrade_names import CommunityUpgrade
@@ -19,7 +9,6 @@ from ..strings.currency_names import Currency
 from ..strings.machine_names import Machine
 from ..strings.quality_names import CropQuality, ForageQuality, FishQuality, ArtisanQuality
 from ..strings.quest_names import Quest
-from ..strings.region_names import Region
 
 
 class BundleLogicMixin(BaseLogicMixin):
@@ -28,8 +17,7 @@ class BundleLogicMixin(BaseLogicMixin):
         self.bundle = BundleLogic(*args, **kwargs)
 
 
-class BundleLogic(BaseLogic[Union[ReceivedLogicMixin, HasLogicMixin, TimeLogicMixin, RegionLogicMixin, MoneyLogicMixin, QualityLogicMixin, FishingLogicMixin,
-SkillLogicMixin, QuestLogicMixin, ActionLogicMixin]]):
+class BundleLogic(BaseLogic):
     # Should be cached
     def can_complete_bundle(self, bundle: Bundle) -> StardewRule:
         item_rules = []
