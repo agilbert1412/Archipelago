@@ -148,8 +148,7 @@ def create_backpack_items(item_factory: StardewItemFactory, options: StardewVall
 
 
 def create_footwear(item_factory: StardewItemFactory, options: StardewValleyOptions, number: int) -> List[Item]:
-    classification = ItemClassification.progression if options.bundle_randomization == BundleRandomization.option_meme else ItemClassification.useful
-    return [item_factory(APWeapon.footwear, classification_pre_fill=classification) for _ in range(number)]
+    return [item_factory(APWeapon.footwear) for _ in range(number)]
 
 
 def create_weapons(item_factory: StardewItemFactory, options: StardewValleyOptions, content: StardewContent, items: List[Item]):
