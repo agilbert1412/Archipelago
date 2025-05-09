@@ -40,5 +40,5 @@ class SpecialItemsLogic(BaseLogic):
 
     def has_advanced_tv_remote(self) -> StardewRule:
         if self.options.exclude_ginger_island == ExcludeGingerIsland.option_true:
-            return self.logic.relationship.has_relationship(NPC.george, 10)
+            return self.logic.relationship.has_hearts(NPC.george, 10)
         return self.logic.quest.can_complete_quest(Quest.the_pirates_wife) & self.logic.relationship.can_meet(NPC.george)
