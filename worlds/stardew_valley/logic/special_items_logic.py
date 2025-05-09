@@ -1,16 +1,11 @@
-from typing import Union
-
 from .base_logic import BaseLogic, BaseLogicMixin
-from .has_logic import HasLogicMixin
-from .received_logic import ReceivedLogicMixin
-from .region_logic import RegionLogicMixin
-from .relationship_logic import RelationshipLogicMixin
-from .season_logic import SeasonLogicMixin
+from ..options import ExcludeGingerIsland
 from ..stardew_rule import StardewRule
 from ..strings.ap_names.ap_option_names import SecretsanityOptionName
 from ..strings.craftable_names import Consumable
 from ..strings.forageable_names import Forageable
 from ..strings.metal_names import Artifact
+from ..strings.quest_names import Quest
 from ..strings.region_names import Region
 from ..strings.season_names import Season
 from ..strings.special_item_names import SpecialItem
@@ -42,3 +37,8 @@ class SpecialItemsLogic(BaseLogic):
         if SecretsanityOptionName.secret_notes in self.options.secretsanity:
             return self.logic.received(SpecialItem.solid_gold_lewis) & self.logic.region.can_reach(Region.town)
         return self.logic.has(Forageable.secret_note) & self.logic.region.can_reach(Region.town)
+
+    def has_advanced_tv_remote(self) -> StardewRule:
+        if self.options.exclude_ginger_island == ExcludeGingerIsland.option_true:
+            return self.logic.relationship.has_relationship(NPC.george, 10)
+        return self.logic.quest.can_complete_quest(Quest.the_pirates_wife) & self.logic.relationship.can_meet(NPC.george)
