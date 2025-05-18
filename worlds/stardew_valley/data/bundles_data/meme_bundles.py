@@ -250,9 +250,7 @@ clickbait_bundle = CurrencyBundleTemplate(CCRoom.vault, MemeBundleName.clickbait
 
 
 # Bundles that need special Mod Handling:
-# Communism Bundle
-
-# Commitment Bundle (Need to have doved and divorced)
+# All done?
 
 pantry_bundles_meme = [hurricane_tortilla_bundle, look_at_chickens_bundle, lemonade_stand_bundle, what_the_rock_is_cooking_bundle, sunmaid_bundle,
                        big_grapes_bundle, eg_bundle, not_the_bees_bundle, speedrunners_bundle, bun_dle_bundle, animal_well_bundle, bad_farmer_bundle]
