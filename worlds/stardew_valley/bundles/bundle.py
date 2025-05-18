@@ -23,7 +23,7 @@ class Bundle:
 
     def special_behavior(self, world):
         if self.name == MemeBundleName.clickbait:
-            world.multiworld.exclude_locations[world.player].value.add(MemeBundleName.clickbait)
+            world.options.exclude_locations.value.add(MemeBundleName.clickbait)
 
 
 @dataclass
