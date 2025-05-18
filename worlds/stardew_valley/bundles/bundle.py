@@ -5,7 +5,8 @@ from typing import List, Tuple
 
 from .bundle_item import BundleItem
 from ..content import StardewContent
-from ..options import BundlePrice, StardewValleyOptions, ExcludeGingerIsland, FestivalLocations, TrapDifficulty
+from ..options import BundlePrice, StardewValleyOptions, ExcludeGingerIsland, FestivalLocations, TrapDifficulty, \
+    MultipleDaySleepEnabled, Gifting
 from ..options import EntranceRandomization
 from ..strings.bundle_names import MemeBundleName
 from ..strings.currency_names import Currency, MemeCurrency
@@ -59,13 +60,15 @@ class BundleTemplate:
             chosen_items = filtered_items + random.choices(filtered_items, k=number_chosen_items - number_items)
         else:
             chosen_items = random.sample(filtered_items, number_chosen_items)
-        chosen_items = [item.as_amount(max(1, math.floor(item.amount * price_multiplier))) for item in chosen_items]
+        chosen_items = [item.as_amount(min(999, max(1, math.floor(item.amount * price_multiplier)))) for item in chosen_items]
         return Bundle(self.room, self.name, chosen_items, number_required)
 
     def can_appear(self, options: StardewValleyOptions) -> bool:
         if self.name == MemeBundleName.trap and options.trap_items.value == TrapDifficulty.option_no_traps:
             return False
-        if self.name == MemeBundleName.hibernation and not self.options.multiple_day_sleep_enabled.value:
+        if self.name == MemeBundleName.hibernation and options.multiple_day_sleep_enabled == MultipleDaySleepEnabled.option_false:
+            return False
+        if self.name == MemeBundleName.cooperation and options.gifting == Gifting.option_false:
             return False
         return True
 
@@ -190,6 +193,34 @@ class DeepBundleTemplate(BundleTemplate):
             chosen_items.append(random.choice(filtered_items))
 
         chosen_items = [item.as_amount(max(1, math.floor(item.amount * price_multiplier))) for item in chosen_items]
+        return Bundle(self.room, self.name, chosen_items, number_required)
+
+
+class FixedPriceDeepBundleTemplate(DeepBundleTemplate):
+
+    def __init__(self, room: str, name: str, categories: List[List[BundleItem]], number_possible_items: int,
+                 number_required_items: int):
+        super().__init__(room, name, categories, number_possible_items, number_required_items)
+
+    def create_bundle(self, random: Random, content: StardewContent, options: StardewValleyOptions) -> Bundle:
+        number_required = self.number_required_items
+        number_categories = len(self.categories)
+        number_chosen_categories = self.number_possible_items
+        if number_chosen_categories < number_required:
+            number_chosen_categories = number_required
+
+        if number_chosen_categories > number_categories:
+            chosen_categories = self.categories + random.choices(self.categories,
+                                                                 k=number_chosen_categories - number_categories)
+        else:
+            chosen_categories = random.sample(self.categories, number_chosen_categories)
+
+        chosen_items = []
+        for category in chosen_categories:
+            filtered_items = [item for item in category if item.can_appear(content, options)]
+            chosen_items.append(random.choice(filtered_items))
+
+        chosen_items = [item.as_amount(max(1, math.floor(item.amount))) for item in chosen_items]
         return Bundle(self.room, self.name, chosen_items, number_required)
 
 

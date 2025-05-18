@@ -476,6 +476,7 @@ dark_ballcap = BundleItem(Hat.dark_ballcap)
 goblin_mask = BundleItem(Hat.goblin_mask, source=BundleItem.Sources.island)
 
 vacation_shirt = BundleItem(Shirts.vacation.name)
+green_jacket_shirt = BundleItem(Shirts.green_jacket.name)
 
 mermaid_boots = BundleItem(Boots.mermaid_boots)
 
@@ -574,3 +575,4 @@ lumber = BundleItem(MemeItem.lumber)
 green_rain_weeds_0 = BundleItem(MemeItem.green_rain_weeds_0)
 seed_spot = BundleItem(MemeItem.seed_spot)
 pot_of_gold = BundleItem(MemeItem.pot_of_gold)
+trash_tuna = BundleItem(MemeItem.trash_tuna)

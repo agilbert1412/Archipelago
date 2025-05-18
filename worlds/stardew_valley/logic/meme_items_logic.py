@@ -2,7 +2,9 @@ from .base_logic import BaseLogicMixin, BaseLogic
 from ..strings.ap_names.ap_weapon_names import APWeapon
 from ..strings.hat_names import all_considered_hat_names
 from ..strings.meme_item_names import MemeItem
+from ..strings.region_names import Region
 from ..strings.ring_names import all_ring_names
+from ..strings.season_names import Season
 from ..strings.special_item_names import NotReallyAnItem
 
 
@@ -36,6 +38,7 @@ class MemeItemsLogic(BaseLogic):
             MemeItem.worn_boots: self.has_any_boots(),
             MemeItem.worn_hat: self.has_any_hat(),
             NotReallyAnItem.death: self.logic.true_,
+            MemeItem.trash_tuna: self.logic.season.has_any([Season.summer, Season.winter]) & self.logic.region.can_reach(Region.town),
         })
 
     def can_cheat(self):
