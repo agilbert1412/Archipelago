@@ -348,6 +348,7 @@ joja_cola = BundleItem(Trash.joja_cola)
 strange_bun = BundleItem(Meal.strange_bun)
 moss_soup = BundleItem(Meal.moss_soup)
 roasted_hazelnuts = BundleItem(Meal.roasted_hazelnuts)
+maple_bar = BundleItem(Meal.maple_bar)
 
 green_algae = BundleItem(WaterItem.green_algae)
 white_algae = BundleItem(WaterItem.white_algae)

@@ -199,16 +199,16 @@ crap_pot_bundle = BundleTemplate(CCRoom.boiler_room, MemeBundleName.crap_pot, cr
 emmalution_items = [garlic, bread, trash, goblin_mask, rain_totem]
 emmalution_bundle = BundleTemplate(CCRoom.bulletin_board, MemeBundleName.emmalution, emmalution_items, 5, 5)
 
-unused_balls = [fairy_rose, melon, grape, geode, ancient_seed, crystal_ball, peach, coconut]
+unused_balls = [fairy_rose, melon, grape, geode, ancient_seed, crystal_ball, peach]
 yellow_pool_balls = [item.as_amount(1) for item in [solar_essence, topaz_crystal_ball, pizza, apricot, gold_ore, golden_coconut, pufferfish, lucky_lunch]]
 blue_pool_balls = [item.as_amount(2) for item in [blue_jazz, blueberry, powdermelon, ancient_fruit, iridium_ore, aquamarine, aquamarine_crystal_ball, opal, broken_cd]]
-red_pool_balls = [item.as_amount(3) for item in [tomato, mega_bomb, magma_geode, ruby_crystal_ball, apple]]
+red_pool_balls = [item.as_amount(3) for item in [tomato, mega_bomb, magma_geode, ruby_crystal_ball, apple, explosive_ammo, cranberries, cherry_bomb]]
 purple_pool_balls = [item.as_amount(4) for item in [red_cabbage, pomegranate, amethyst_crystal_ball, void_essence, wild_plum]]
 orange_pool_balls = [item.as_amount(5) for item in [pumpkin, orange, tigerseye]]
-green_pool_balls = [item.as_amount(6) for item in [cauliflower, jamborite, emerald_crystal_ball, salad, cactus_fruit, radioactive_ore]]
-dark_red_pool_balls = [item.as_amount(7) for item in [explosive_ammo, cranberries, cherry_bomb]]
+green_pool_balls = [item.as_amount(6) for item in [cauliflower, jamborite, salad, cactus_fruit, radioactive_ore]]
+brown_pool_balls = [item.as_amount(7) for item in [acorn, chipped_amphora, coconut, dwarvish_helm, hazelnut, maple_bar, maple_syrup, potato, truffle, yam]]
 black_pool_balls = [item.as_amount(8) for item in [bomb, coal]]
-pool_items = [yellow_pool_balls, blue_pool_balls, red_pool_balls, purple_pool_balls, orange_pool_balls, green_pool_balls, dark_red_pool_balls, black_pool_balls]
+pool_items = [yellow_pool_balls, blue_pool_balls, red_pool_balls, purple_pool_balls, orange_pool_balls, green_pool_balls, brown_pool_balls, black_pool_balls]
 pool_bundle = FixedPriceDeepBundleTemplate(CCRoom.boiler_room, MemeBundleName.pool, pool_items, 8, 8)
 
 argonmatrix_items = [radish.as_amount(32), radish.as_amount(87), melon.as_amount(127), chocolate_cake.as_amount(3), cactus_fruit.as_amount(1)]
