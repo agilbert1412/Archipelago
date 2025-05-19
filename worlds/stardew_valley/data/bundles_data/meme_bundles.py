@@ -2,7 +2,7 @@ from .bundle_data import all_bundle_items_by_name
 from .meme_bundles_data.capitalist_bundle import capitalist_items
 from .remixed_bundles import *
 from ...bundles.bundle import BureaucracyBundleTemplate, RecursiveBundleTemplate, FixedPriceCurrencyBundleTemplate, \
-    FixedPriceBundleTemplate, FixedPriceDeepBundleTemplate
+    FixedPriceBundleTemplate, FixedPriceDeepBundleTemplate, FixedMultiplierBundleTemplate
 from ...strings.bundle_names import MemeBundleName
 from ...strings.currency_names import MemeCurrency
 from ...strings.flower_names import all_flowers
@@ -13,7 +13,7 @@ from ...strings.quality_names import AnimalProductQuality, CropQuality
 burger_king_items = [survival_burger, joja_cola, apple_slices, ice_cream, strange_doll, strange_doll_green, hashbrowns, infinity_crown]
 burger_king_bundle = BundleTemplate(CCRoom.bulletin_board, MemeBundleName.burger_king, burger_king_items, 6, 3)
 
-capitalist_bundle = BundleTemplate(CCRoom.vault, MemeBundleName.capitalist, capitalist_items, 12, 2)
+capitalist_bundle = FixedMultiplierBundleTemplate(CCRoom.vault, MemeBundleName.capitalist, capitalist_items, 12, 2)
 
 romance_items = [lucky_purple_shorts, truffle_oil, super_cucumber, good_ol_cap]
 romance_bundle = BundleTemplate(CCRoom.bulletin_board, MemeBundleName.romance, romance_items, 4, 4)
@@ -218,13 +218,16 @@ frazzleduck_items = [duck_egg, duck_feather, eggplant, green_jacket_shirt]
 frazzleduck_bundle = BundleTemplate(CCRoom.bulletin_board, MemeBundleName.frazzleduck, frazzleduck_items, 4, 4)
 
 loser_club_items = [tuna]
-loser_club_bundle = BundleTemplate(CCRoom.bulletin_board, MemeBundleName.loser_club, loser_club_items, 1, 1)
+loser_club_bundle = FixedPriceBundleTemplate(CCRoom.bulletin_board, MemeBundleName.loser_club, loser_club_items, 1, 1)
 
 ministry_items = [item.as_amount(999) for item in [trash, joja_cola, broken_glasses, broken_glasses, soggy_newspaper]]
 ministry_bundle = BundleTemplate(CCRoom.bulletin_board, MemeBundleName.ministry_of_madness, ministry_items, 4, 1)
 
 pomnut_items = [pomegranate, hazelnut, carrot]
 pomnut_bundle = BundleTemplate(CCRoom.bulletin_board, MemeBundleName.pomnut, pomnut_items, 3, 3)
+
+blossom_garden_items = [banana.as_amount(18), pizza.as_amount(32), spaghetti, single_bed, pink_cake, wood_floor, triple_shot_espresso, maple_bar, bug_steak, void_essence.as_amount(10), crystal_ball, solar_essence.as_amount(10)]
+blossom_garden_bundle = BundleTemplate(CCRoom.bulletin_board, MemeBundleName.blossom_garden, blossom_garden_items, 12, 6)
 
 cooperation_items = [*all_simple_items]
 cooperation_bundle = BundleTemplate(CCRoom.bulletin_board, MemeBundleName.cooperation, cooperation_items, 4, 4)
@@ -301,7 +304,7 @@ boiler_room_meme = BundleRoomTemplate(CCRoom.boiler_room, boiler_room_bundles_me
 bulletin_board_bundles_meme = [burger_king_bundle, romance_bundle, burger_king_revenge_bundle, smapi_bundle, sappy_bundle, hats_off_to_you_bundle,
                                snitch_bundle, commitment_bundle_bundle, journalist_bundle, trap_bundle, off_your_back_bundle, vocaloid_bundle, fruit_bundle,
                                celeste_bundle, cap_bundle, emmalution_bundle, joetg_bundle, honeywell_bundle, cooperation_bundle,
-                               ministry_bundle, loser_club_bundle, frazzleduck_bundle, argonmatrix_bundle, pomnut_bundle]
+                               ministry_bundle, loser_club_bundle, frazzleduck_bundle, argonmatrix_bundle, pomnut_bundle, blossom_garden_bundle]
 bulletin_board_meme = BundleRoomTemplate(CCRoom.bulletin_board, bulletin_board_bundles_meme, 5)
 
 vault_bundles_meme = [capitalist_bundle, death_bundle, permit_a38_bundle, vampire_bundle, exhaustion_bundle,

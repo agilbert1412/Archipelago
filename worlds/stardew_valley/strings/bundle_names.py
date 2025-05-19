@@ -128,6 +128,7 @@ class BundleName:
 
 
 class MemeBundleName:
+    blossom_garden = meme_bundle("Blossom Garden")
     deathlink = meme_bundle("DeathLink")
     humble = meme_bundle("Humble")
     asmr = meme_bundle("ASMR")

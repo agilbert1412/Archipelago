@@ -4,7 +4,7 @@ from ...strings.animal_product_names import AnimalProduct
 from ...strings.artisan_good_names import ArtisanGood
 from ...strings.boot_names import Boots
 from ...strings.catalogue_names import CatalogueItem
-from ...strings.craftable_names import Consumable, Lighting, Fishing, Craftable, Bomb, Furniture, Floor
+from ...strings.craftable_names import Consumable, Lighting, Fishing, Craftable, Bomb, Furniture, Floor, Edible
 from ...strings.crop_names import Vegetable, Fruit
 from ...strings.currency_names import Currency
 from ...strings.decoration_names import Decoration
@@ -524,6 +524,7 @@ pomegranate_sapling = BundleItem(Sapling.pomegranate)
 
 cookout_kit = BundleItem(Craftable.cookout_kit)
 tent_kit = BundleItem(Craftable.tent_kit)
+bug_steak = BundleItem(Edible.bug_steak)
 
 tea_set = BundleItem(Gift.tea_set)
 golden_pumpkin = BundleItem(Gift.golden_pumpkin)
@@ -539,6 +540,7 @@ topaz_crystal_ball = BundleItem(CatalogueItem.topaz_crystal_ball)
 flute_block = BundleItem(Furniture.flute_block)
 candle_lamp = BundleItem(Furniture.candle_lamp)
 modern_lamp = BundleItem(Furniture.modern_lamp)
+single_bed = BundleItem(Furniture.single_bed)
 
 wood_floor = BundleItem(Floor.wood)
 rustic_plank_floor = BundleItem(Floor.rustic)
