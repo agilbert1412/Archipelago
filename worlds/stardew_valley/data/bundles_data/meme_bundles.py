@@ -131,8 +131,11 @@ mermaid_bundle = FixedPriceBundleTemplate(CCRoom.fish_tank, MemeBundleName.merma
 commitment_items = [bouquet, mermaid_pendant, wilted_bouquet, ancient_doll.as_amount(2)]
 commitment_bundle_bundle = FixedPriceBundleTemplate(CCRoom.bulletin_board, MemeBundleName.commitment, commitment_items, 4, 4)
 
-all_simple_items = [bundle_item for bundle_item in all_bundle_items_by_name.values() if
-                    bundle_item.amount == 1 and bundle_item.quality.startswith("Basic") and bundle_item.flavor is None]
+all_simple_items = [all_bundle_items_by_name[bundle_item_name] for bundle_item_name in all_bundle_items_by_name if
+                    all_bundle_items_by_name[bundle_item_name].amount == 1 and
+                    all_bundle_items_by_name[bundle_item_name].quality.startswith("Basic") and
+                    all_bundle_items_by_name[bundle_item_name].flavor is None and
+                    bundle_item_name != "Honey"]
 
 permit_a38_items = [*all_simple_items]
 permit_a38_bundle = BureaucracyBundleTemplate(CCRoom.vault, MemeBundleName.permit_a38, permit_a38_items, 1, 8)
@@ -227,7 +230,7 @@ pomnut_items = [pomegranate, hazelnut, carrot]
 pomnut_bundle = BundleTemplate(CCRoom.bulletin_board, MemeBundleName.pomnut, pomnut_items, 3, 3)
 
 blossom_garden_items = [banana.as_amount(18), pizza.as_amount(32), spaghetti, single_bed, pink_cake, wood_floor, triple_shot_espresso, maple_bar, bug_steak, void_essence.as_amount(10), crystal_ball, solar_essence.as_amount(10)]
-blossom_garden_bundle = BundleTemplate(CCRoom.bulletin_board, MemeBundleName.blossom_garden, blossom_garden_items, 12, 6)
+blossom_garden_bundle = FixedPriceBundleTemplate(CCRoom.bulletin_board, MemeBundleName.blossom_garden, blossom_garden_items, 12, 6)
 
 cooperation_items = [*all_simple_items]
 cooperation_bundle = BundleTemplate(CCRoom.bulletin_board, MemeBundleName.cooperation, cooperation_items, 4, 4)

@@ -164,11 +164,13 @@ class BundlePrice(Choice):
 class BundlePerRoom(Choice):
     """How many bundles are in each room of the community center?
     Rooms that already have the max cannot increase further
-    2 Fewer: Every room will have two fewer bundles
-    1 Fewer: Every room will have one fewer bundle
+    2 Fewer: Every room will have 2 fewer bundles
+    1 Fewer: Every room will have 1 fewer bundle
     Normal: Every room will have its usual number of bundles
-    1 Extra: Every room will have one extra bundle
-    2 Extra: Every room will have two extra bundles"""
+    1 Extra: Every room will have 1 extra bundle
+    2 Extra: Every room will have 2 extra bundles
+    3 Extra: Every room will have 3 extra bundles
+    4 Extra: Every room will have 4 extra bundles"""
     internal_name = "bundle_per_room"
     display_name = "Bundle Per Room"
     default = 0
@@ -178,6 +180,8 @@ class BundlePerRoom(Choice):
     option_normal = 0
     option_one_extra = 1
     option_two_extra = 2
+    option_three_extra = 3
+    option_four_extra = 4
     # option_maximum = 8  # I don't think users need this, keeping my options open
 
 
