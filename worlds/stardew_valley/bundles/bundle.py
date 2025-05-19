@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from random import Random
 from typing import List, Tuple
 
+from Options import DeathLink
 from .bundle_item import BundleItem
 from ..content import StardewContent
 from ..options import BundlePrice, StardewValleyOptions, ExcludeGingerIsland, FestivalLocations, TrapDifficulty, \
@@ -119,6 +120,9 @@ class CurrencyBundleTemplate(BundleTemplate):
                 return False
         if options.entrance_randomization != EntranceRandomization.option_disabled:
             if self.item.item_name == MemeCurrency.time_elapsed:
+                return False
+        if options.death_link != DeathLink.option_true:
+            if self.item.item_name == MemeCurrency.deathlinks:
                 return False
         return True
 
