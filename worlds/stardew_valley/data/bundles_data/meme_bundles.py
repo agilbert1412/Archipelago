@@ -277,13 +277,7 @@ deathlink_bundle = CurrencyBundleTemplate(CCRoom.boiler_room, MemeBundleName.dea
 
 
 # Bundles that need special Mod Handling:
-#   Pool Bundle         (Stick and Balls, but Black ball must be last)
-#   Puzzle Bundle       (Some sort of sliding puzzle)
-#   ASMR Bundle         (Relaxing Bundle, it plays ASMR noise)
-#   Humble Bundle       (Pay what you want)
-#   Loser Bundle
-#   Cooperation Bundle  (Asks for normal items but can only be donated through gifting)
-#   Deathlink Bundle    (Completes after N deathlinks are sent across the multiworld)
+#     None
 
 pantry_bundles_meme = [hurricane_tortilla_bundle, look_at_chickens_bundle, lemonade_stand_bundle, what_the_rock_is_cooking_bundle, sunmaid_bundle,
                        big_grapes_bundle, eg_bundle, not_the_bees_bundle, speedrunners_bundle, bun_dle_bundle, animal_well_bundle, bad_farmer_bundle]
