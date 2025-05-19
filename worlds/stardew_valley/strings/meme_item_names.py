@@ -18,4 +18,3 @@ class MemeItem:
     worn_boots = "Worn Boots"
     worn_hat = "Worn Hat"
     trap = "Fun Trap"
-    trash_tuna = "Trash Tuna"

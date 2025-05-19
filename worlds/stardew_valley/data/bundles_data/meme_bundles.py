@@ -217,7 +217,7 @@ argonmatrix_bundle = FixedPriceBundleTemplate(CCRoom.bulletin_board, MemeBundleN
 frazzleduck_items = [duck_egg, duck_feather, eggplant, green_jacket_shirt]
 frazzleduck_bundle = BundleTemplate(CCRoom.bulletin_board, MemeBundleName.frazzleduck, frazzleduck_items, 4, 4)
 
-loser_club_items = [trash_tuna]
+loser_club_items = [tuna]
 loser_club_bundle = BundleTemplate(CCRoom.bulletin_board, MemeBundleName.loser_club, loser_club_items, 1, 1)
 
 ministry_items = [item.as_amount(999) for item in [trash, joja_cola, broken_glasses, broken_glasses, soggy_newspaper]]
@@ -252,7 +252,7 @@ gacha_bundle = CurrencyBundleTemplate(CCRoom.vault, MemeBundleName.gacha, Bundle
 hibernation_bundle = CurrencyBundleTemplate(CCRoom.vault, MemeBundleName.hibernation, BundleItem(MemeCurrency.sleep_days, 60))
 crowdfunding_bundle = CurrencyBundleTemplate(CCRoom.vault, MemeBundleName.crowdfunding, BundleItem(MemeCurrency.bank_money, 10000))
 clickbait_bundle = CurrencyBundleTemplate(CCRoom.vault, MemeBundleName.clickbait, BundleItem.money_bundle(100))
-puzzle_bundle = FixedPriceCurrencyBundleTemplate(CCRoom.vault, MemeBundleName.puzzle, BundleItem.money_bundle(0))
+puzzle_bundle = CurrencyBundleTemplate(CCRoom.vault, MemeBundleName.puzzle, BundleItem.money_bundle(10))
 asmr_bundle = FixedPriceCurrencyBundleTemplate(CCRoom.vault, MemeBundleName.asmr, BundleItem.money_bundle(0))
 humble_bundle = CurrencyBundleTemplate(CCRoom.vault, MemeBundleName.humble, BundleItem.money_bundle(5000))
 deathlink_bundle = CurrencyBundleTemplate(CCRoom.boiler_room, MemeBundleName.deathlink, BundleItem(MemeCurrency.deathlinks, 10))
