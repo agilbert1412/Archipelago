@@ -18,7 +18,7 @@ class Currency:
 
 
 class MemeCurrency:
-    deathlinks = "Deathlinks"
+    deathlinks = "DeathLinks"
     bank_money = "Bank Money"
     sleep_days = "Sleep Days"
     blood = "Blood"
