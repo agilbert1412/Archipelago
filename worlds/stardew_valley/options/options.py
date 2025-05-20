@@ -7,7 +7,7 @@ from Options import Range, NamedRange, Toggle, Choice, OptionSet, PerGameCommonO
     Visibility, Removed, OptionCounter
 from ..mods.mod_data import ModNames
 from ..strings.ap_names.ap_option_names import BuffOptionName, WalnutsanityOptionName, SecretsanityOptionName
-from ..strings.bundle_names import all_cc_bundle_names
+from ..strings.bundle_names import all_cc_bundle_names, MemeBundleName
 from ..strings.trap_names import all_traps
 
 
@@ -958,6 +958,16 @@ class BundlePlando(OptionSet):
     display_name = "Bundle Plando"
     visibility = Visibility.template | Visibility.spoiler
     valid_keys = set(all_cc_bundle_names)
+
+    def prioritizes(self, bundle_name):
+        if self.in_plando(bundle_name):
+            return True
+        if bundle_name == MemeBundleName.scam:
+            return self.in_plando("Investment")
+        return False
+
+    def in_plando(self, bundle_name) -> bool:
+        return bundle_name in self.value
 
 
 @dataclass

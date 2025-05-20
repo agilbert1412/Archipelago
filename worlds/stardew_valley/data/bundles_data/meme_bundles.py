@@ -262,7 +262,7 @@ puzzle_bundle = CurrencyBundleTemplate(CCRoom.vault, MemeBundleName.puzzle, Bund
 asmr_bundle = FixedPriceCurrencyBundleTemplate(CCRoom.vault, MemeBundleName.asmr, BundleItem.money_bundle(0))
 humble_bundle = CurrencyBundleTemplate(CCRoom.vault, MemeBundleName.humble, BundleItem.money_bundle(5000))
 deathlink_bundle = CurrencyBundleTemplate(CCRoom.boiler_room, MemeBundleName.deathlink, BundleItem(MemeCurrency.deathlinks, 10))
-investment_bundle = CurrencyBundleTemplate(CCRoom.vault, MemeBundleName.investment, BundleItem.money_bundle(10000))
+investment_bundle = CurrencyBundleTemplate(CCRoom.vault, MemeBundleName.scam, BundleItem.money_bundle(10000))
 
 # Stopped at 49 responses on the form
 
