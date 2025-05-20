@@ -262,6 +262,7 @@ puzzle_bundle = CurrencyBundleTemplate(CCRoom.vault, MemeBundleName.puzzle, Bund
 asmr_bundle = FixedPriceCurrencyBundleTemplate(CCRoom.vault, MemeBundleName.asmr, BundleItem.money_bundle(0))
 humble_bundle = CurrencyBundleTemplate(CCRoom.vault, MemeBundleName.humble, BundleItem.money_bundle(5000))
 deathlink_bundle = CurrencyBundleTemplate(CCRoom.boiler_room, MemeBundleName.deathlink, BundleItem(MemeCurrency.deathlinks, 10))
+investment_bundle = CurrencyBundleTemplate(CCRoom.vault, MemeBundleName.investment, BundleItem.money_bundle(10000))
 
 # Stopped at 49 responses on the form
 
@@ -269,11 +270,9 @@ deathlink_bundle = CurrencyBundleTemplate(CCRoom.boiler_room, MemeBundleName.dea
 #   Acrostic Bundle     (Asks for a specific word, you need to donate an item for each letter)
 #   Cipher Bundle       (Some sort of code?)
 #   Friendship Bundle   (Show some NPCs, gotta donate a loved gift for each of them)
-#   Investment Bundle   (Give anything you want, you get it back double in a month)
 #   Leaf Blower Bundle  (Leaf Blower Minigame, similar to the cookie clicker one)
 #   QA Bundle           (Some sort of bug, not sure yet)
 #   Relay Bundle        (Relay Stick passed around the multiworld)
-#   SakuraTsubasa Bundle (TBD)
 #   Scavenger Bundle    (The bundle moves around the map and you need to keep finding it)
 #   Side Quest Bundle   (Sends you on side quests to talk to random NPCs several times)
 #   Sticky Bundle       (But it sticks, somehow?)
@@ -308,7 +307,7 @@ vault_bundles_meme = [capitalist_bundle, death_bundle, permit_a38_bundle, vampir
                       tick_tock_bundle, archipela_go_bundle, clique_bundle, cookie_clicker_bundle, communism_bundle,
                       flashbang_bundle, connection_bundle, nft_bundle, firstborn_bundle, restraint_bundle, fast_bundle,
                       floor_is_lava_bundle, gacha_bundle, hibernation_bundle, crowdfunding_bundle, clickbait_bundle,
-                      humble_bundle, puzzle_bundle, asmr_bundle]
+                      humble_bundle, puzzle_bundle, asmr_bundle, investment_bundle]
 vault_meme = BundleRoomTemplate(CCRoom.vault, vault_bundles_meme, 4)
 
 all_cc_meme_bundles = [*pantry_bundles_meme, *crafts_room_bundles_meme, *fish_tank_bundles_meme,
