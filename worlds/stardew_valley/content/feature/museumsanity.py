@@ -1,21 +1,19 @@
 from abc import ABC
 from dataclasses import dataclass
-from typing import Tuple, ClassVar
+from typing import ClassVar
 
-from ...data.game_item import Source, Requirement
+from .base import FeatureBase, always_disabled
 from ...data.requirement import MuseumCompletionRequirement
 
 
 @dataclass(frozen=True)
-class MuseumsanityFeature(ABC):
+class MuseumsanityFeature(FeatureBase, ABC):
     is_enabled: ClassVar[bool]
-    disabled_sources: ClassVar[Tuple[type[Source], ...]] = ()
-    disabled_requirements: ClassVar[Tuple[type[Requirement], ...]] = ()
 
 
 class MuseumsanityNone(MuseumsanityFeature):
     is_enabled = False
-    disabled_requirements = (MuseumCompletionRequirement,)
+    disabled_requirements = {MuseumCompletionRequirement: always_disabled}
 
 
 @dataclass(frozen=True)
