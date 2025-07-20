@@ -27,6 +27,10 @@ class MuseumsanityMilestones(MuseumsanityFeature):
 @dataclass(frozen=True)
 class MuseumsanityRandomized(MuseumsanityFeature):
     is_enabled = True
+    amount_of_randomized_donations: int = 40
+
+    def _disable_museum_completion_requirement(self, requirement: MuseumCompletionRequirement) -> bool:
+        return requirement.number_donated > self.amount_of_randomized_donations
 
 
 @dataclass(frozen=True)

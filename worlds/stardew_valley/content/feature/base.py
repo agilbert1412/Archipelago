@@ -1,11 +1,8 @@
 import inspect
-from abc import ABC, ABCMeta
+from abc import ABC
 from collections.abc import Mapping
-from dataclasses import dataclass
-from types import MappingProxyType
-from typing import ClassVar, TYPE_CHECKING, Protocol
-
-from typing_extensions import Self
+from functools import cached_property
+from typing import TYPE_CHECKING, Protocol
 
 from ...data.game_item import Source, Requirement
 
@@ -36,41 +33,40 @@ def wrap_optional_content_arg(hook):
     return wrapper
 
 
-class FeatureMeta(ABCMeta):
+class FeatureBase(ABC):
 
-    def __new__(mcs: type[Self], name: str, bases: tuple[type, ...], namespace: dict[str, object]) -> type:
-        mcs.__handle_disable_hooks(namespace)
-        return super().__new__(mcs, name, bases, namespace)
-
-    @staticmethod
-    def __handle_disable_hooks(namespace: dict[str, object]):
+    @cached_property
+    def disable_source_hooks(self) -> Mapping[type[Source], DisableSourceHook]:
+        """All hooks to call when a source is created to check if it has to be disabled by this feature."""
         disable_source_hooks = {}
-        disable_requirement_hooks = {}
-        for attribute_name, attribute in namespace.items():
-            if not attribute_name.startswith("_disable_") or not callable(attribute):
+        for attribute_name in dir(self):
+            if not attribute_name.startswith("_disable_") or not callable((attribute := getattr(self, attribute_name))):
                 continue
 
             sig = inspect.signature(attribute)
 
-            if (source_param := sig.parameters.get("source")) is not None:
+            source_param = sig.parameters.get("source")
+            if source_param is not None:
                 source_type = source_param.annotation
                 disable_source_hooks[source_type] = wrap_optional_content_arg(attribute)
                 continue
 
-            if (requirement_param := sig.parameters.get("requirement")) is not None:
-                source_type = requirement_param.annotation
-                disable_requirement_hooks[source_type] = wrap_optional_content_arg(attribute)
+        return disable_source_hooks
+
+    @cached_property
+    def disable_requirement_hooks(self) -> Mapping[type[Requirement], DisableRequirementHook]:
+        """All hooks to call when a requirement is created to check if it has to be disabled by this feature."""
+        disable_requirement_hooks = {}
+        for attribute_name in dir(self):
+            if not attribute_name.startswith("_disable_") or not callable((attribute := getattr(self, attribute_name))):
                 continue
 
-            raise "Invalid disable hook signature: " + attribute_name + ". Expected a parameter named \"source\" or \"requirement\"."
+            sig = inspect.signature(attribute)
 
-        namespace["disable_source_hooks"] = MappingProxyType(disable_source_hooks)
-        namespace["disable_requirement_hooks"] = MappingProxyType(disable_requirement_hooks)
+            requirement_param = sig.parameters.get("requirement")
+            if requirement_param is not None:
+                requirement_type = requirement_param.annotation
+                disable_requirement_hooks[requirement_type] = wrap_optional_content_arg(attribute)
+                continue
 
-
-@dataclass(frozen=True)
-class FeatureBase(ABC, metaclass=FeatureMeta):
-    disable_source_hooks: "ClassVar[Mapping[type[Source], DisableSourceHook]]"
-    """All hooks to call when a source is created to check if it has to be disabled by this feature."""
-    disable_requirement_hooks: "ClassVar[Mapping[type[Requirement], DisableRequirementHook]]"
-    """All hooks to call when a source is created to check if it has to be disabled by this feature."""
+        return disable_requirement_hooks
