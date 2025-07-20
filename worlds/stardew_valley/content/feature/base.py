@@ -34,6 +34,7 @@ def wrap_optional_content_arg(hook):
 
 class FeatureBase(ABC):
 
+    @property
     def disable_source_hooks(self) -> Mapping[type[Source], DisableSourceHook]:
         """All hooks to call when a source is created to check if it has to be disabled by this feature."""
         disable_source_hooks = {}
@@ -51,6 +52,7 @@ class FeatureBase(ABC):
 
         return disable_source_hooks
 
+    @property
     def disable_requirement_hooks(self) -> Mapping[type[Requirement], DisableRequirementHook]:
         """All hooks to call when a requirement is created to check if it has to be disabled by this feature."""
         disable_requirement_hooks = {}
