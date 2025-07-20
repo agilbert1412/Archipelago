@@ -76,26 +76,27 @@ class StardewContent:
     def _filter_sources(self, sources: Iterable[Source]) -> Generator[Source]:
         """Filters out sources that are disabled by features."""
         for source in sources:
+            if not self._is_disabled(source):
+                yield source
+
+    def _is_disabled(self, source: Source) -> bool:
+        """Checks if a source is disabled by any feature."""
+        try:
+            hook = self.features.disable_source_hooks[type(source)]
+            if hook(source, content=self):
+                return True
+        except KeyError:
+            pass
+
+        for requirement in source.all_requirements:
             try:
-                hook = self.features.disable_source_hooks[type(source)]
-                if hook(source, content=self):
-                    continue
+                hook = self.features.disable_requirement_hooks[type(requirement)]
+                if hook(requirement, content=self):
+                    return True
             except KeyError:
                 pass
 
-            has_disabled_requirements = False
-            for requirement in source.all_requirements:
-                try:
-                    hook = self.features.disable_requirement_hooks[type(requirement)]
-                    if hook(requirement, content=self):
-                        has_disabled_requirements = True
-                        break
-                except KeyError:
-                    pass
-            if has_disabled_requirements:
-                continue
-
-            yield source
+        return False
 
 
 @dataclass(frozen=True)
