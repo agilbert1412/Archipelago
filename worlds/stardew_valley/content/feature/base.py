@@ -1,7 +1,6 @@
 import inspect
 from abc import ABC
 from collections.abc import Mapping
-from functools import cached_property
 from typing import TYPE_CHECKING, Protocol
 
 from ...data.game_item import Source, Requirement
@@ -35,7 +34,6 @@ def wrap_optional_content_arg(hook):
 
 class FeatureBase(ABC):
 
-    @cached_property
     def disable_source_hooks(self) -> Mapping[type[Source], DisableSourceHook]:
         """All hooks to call when a source is created to check if it has to be disabled by this feature."""
         disable_source_hooks = {}
@@ -53,7 +51,6 @@ class FeatureBase(ABC):
 
         return disable_source_hooks
 
-    @cached_property
     def disable_requirement_hooks(self) -> Mapping[type[Requirement], DisableRequirementHook]:
         """All hooks to call when a requirement is created to check if it has to be disabled by this feature."""
         disable_requirement_hooks = {}
