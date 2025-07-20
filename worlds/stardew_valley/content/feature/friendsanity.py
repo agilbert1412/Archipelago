@@ -4,7 +4,6 @@ from functools import lru_cache
 from typing import ClassVar
 
 from .base import FeatureBase
-from ...data.requirement import NumberOfFriendsRequirement, SpecificFriendRequirement
 from ...data.villagers_data import Villager
 from ...strings.villager_names import NPC
 
@@ -81,14 +80,6 @@ class FriendsanityNone(FriendsanityFeature):
     def get_pet_randomized_hearts(self) -> tuple[int, ...]:
         return ()
 
-    @staticmethod
-    def _disable_number_of_friends_requirement(requirement: NumberOfFriendsRequirement) -> bool:
-        return requirement.friends <= 1 and requirement.hearts <= 5
-
-    @staticmethod
-    def _disable_specific_friend_requirement(requirement: SpecificFriendRequirement) -> bool:
-        return requirement.hearts <= 5
-
 
 @dataclass(frozen=True)
 class FriendsanityBachelors(FriendsanityFeature):
@@ -102,14 +93,6 @@ class FriendsanityBachelors(FriendsanityFeature):
 
     def get_pet_randomized_hearts(self) -> tuple[int, ...]:
         return ()
-
-    @staticmethod
-    def _disable_number_of_friends_requirement(requirement: NumberOfFriendsRequirement) -> bool:
-        return requirement.friends <= 1 and requirement.hearts <= 5
-
-    @staticmethod
-    def _disable_specific_friend_requirement(requirement: SpecificFriendRequirement) -> bool:
-        return requirement.hearts <= 5
 
 
 @dataclass(frozen=True)

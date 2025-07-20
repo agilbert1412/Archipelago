@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import ClassVar
 
+from .base import FeatureBase
 from ...data.hats_data import HatItem, HatDifficulty
 
 wear_prefix = "Wear "
@@ -21,7 +22,7 @@ def extract_hat_from_location_name(location_name: str) -> str | None:
 
 
 @dataclass(frozen=True)
-class HatsanityFeature(ABC):
+class HatsanityFeature(FeatureBase, ABC):
     is_enabled: ClassVar[bool]
 
     to_location_name = staticmethod(to_location_name)

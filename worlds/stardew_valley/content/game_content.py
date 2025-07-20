@@ -7,7 +7,7 @@ from typing import Iterable, Set, Any, Mapping, Generator
 
 from .feature import BooksanityFeature, BuildingProgressionFeature, CropsanityFeature, FishsanityFeature, FriendsanityFeature, HatsanityFeature, \
     MuseumsanityFeature, SkillProgressionFeature, ToolProgressionFeature
-from .feature.base import DisableSourceHook, DisableRequirementHook
+from .feature.base import DisableSourceHook, DisableRequirementHook, FeatureBase
 from ..data.animal import Animal
 from ..data.building import Building
 from ..data.fish_data import FishItem
@@ -111,23 +111,24 @@ class StardewFeatures:
     tool_progression: ToolProgressionFeature
 
     @cached_property
+    def all_features(self) -> Iterable[FeatureBase]:
+        return (self.booksanity, self.building_progression, self.cropsanity, self.fishsanity, self.friendsanity, self.hatsanity, self.museumsanity,
+                self.skill_progression, self.tool_progression)
+
+    @cached_property
     def disable_source_hooks(self) -> Mapping[type[Source], DisableSourceHook]:
         """Returns a set of source types that are disabled by features. Need to be exact types, subclasses are not considered."""
         hooks = {}
-        # TODO implement in other features
-        for feature in self.__dict__.values():
-            if hasattr(feature, 'disable_source_hooks'):
-                hooks.update(feature.disable_source_hooks)
+        for feature in self.all_features:
+            hooks.update(feature.disable_source_hooks)
         return MappingProxyType(hooks)
 
     @cached_property
     def disable_requirement_hooks(self) -> Mapping[type[Requirement], DisableRequirementHook]:
         """Returns a set of requirement types that are disabled by features. Need to be exact types, subclasses are not considered."""
         hooks = {}
-        # TODO implement in other features
-        for feature in self.__dict__.values():
-            if hasattr(feature, 'disable_requirement_hooks'):
-                hooks.update(feature.disable_requirement_hooks)
+        for feature in self.all_features:
+            hooks.update(feature.disable_requirement_hooks)
         return MappingProxyType(hooks)
 
 
