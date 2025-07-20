@@ -3,7 +3,9 @@ from abc import ABC, ABCMeta
 from collections.abc import Mapping
 from dataclasses import dataclass
 from types import MappingProxyType
-from typing import ClassVar, Self, TYPE_CHECKING, Protocol
+from typing import ClassVar, TYPE_CHECKING, Protocol
+
+from typing_extensions import Self
 
 from ...data.game_item import Source, Requirement
 
