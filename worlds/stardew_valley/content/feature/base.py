@@ -25,7 +25,7 @@ class DisableRequirementHook(Protocol):
 
 def wrap_optional_content_arg(hook):
     """Wraps a hook to ensure it has the correct signature."""
-    if 'content' in hook.__annotations__:
+    if "content" in hook.__annotations__:
         return hook
 
     def wrapper(*args, content: "StardewContent", **kwargs):
@@ -45,25 +45,25 @@ class FeatureMeta(ABCMeta):
         disable_source_hooks = {}
         disable_requirement_hooks = {}
         for attribute_name, attribute in namespace.items():
-            if not attribute_name.startswith('_disable_') or not callable(attribute):
+            if not attribute_name.startswith("_disable_") or not callable(attribute):
                 continue
 
             sig = inspect.signature(attribute)
 
-            if (source_param := sig.parameters.get('source')) is not None:
+            if (source_param := sig.parameters.get("source")) is not None:
                 source_type = source_param.annotation
                 disable_source_hooks[source_type] = wrap_optional_content_arg(attribute)
                 continue
 
-            if (requirement_param := sig.parameters.get('requirement')) is not None:
+            if (requirement_param := sig.parameters.get("requirement")) is not None:
                 source_type = requirement_param.annotation
                 disable_requirement_hooks[source_type] = wrap_optional_content_arg(attribute)
                 continue
 
-            raise 'Invalid disable hook signature: ' + attribute_name + '. Expected a parameter named "source" or "requirement".'
+            raise "Invalid disable hook signature: " + attribute_name + ". Expected a parameter named \"source\" or \"requirement\"."
 
-        namespace['disable_source_hooks'] = MappingProxyType(disable_source_hooks)
-        namespace['disable_requirement_hooks'] = MappingProxyType(disable_requirement_hooks)
+        namespace["disable_source_hooks"] = MappingProxyType(disable_source_hooks)
+        namespace["disable_requirement_hooks"] = MappingProxyType(disable_requirement_hooks)
 
 
 @dataclass(frozen=True)
