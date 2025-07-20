@@ -12,6 +12,7 @@ from worlds.AutoWorld import World, WebWorld
 from .bundles.bundle_room import BundleRoom
 from .bundles.bundles import get_all_bundles
 from .content import StardewContent, create_content
+from .content.feature.special_order_locations import get_qi_gem_amount
 from .content.feature.walnutsanity import get_walnut_amount
 from .early_items import setup_early_items
 from .items import item_table, ItemData, Group, items_by_group
@@ -322,6 +323,9 @@ class StardewValleyWorld(World):
 
         if (walnut_amount := get_walnut_amount(stardew_item.name)) > 0:
             stardew_item.events_to_collect[Event.received_walnuts] = walnut_amount
+
+        if (qi_gem_amount := get_qi_gem_amount(stardew_item.name)) > 0:
+            stardew_item.events_to_collect[Event.received_qi_gems] = qi_gem_amount
 
         return stardew_item
 

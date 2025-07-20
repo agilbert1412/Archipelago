@@ -3,6 +3,7 @@ from .base_logic import BaseLogicMixin, BaseLogic
 from ..data.shop import ShopSource
 from ..options import SpecialOrderLocations
 from ..stardew_rule import StardewRule, True_, HasProgressionPercent, False_, true_
+from ..strings.ap_names.event_names import Event
 from ..strings.currency_names import Currency
 from ..strings.region_names import Region, LogicRegion
 
@@ -74,7 +75,8 @@ class MoneyLogic(BaseLogic):
     # Should be cached
     def can_trade(self, currency: str, amount: int) -> StardewRule:
         if amount == 0:
-            return True_()
+            return self.logic.true_
+
         if currency == Currency.money:
             return self.can_spend(amount)
         if currency == Currency.star_token:
@@ -83,11 +85,10 @@ class MoneyLogic(BaseLogic):
             return self.logic.region.can_reach(Region.casino) & self.logic.time.has_lived_months(amount // 1000)
         if currency == Currency.qi_gem:
             if self.options.special_order_locations & SpecialOrderLocations.value_qi:
-                number_rewards = min(len(qi_gem_rewards), max(1, (amount // 10)))
-                return self.logic.received_n(*qi_gem_rewards, count=number_rewards)
-            number_rewards = 2
-            return self.logic.received_n(*qi_gem_rewards, count=number_rewards) & self.logic.region.can_reach(Region.qi_walnut_room) & \
-                self.logic.region.can_reach(Region.saloon) & self.can_have_earned_total(5000)
+                return self.logic.received(Event.received_qi_gems, amount * 3)
+            # Hardcoded number to match the two 15 Qi Gems added by remixed bundles
+            return (self.logic.received(Event.received_qi_gems, 30) & self.logic.region.can_reach_all((Region.qi_walnut_room, Region.saloon))
+                    & self.can_have_earned_total(5000))
         if currency == Currency.golden_walnut:
             return self.can_spend_walnut(amount)
 
