@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from functools import lru_cache
-from types import MappingProxyType
 from typing import ClassVar
 
 from .base import FeatureBase
@@ -72,10 +71,6 @@ class FriendsanityFeature(FeatureBase, ABC):
 
 class FriendsanityNone(FriendsanityFeature):
     is_enabled = False
-    disabled_requirements = MappingProxyType({
-        NumberOfFriendsRequirement: lambda requirement: requirement.friends <= 1 and requirement.hearts <= 5,
-        SpecificFriendRequirement: lambda requirement: requirement.hearts <= 5
-    })
 
     def __init__(self):
         super().__init__(1)
@@ -86,14 +81,18 @@ class FriendsanityNone(FriendsanityFeature):
     def get_pet_randomized_hearts(self) -> tuple[int, ...]:
         return ()
 
+    @staticmethod
+    def _disable_number_of_friends_requirement(requirement: NumberOfFriendsRequirement) -> bool:
+        return requirement.friends <= 1 and requirement.hearts <= 5
+
+    @staticmethod
+    def _disable_specific_friend_requirement(requirement: SpecificFriendRequirement) -> bool:
+        return requirement.hearts <= 5
+
 
 @dataclass(frozen=True)
 class FriendsanityBachelors(FriendsanityFeature):
     is_enabled = True
-    disabled_requirements = MappingProxyType({
-        NumberOfFriendsRequirement: lambda requirement: requirement.friends <= 1 and requirement.hearts <= 5,
-        SpecificFriendRequirement: lambda requirement: requirement.hearts <= 5
-    })
 
     def get_randomized_hearts(self, villager: Villager) -> tuple[int, ...]:
         if not villager.bachelor:
@@ -103,6 +102,14 @@ class FriendsanityBachelors(FriendsanityFeature):
 
     def get_pet_randomized_hearts(self) -> tuple[int, ...]:
         return ()
+
+    @staticmethod
+    def _disable_number_of_friends_requirement(requirement: NumberOfFriendsRequirement) -> bool:
+        return requirement.friends <= 1 and requirement.hearts <= 5
+
+    @staticmethod
+    def _disable_specific_friend_requirement(requirement: SpecificFriendRequirement) -> bool:
+        return requirement.hearts <= 5
 
 
 @dataclass(frozen=True)

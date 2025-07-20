@@ -2,7 +2,7 @@ from abc import ABC
 from dataclasses import dataclass
 from typing import ClassVar
 
-from .base import FeatureBase, always_disabled
+from .base import FeatureBase
 from ...data.requirement import MuseumCompletionRequirement
 
 
@@ -13,7 +13,10 @@ class MuseumsanityFeature(FeatureBase, ABC):
 
 class MuseumsanityNone(MuseumsanityFeature):
     is_enabled = False
-    disabled_requirements = {MuseumCompletionRequirement: always_disabled}
+
+    @staticmethod
+    def _disable_museum_completion_requirement(requirement: MuseumCompletionRequirement) -> bool:
+        return True
 
 
 @dataclass(frozen=True)
