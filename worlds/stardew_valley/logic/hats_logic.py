@@ -24,7 +24,5 @@ class HatLogic(BaseLogic):
         trout_derby_rule = self.logic.region.can_reach(LogicRegion.trout_derby) & self.logic.fishing.can_catch_fish(self.content.fishes[Fish.rainbow_trout])
         return trout_derby_rule
 
-    def can_wear(self, hat: str | HatItem) -> StardewRule:
-        if isinstance(hat, HatItem):
-            hat = hat.clarified_name
-        return self.logic.has(hat)
+    def can_wear(self, hat: HatItem) -> StardewRule:
+        return self.logic.has(hat.clarified_name)
