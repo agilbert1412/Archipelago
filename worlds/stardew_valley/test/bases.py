@@ -6,6 +6,7 @@ import threading
 import typing
 import unittest
 from contextlib import contextmanager
+from copy import deepcopy
 from typing import Optional, Dict, Union, Any, List, Iterable
 
 from BaseClasses import get_seed, MultiWorld, Location, Item, Region, Entrance, CollectionState
@@ -78,7 +79,7 @@ class SVTestBase(RuleAssertMixin, WorldTestBase, SVTestCase):
         world = self.multiworld.worlds[self.player]
 
         self.original_state = self.multiworld.state.copy()
-        self.original_itempool = self.multiworld.itempool.copy()
+        self.original_itempool = deepcopy(self.multiworld.itempool)
         self.unfilled_locations = self.multiworld.get_unfilled_locations(1)
         if self.constructed:
             self.world = world  # noqa
@@ -87,10 +88,7 @@ class SVTestBase(RuleAssertMixin, WorldTestBase, SVTestCase):
         self.multiworld.state = self.original_state
         self.multiworld.itempool = self.original_itempool
         for location in self.unfilled_locations:
-            item = location.item
-            if item:
-                location.item = None
-                item.location = None
+            location.item = None
 
         self.multiworld.lock.release()
 
@@ -117,12 +115,12 @@ class SVTestBase(RuleAssertMixin, WorldTestBase, SVTestCase):
         self.collect_lots_of_money(0.95)
 
     def collect_everything(self):
-        non_event_items = [item for item in self.multiworld.get_items() if item.code]
+        non_event_items = [i for i in self.multiworld.get_items() if i.advancement and i.code]
         for item in non_event_items:
             self.multiworld.state.collect(item)
 
     def collect_all_except(self, item_to_not_collect: str):
-        non_event_items = [item for item in self.multiworld.get_items() if item.code]
+        non_event_items = [i for i in self.multiworld.get_items() if i.advancement and i.code]
         for item in non_event_items:
             if item.name != item_to_not_collect:
                 self.multiworld.state.collect(item)
@@ -219,7 +217,7 @@ def solo_multiworld(world_options: dict[str | type[StardewValleyOption], Any] | 
             world = multiworld.worlds[1]
 
             original_state = multiworld.state.copy()
-            original_itempool = multiworld.itempool.copy()
+            original_itempool = deepcopy(multiworld.itempool)
             unfilled_locations = multiworld.get_unfilled_locations(1)
 
             yield multiworld, typing.cast(StardewValleyWorld, world)
