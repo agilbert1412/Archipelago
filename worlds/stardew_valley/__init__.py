@@ -435,7 +435,6 @@ class StardewValleyWorld(World):
         if qi_gem_amount:
             player_state[Event.received_qi_gems] -= qi_gem_amount
 
-
         if item.name in APWeapon.all_weapons:
             player_state[Event.received_progressive_weapon] = max(player_state[weapon] for weapon in APWeapon.all_weapons)
 
