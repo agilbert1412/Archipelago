@@ -1,16 +1,15 @@
-import math
 from random import Random, random
-from typing import Dict, List, Iterable, Tuple
+from typing import List, Iterable, Tuple
 from unittest import TestCase
 
 from BaseClasses import Location
 from . import APGOTestBase
 from .. import Options, APGOWorld
 from ..ItemNames import ItemName
-from ..Trips import generate_trips, Trip, get_max_distance_tier
+from ..Trips import generate_trips, get_max_distance_tier
 from ..distance import get_current_distance, get_reductions_needed_to_be_reachable
 
-FEW_TRIPS = 5
+FEW_TRIPS = 20
 MANY_TRIPS = 100
 MAX_EXTRA_REDUCTIONS = 20
 
