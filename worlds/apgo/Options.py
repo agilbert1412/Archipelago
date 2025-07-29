@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from Options import DeathLink, NamedRange, PerGameCommonOptions, Range, Toggle, Choice, ProgressionBalancing
+from Options import DeathLink, NamedRange, PerGameCommonOptions, Range, Toggle, Choice
 
 standard_race_lengths = {
     "2k": 2000,
@@ -42,7 +42,7 @@ class Goal(Choice):
     option_allsanity = 1
     option_short_macguffin = 2
     option_long_macguffin = 3
-    default = 0
+    default = option_short_macguffin
 
 
 class NumberOfTrips(Range):
@@ -97,10 +97,12 @@ class NumberOfLocks(NamedRange):
 
 
 class SpeedRequirement(NamedRange):
-    """Every check will generate a random minimum speed in km/h you must travel at in order to be allowed to get it.
+    """[Not currently implemented]
+    Every check will generate a random minimum speed in km/h you must travel at in order to be allowed to get it.
     This setting will be an upper bound for this speed requirement. The lower bound will scale with the choice as well.
     If you reach the check too slowly, you will need to go back home and try again.
-    The generator does not know in advance about hills in your area, so make sure you consider them in your speed commitment"""
+    The generator does not know in advance about hills in your area, so make sure you consider them in your speed commitment.
+    """
     internal_name = "speed_requirement"
     display_name = "Speed Requirement"
     range_start = 0
@@ -111,6 +113,7 @@ class SpeedRequirement(NamedRange):
 
 class EnableDistanceReductions(Toggle):
     """
+    [Not currently implemented in the app]
     Whether some checks will spawn further than the maximum distance, and distance reduction items are in the pool
     """
     internal_name = "enable_distance_reductions"
@@ -118,7 +121,7 @@ class EnableDistanceReductions(Toggle):
 
 
 class EnableScoutingDistanceBonuses(Toggle):
-    """
+    """[Not currently implemented]
     Whether the item pool can contain permanent bonuses to scouting distance
     """
     internal_name = "enable_scouting_distance_bonuses"
@@ -126,7 +129,7 @@ class EnableScoutingDistanceBonuses(Toggle):
 
 
 class EnableCollectionDistanceBonuses(Toggle):
-    """
+    """[Not currently implemented]
     Whether the item pool can contain permanent bonuses to collection distance
     """
     internal_name = "enable_collection_distance_bonuses"
