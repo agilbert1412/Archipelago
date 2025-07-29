@@ -42,7 +42,7 @@ class Goal(Choice):
     option_allsanity = 1
     option_short_macguffin = 2
     option_long_macguffin = 3
-    default = option_short_macguffin
+    default = 2
 
 
 class NumberOfTrips(Range):
