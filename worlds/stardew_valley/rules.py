@@ -307,6 +307,9 @@ def set_entrance_rules(logic: StardewLogic, rule_collector: StardewRuleCollector
     rule_collector.set_entrance_rule(Entrance.feed_trash_bear, logic.received("Trash Bear Arrival"))
     rule_collector.set_entrance_rule(Entrance.enter_shorts_maze, logic.has(Craftable.staircase))
 
+    rule_collector.set_entrance_rule(Entrance.enter_mens_locker_room, logic.wallet.has_mens_locker_key())
+    rule_collector.set_entrance_rule(Entrance.enter_womens_locker_room, logic.wallet.has_mens_locker_key())
+
 
 def set_bookseller_rules(logic, rule_collector):
     rule_collector.set_entrance_rule(LogicEntrance.buy_books, logic.received(Bookseller.days))
