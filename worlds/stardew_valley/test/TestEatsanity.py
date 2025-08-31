@@ -102,7 +102,7 @@ class TestEatsanityCrops(SVEatsanityTestBase):
 class TestEatsanityCooking(SVEatsanityTestBase):
     options = {
         SeasonRandomization: SeasonRandomization.option_randomized,
-        Chefsanity: Chefsanity.option_all,
+        Chefsanity: Chefsanity.preset_all,
         ExcludeGingerIsland: ExcludeGingerIsland.option_false,
         Eatsanity: frozenset({EatsanityOptionName.cooking}),
         "start_inventory": {"Winter": 1}
@@ -322,7 +322,7 @@ class TestEatsanityPoisonousArtisan(SVEatsanityTestBase):
 
     def test_need_lots_of_things_for_iridium_snake_milk(self):
         location = self.world.get_location(f"Drink Iridium Snake Milk")
-        required_items = ["Wizard Invitation", "Desert Obelisk", "Skull Key", "Progressive House", *["Progressive Pickaxe"]*2,
+        required_items = ["Desert Obelisk", "Skull Key", "Progressive House", *["Progressive Pickaxe"]*2,
                           *["Progressive Weapon"]*4, *["Mining Level"]*8, *["Combat Level"]*8]
         unique_items = list(set(required_items))
         required_items = [self.create_item(item) for item in required_items]

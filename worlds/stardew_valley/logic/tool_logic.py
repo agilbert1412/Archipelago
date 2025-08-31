@@ -10,8 +10,11 @@ from ..strings.spells import MagicSpell
 from ..strings.tool_names import ToolMaterial, Tool, FishingRod
 
 fishing_rod_prices = {
+    FishingRod.training: 25,
+    FishingRod.bamboo: 500,
     FishingRod.fiberglass: 1800,
     FishingRod.iridium: 7500,
+    FishingRod.advanced_iridium: 25000,
 }
 
 tool_materials = {
@@ -116,14 +119,20 @@ class ToolLogic(BaseLogic):
         level = FishingRod.material_to_tier[material]
         tool_progression = self.content.features.tool_progression
 
+        rebuy_rule = self.logic.money.can_spend_at(Region.fish_shop, fishing_rod_prices[material])
+
         if tool_progression.is_progressive:
-            return self.logic.tool._has_progressive_tool(Tool.fishing_rod, level)
+            return self.logic.tool._has_progressive_tool(Tool.fishing_rod, level) & rebuy_rule
 
-        if level <= 2:
-            # We assume you always have access to the Bamboo pole, because mod side there is a builtin way to get it back.
-            return self.logic.region.can_reach(Region.beach)
-
-        return self.logic.money.can_spend_at(Region.fish_shop, fishing_rod_prices[material])
+        if material == FishingRod.bamboo:
+            return self.logic.region.can_reach(Region.beach) & rebuy_rule
+        if material == FishingRod.fiberglass:
+            return self.logic.skill.has_level(Skill.fishing, 2) & rebuy_rule
+        if material == FishingRod.iridium:
+            return self.logic.skill.has_level(Skill.fishing, 6) & rebuy_rule
+        if material == FishingRod.advanced_iridium:
+            return self.logic.skill.has_mastery(Skill.fishing) & rebuy_rule
+        return rebuy_rule
 
     def _has_progressive_tool(self, tool: str, amount: int) -> StardewRule:
         tool_progression = self.content.features.tool_progression

@@ -1,5 +1,6 @@
 import csv
 import enum
+import logging
 from dataclasses import dataclass
 from random import Random
 from typing import Optional, Dict, Protocol, List, Iterable
@@ -15,8 +16,8 @@ from .mods.mod_data import ModNames
 from .options import ArcadeMachineLocations, SpecialOrderLocations, Museumsanity, \
     FestivalLocations, ElevatorProgression, BackpackProgression, FarmType
 from .options import StardewValleyOptions, Craftsanity, Chefsanity, Cooksanity, Shipsanity, Monstersanity
-from .options.options import BackpackSize, Moviesanity, Eatsanity, IncludeEndgameLocations, Friendsanity, ToolProgression
-from .strings.ap_names.ap_option_names import WalnutsanityOptionName, SecretsanityOptionName, EatsanityOptionName
+from .options.options import BackpackSize, Moviesanity, Eatsanity, IncludeEndgameLocations, Friendsanity
+from .strings.ap_names.ap_option_names import WalnutsanityOptionName, SecretsanityOptionName, EatsanityOptionName, ChefsanityOptionName, StartWithoutOptionName
 from .strings.backpack_tiers import Backpack
 from .strings.goal_names import Goal
 from .strings.quest_names import ModQuest, Quest
@@ -24,6 +25,8 @@ from .strings.region_names import Region, LogicRegion
 from .strings.villager_names import NPC
 
 LOCATION_CODE_OFFSET = 717000
+
+logger = logging.getLogger(__name__)
 
 
 class LocationTags(enum.Enum):
@@ -408,12 +411,12 @@ def extend_backpack_locations(randomized_locations: List[LocationData], options:
     if options.backpack_progression == BackpackProgression.option_vanilla:
         return
 
-    no_start_tools = options.tool_progression & ToolProgression.value_no_starting_tools
+    no_start_backpack = StartWithoutOptionName.backpack in options.start_without
     if options.backpack_size == BackpackSize.option_12:
-        backpack_locations = [location for location in locations_by_tag[LocationTags.BACKPACK_TIER] if no_start_tools or LocationTags.STARTING_TOOLS not in location.tags]
+        backpack_locations = [location for location in locations_by_tag[LocationTags.BACKPACK_TIER] if no_start_backpack or LocationTags.STARTING_TOOLS not in location.tags]
     else:
         num_per_tier = options.backpack_size.count_per_tier()
-        backpack_tier_names = Backpack.get_purchasable_tiers(ModNames.big_backpack in content.registered_packs, no_start_tools)
+        backpack_tier_names = Backpack.get_purchasable_tiers(ModNames.big_backpack in content.registered_packs, no_start_backpack)
         backpack_locations = []
         for tier in backpack_tier_names:
             for i in range(1, num_per_tier + 1):
@@ -486,18 +489,18 @@ def extend_cooksanity_locations(randomized_locations: List[LocationData], option
 
 def extend_chefsanity_locations(randomized_locations: List[LocationData], options: StardewValleyOptions, content: StardewContent):
     chefsanity = options.chefsanity
-    if chefsanity == Chefsanity.option_none:
+    if chefsanity == Chefsanity.preset_none:
         return
 
     chefsanity_locations_by_name = {}  # Dictionary to not make duplicates
 
-    if chefsanity & Chefsanity.option_queen_of_sauce:
+    if ChefsanityOptionName.queen_of_sauce in chefsanity:
         chefsanity_locations_by_name.update({location.name: location for location in locations_by_tag[LocationTags.CHEFSANITY_QOS]})
-    if chefsanity & Chefsanity.option_purchases:
+    if ChefsanityOptionName.purchases in chefsanity:
         chefsanity_locations_by_name.update({location.name: location for location in locations_by_tag[LocationTags.CHEFSANITY_PURCHASE]})
-    if chefsanity & Chefsanity.option_friendship:
+    if ChefsanityOptionName.friendship in chefsanity:
         chefsanity_locations_by_name.update({location.name: location for location in locations_by_tag[LocationTags.CHEFSANITY_FRIENDSHIP]})
-    if chefsanity & Chefsanity.option_skills:
+    if ChefsanityOptionName.skills in chefsanity:
         chefsanity_locations_by_name.update({location.name: location for location in locations_by_tag[LocationTags.CHEFSANITY_SKILL]})
 
     filtered_chefsanity_locations = filter_disabled_locations(options, content, list(chefsanity_locations_by_name.values()))
@@ -649,6 +652,21 @@ def extend_endgame_locations(randomized_locations: List[LocationData], options: 
     randomized_locations.extend(endgame_locations)
 
 
+def extend_filler_locations(randomized_locations: List[LocationData], options: StardewValleyOptions, content: StardewContent):
+    days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+    i = 1
+    while len(randomized_locations) < 90:
+        location_name = f"Traveling Merchant Sunday Item {i}"
+        while any(location.name == location_name for location in randomized_locations):
+            i += 1
+            location_name = f"Traveling Merchant Sunday Item {i}"
+        logger.debug(f"Player too few locations, adding Traveling Merchant Items #{i}")
+        for day in days:
+            location_name = f"Traveling Merchant {day} Item {i}"
+            randomized_locations.append(location_table[location_name])
+
+
+
 def create_locations(location_collector: StardewLocationCollector,
                      bundle_rooms: List[BundleRoom],
                      trash_bear_requests: Dict[str, List[str]],
@@ -707,6 +725,8 @@ def create_locations(location_collector: StardewLocationCollector,
 
     # Mods
     extend_situational_quest_locations(randomized_locations, options, content)
+
+    extend_filler_locations(randomized_locations, options, content)
 
     for location_data in randomized_locations:
         location_collector(location_data.name, location_data.code, location_data.region)

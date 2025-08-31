@@ -27,13 +27,13 @@ from .mods.mod_data import ModNames
 from .options import SpecialOrderLocations, Museumsanity, BackpackProgression, Shipsanity, \
     Monstersanity, Chefsanity, Craftsanity, ArcadeMachineLocations, Cooksanity, StardewValleyOptions, Walnutsanity
 from .options.options import FarmType, Moviesanity, Eatsanity, Friendsanity, ExcludeGingerIsland, \
-    IncludeEndgameLocations, ToolProgression
+    IncludeEndgameLocations
 from .stardew_rule import And, StardewRule, true_
 from .stardew_rule.indirect_connection import look_for_indirect_connection
 from .stardew_rule.rule_explain import explain
 from .strings.animal_product_names import AnimalProduct
-from .strings.ap_names.ap_option_names import WalnutsanityOptionName, SecretsanityOptionName
-from .strings.ap_names.community_upgrade_names import CommunityUpgrade
+from .strings.ap_names.ap_option_names import WalnutsanityOptionName, SecretsanityOptionName, StartWithoutOptionName
+from .strings.ap_names.community_upgrade_names import CommunityUpgrade, Bookseller
 from .strings.ap_names.mods.mod_items import SVEQuestItem, SVERunes
 from .strings.ap_names.transport_names import Transportation
 from .strings.artisan_good_names import ArtisanGood
@@ -155,7 +155,7 @@ def set_rules(world):
 
 def set_isolated_locations_rules(logic: StardewLogic, rule_collector: StardewRuleCollector, trash_bear_requests: Dict[str, List[str]]):
     rule_collector.set_location_rule("Beach Bridge Repair", logic.grind.can_grind_item(300, "Wood"))
-    rule_collector.set_location_rule("Grim Reaper statue", logic.combat.can_fight_at_level(Performance.basic) & logic.tool.has_tool(Tool.pickaxe))
+    rule_collector.set_location_rule("Grim Reaper Statue", logic.combat.can_fight_at_level(Performance.basic) & logic.tool.has_tool(Tool.pickaxe))
     rule_collector.set_location_rule("Galaxy Sword Shrine", logic.has("Prismatic Shard"))
     rule_collector.set_location_rule("Krobus Stardrop", logic.money.can_spend(20000))
     rule_collector.set_location_rule("Demetrius's Breakthrough", logic.money.can_have_earned_total(25000))
@@ -291,9 +291,7 @@ def set_entrance_rules(logic: StardewLogic, rule_collector: StardewRuleCollector
                                      logic.quest.has_magnifying_glass() & (logic.ability.can_chop_trees() | logic.mine.can_mine_in_the_mines_floor_1_40()))
     rule_collector.set_entrance_rule(LogicEntrance.watch_queen_of_sauce, logic.action.can_watch(Channel.queen_of_sauce))
     rule_collector.set_entrance_rule(Entrance.forest_to_mastery_cave, logic.skill.can_enter_mastery_cave)
-    rule_collector.set_entrance_rule(LogicEntrance.buy_experience_books, logic.time.has_lived_months(2))
-    rule_collector.set_entrance_rule(LogicEntrance.buy_year1_books, logic.time.has_year_two)
-    rule_collector.set_entrance_rule(LogicEntrance.buy_year3_books, logic.time.has_year_three)
+    set_bookseller_rules(logic, rule_collector)
     rule_collector.set_entrance_rule(Entrance.adventurer_guild_to_bedroom, logic.monster.can_kill_max(Generic.any))
     if world_options.include_endgame_locations == IncludeEndgameLocations.option_true:
         rule_collector.set_entrance_rule(LogicEntrance.purchase_wizard_blueprints, logic.quest.has_magic_ink())
@@ -311,6 +309,15 @@ def set_entrance_rules(logic: StardewLogic, rule_collector: StardewRuleCollector
 
     rule_collector.set_entrance_rule(Entrance.enter_mens_locker_room, logic.wallet.has_mens_locker_key())
     rule_collector.set_entrance_rule(Entrance.enter_womens_locker_room, logic.wallet.has_mens_locker_key())
+
+
+def set_bookseller_rules(logic, rule_collector):
+    rule_collector.set_entrance_rule(LogicEntrance.buy_books, logic.received(Bookseller.days))
+    rule_collector.set_entrance_rule(LogicEntrance.buy_experience_books, logic.received(Bookseller.stock_experience_books))
+    rule_collector.set_entrance_rule(LogicEntrance.buy_permanent_books, logic.received(Bookseller.stock_permanent_books))
+    rare_books_rule = (logic.received(Bookseller.days, 4) & logic.received(Bookseller.stock_rare_books)) | \
+                      (logic.received(Bookseller.days, 2) & logic.received(Bookseller.stock_rare_books, 2))
+    rule_collector.set_entrance_rule(LogicEntrance.buy_rare_books, rare_books_rule)
 
 
 def set_raccoon_rules(logic: StardewLogic, rule_collector: StardewRuleCollector, bundle_rooms: List[BundleRoom], world_options: StardewValleyOptions):
@@ -355,7 +362,7 @@ def set_bedroom_entrance_rules(logic, rule_collector: StardewRuleCollector, cont
     rule_collector.set_entrance_rule(Entrance.enter_elliott_house, logic.relationship.has_hearts(NPC.elliott, 2))
     rule_collector.set_entrance_rule(Entrance.enter_sunroom, logic.relationship.has_hearts(NPC.caroline, 2))
     rule_collector.set_entrance_rule(Entrance.enter_wizard_basement, logic.relationship.has_hearts(NPC.wizard, 4))
-    rule_collector.set_entrance_rule(Entrance.enter_lewis_bedroom, logic.relationship.has_hearts(NPC.lewis, 4))
+    rule_collector.set_entrance_rule(Entrance.enter_lewis_bedroom, logic.relationship.has_hearts(NPC.lewis, 2))
     if content.is_enabled(ModNames.alec):
         rule_collector.set_entrance_rule(AlecEntrance.petshop_to_bedroom, (logic.relationship.has_hearts(ModNPC.alec, 2) | logic.mod.magic.can_blink()))
     if content.is_enabled(ModNames.lacey):
@@ -741,8 +748,8 @@ def set_backpack_rules(logic: StardewLogic, rule_collector: StardewRuleCollector
         return
 
     num_per_tier = world_options.backpack_size.count_per_tier()
-    start_without_tools = bool(world_options.tool_progression & ToolProgression.value_no_starting_tools)
-    backpack_tier_names = Backpack.get_purchasable_tiers(content.is_enabled(ModNames.big_backpack), start_without_tools)
+    start_without_backpack = bool(StartWithoutOptionName.backpack in world_options.start_without)
+    backpack_tier_names = Backpack.get_purchasable_tiers(content.is_enabled(ModNames.big_backpack), start_without_backpack)
     previous_backpacks = 0
     for tier in backpack_tier_names:
         for i in range(1, num_per_tier + 1):
@@ -871,7 +878,7 @@ def set_cooksanity_rules(all_location_names: Set[str], logic: StardewLogic, rule
 
 def set_chefsanity_rules(all_location_names: Set[str], logic: StardewLogic, rule_collector: StardewRuleCollector, world_options: StardewValleyOptions):
     chefsanity_option = world_options.chefsanity
-    if chefsanity_option == Chefsanity.option_none:
+    if chefsanity_option == Chefsanity.preset_none:
         return
 
     chefsanity_suffix = " Recipe"

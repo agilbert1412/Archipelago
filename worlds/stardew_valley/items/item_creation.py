@@ -15,11 +15,11 @@ from ..mods.mod_data import ModNames
 from ..options import StardewValleyOptions, FestivalLocations, SpecialOrderLocations, SeasonRandomization, Museumsanity, \
     ElevatorProgression, BackpackProgression, ArcadeMachineLocations, Monstersanity, Goal, \
     Chefsanity, Craftsanity, BundleRandomization, EntranceRandomization, Shipsanity, Walnutsanity, Moviesanity
-from ..options.options import IncludeEndgameLocations, Friendsanity, ToolProgression
-from ..strings.ap_names.ap_option_names import WalnutsanityOptionName, SecretsanityOptionName, EatsanityOptionName
+from ..options.options import IncludeEndgameLocations, Friendsanity
+from ..strings.ap_names.ap_option_names import WalnutsanityOptionName, SecretsanityOptionName, EatsanityOptionName, ChefsanityOptionName, StartWithoutOptionName
 from ..strings.ap_names.ap_weapon_names import APWeapon
 from ..strings.ap_names.buff_names import Buff
-from ..strings.ap_names.community_upgrade_names import CommunityUpgrade
+from ..strings.ap_names.community_upgrade_names import CommunityUpgrade, Bookseller
 from ..strings.ap_names.mods.mod_items import SVEQuestItem
 from ..strings.backpack_tiers import Backpack
 from ..strings.building_names import Building
@@ -53,10 +53,14 @@ def create_items(item_factory: StardewItemFactory, locations_count: int, items_t
     return items
 
 
-def remove_items(items_to_remove, items):
-    for item in items_to_remove:
-        if item in items:
-            items.remove(item)
+def remove_items(items_to_remove: List[Item], items: List[Item]):
+    for item_to_remove in items_to_remove:
+        for i, item_candidate in enumerate(items):
+            if item_to_remove != item_candidate:
+                continue
+            if item_to_remove.classification == item_candidate.classification and item_to_remove.advancement == item_candidate.advancement:
+                items.pop(i)
+                break
 
 
 def remove_items_if_no_room_for_them(unique_items: List[Item], locations_count: int, random: Random):
@@ -72,7 +76,7 @@ def remove_items_if_no_room_for_them(unique_items: List[Item], locations_count: 
         logger.debug(f"Player has more items than locations, trying to remove {number_of_items_to_remove} random filler items")
     count = len(unique_items)
     assert len(removable_items) >= number_of_items_to_remove, \
-        f"There should be at least as many locations [{locations_count}] as there are mandatory items [{count}]"
+        f"There should be at least as many locations [{locations_count}] as there are mandatory items [{count - len(removable_items)}]"
     items_to_remove = random.sample(removable_items, number_of_items_to_remove)
     remove_items(items_to_remove, unique_items)
 
@@ -116,7 +120,7 @@ def create_unique_items(item_factory: StardewItemFactory, options: StardewValley
     create_crafting_recipes(item_factory, options, content, items)
     create_cooking_recipes(item_factory, options, content, items)
     create_shipsanity_items(item_factory, options, items)
-    create_booksanity_items(item_factory, content, items)
+    create_booksanity_items(item_factory, options, content, items)
     create_movie_items(item_factory, options, items)
     create_secrets_items(item_factory, content, options, items)
     create_eatsanity_enzyme_items(item_factory, options, items)
@@ -151,7 +155,7 @@ def create_backpack_items(item_factory: StardewItemFactory, options: StardewVall
     if options.backpack_progression == BackpackProgression.option_vanilla:
         return
     num_per_tier = options.backpack_size.count_per_tier()
-    backpack_tier_names = Backpack.get_purchasable_tiers(ModNames.big_backpack in content.registered_packs, options.tool_progression & ToolProgression.value_no_starting_tools)
+    backpack_tier_names = Backpack.get_purchasable_tiers(ModNames.big_backpack in content.registered_packs, StartWithoutOptionName.backpack in options.start_without)
     num_backpacks = len(backpack_tier_names) * num_per_tier
 
     items.extend(item_factory(item) for item in ["Progressive Backpack"] * num_backpacks)
@@ -490,18 +494,18 @@ def create_crafting_recipes(item_factory: StardewItemFactory, options: StardewVa
 
 def create_cooking_recipes(item_factory: StardewItemFactory, options: StardewValleyOptions, content: StardewContent, items: List[Item]):
     chefsanity = options.chefsanity
-    if chefsanity == Chefsanity.option_none:
+    if chefsanity == Chefsanity.preset_none:
         return
 
     chefsanity_recipes_by_name = {recipe.name: recipe for recipe in items_by_group[Group.CHEFSANITY_STARTER]}  # Dictionary to not make duplicates
 
-    if chefsanity & Chefsanity.option_queen_of_sauce:
+    if ChefsanityOptionName.queen_of_sauce in chefsanity:
         chefsanity_recipes_by_name.update({recipe.name: recipe for recipe in items_by_group[Group.CHEFSANITY_QOS]})
-    if chefsanity & Chefsanity.option_purchases:
+    if ChefsanityOptionName.purchases in chefsanity:
         chefsanity_recipes_by_name.update({recipe.name: recipe for recipe in items_by_group[Group.CHEFSANITY_PURCHASE]})
-    if chefsanity & Chefsanity.option_friendship:
+    if ChefsanityOptionName.friendship in chefsanity:
         chefsanity_recipes_by_name.update({recipe.name: recipe for recipe in items_by_group[Group.CHEFSANITY_FRIENDSHIP]})
-    if chefsanity & Chefsanity.option_skills:
+    if ChefsanityOptionName.skills in chefsanity:
         chefsanity_recipes_by_name.update({recipe.name: recipe for recipe in items_by_group[Group.CHEFSANITY_SKILL]})
 
     filtered_chefsanity_recipes = remove_excluded(list(chefsanity_recipes_by_name.values()), content, options)
@@ -516,14 +520,32 @@ def create_shipsanity_items(item_factory: StardewItemFactory, options: StardewVa
     items.append(item_factory(Wallet.metal_detector))
 
 
-def create_booksanity_items(item_factory: StardewItemFactory, content: StardewContent, items: List[Item]):
+def create_booksanity_items(item_factory: StardewItemFactory, options: StardewValleyOptions, content: StardewContent, items: List[Item]):
+    create_bookseller_items(item_factory, options, content, items)
     booksanity = content.features.booksanity
     if not booksanity.is_enabled:
         return
 
     items.extend(item_factory(item_table[booksanity.to_item_name(book.name)]) for book in content.find_tagged_items(ItemTag.BOOK_POWER))
     progressive_lost_book = item_table[booksanity.progressive_lost_book]
-    items.extend(item_factory(progressive_lost_book) for _ in content.features.booksanity.get_randomized_lost_books())
+    # We do -1 here because the first lost book spawns freely in the museum
+    num_lost_books = len([book for book in content.features.booksanity.get_randomized_lost_books()]) - 1
+    items.extend(item_factory(progressive_lost_book) for _ in range(num_lost_books))
+
+
+def create_bookseller_items(item_factory: StardewItemFactory, options: StardewValleyOptions, content: StardewContent, items: List[Item]):
+    needs_books = options.shipsanity == Shipsanity.option_everything or content.features.booksanity.is_enabled
+    book_items = []
+    book_items.extend(item_factory(item_table[Bookseller.days]) for _ in range(4 if needs_books else 1))
+    if not needs_books:
+        book_items.extend(item_factory(item_table[Bookseller.days], classification_pre_fill=ItemClassification.filler) for _ in range(3))
+    book_items.extend(item_factory(item_table[Bookseller.stock_rare_books]) for _ in range(2 if needs_books else 1))
+    book_items.append(item_factory(item_table[Bookseller.stock_permanent_books]))
+    book_items.append(item_factory(item_table[Bookseller.stock_experience_books]))
+    if needs_books:
+        book_items.extend(item_factory(item_table[Bookseller.stock_experience_books], classification_pre_fill=ItemClassification.filler) for _ in range(2))
+
+    items.extend(book_items)
 
 
 def create_movie_items(item_factory: StardewItemFactory, options: StardewValleyOptions, items: List[Item]):
