@@ -252,7 +252,7 @@ class TestReductionsRequiredFitDistanceAlgorithm(TestCase):
                            Options.SpeedRequirement.internal_name: 0,
                            Options.MaximumDistance: max_distance,
                            Options.EnableDistanceReductions: True}
-                trips = generate_trips(options, create_random())
+                trips = generate_trips(options[Options.SpeedRequirement.internal_name], options[Options.NumberOfLocks.internal_name], options[Options.NumberOfTrips.internal_name], create_random())
                 max_distance_tier = get_max_distance_tier(trips)
                 tested_trips = set()
                 for trip in trips:

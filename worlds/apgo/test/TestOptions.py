@@ -1,9 +1,9 @@
 from random import Random, random
 from unittest import TestCase
 
-from . import APGOTestBase, complete_options_with_default
-from .. import Options, APGOOptions, APGOWorld
-from ..Trips import generate_trips, Trip
+from . import complete_options_with_default
+from .. import Options, APGOWorld
+from ..Trips import generate_trips
 
 
 def create_seed() -> int:
@@ -29,7 +29,7 @@ class TestGenerateTrips(TestCase):
                                              Options.NumberOfLocks.internal_name: desired_keys,
                                              Options.SpeedRequirement.internal_name: 0})
                     APGOWorld.force_change_options_if_incompatible(options, 1, "Tester")
-                    trips = generate_trips(options.as_dict(*[option_name for option_name in APGOOptions.type_hints]), create_random())
+                    trips = generate_trips(options.speed_requirement, options.number_of_locks, options.number_of_trips, create_random())
                     total_trips = len(trips)
                     self.assertLessEqual(total_trips, 210 + (desired_keys * 100))
 
@@ -41,7 +41,7 @@ class TestGenerateTrips(TestCase):
                                              Options.NumberOfLocks.internal_name: desired_keys,
                                              Options.SpeedRequirement.internal_name: 0})
                     APGOWorld.force_change_options_if_incompatible(options, 1, "Tester")
-                    trips = generate_trips(options.as_dict(*[option_name for option_name in APGOOptions.type_hints]), create_random())
+                    trips = generate_trips(options.speed_requirement, options.number_of_locks, options.number_of_trips, create_random())
                     total_trips = len(trips)
                     for trip in trips:
                         self.assertLessEqual(trip.template.key_needed, total_trips / 2)

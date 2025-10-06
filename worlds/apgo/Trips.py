@@ -1,9 +1,7 @@
 import logging
 from dataclasses import dataclass
 from random import Random
-from typing import Dict, List, Union, Optional, Iterable, Tuple
-
-from .Options import NumberOfTrips, NumberOfLocks, SpeedRequirement, EnableDistanceReductions
+from typing import Dict, List, Optional, Iterable
 
 logger = logging.getLogger(__name__)
 
@@ -61,10 +59,10 @@ for distance in range(1, max_per_category + 1):
             all_trip_templates.append(TripTemplate(distance, speed, key))
 
 
-def generate_trips(options: Dict[str, int], random: Random) -> List[Trip]:
+def generate_trips(option_speed_requirement, option_number_of_locks, option_number_of_trips, random: Random) -> List[Trip]:
     valid_trip_templates = []
-    enable_speed = options[SpeedRequirement.internal_name] > 0
-    number_of_keys = options[NumberOfLocks.internal_name]
+    enable_speed = option_speed_requirement > 0
+    number_of_keys = option_number_of_locks
     for trip in all_trip_templates:
         has_speed = trip.speed_tier > 0
         if enable_speed != has_speed:
@@ -72,7 +70,7 @@ def generate_trips(options: Dict[str, int], random: Random) -> List[Trip]:
         if trip.key_needed > number_of_keys:
             continue
         valid_trip_templates.append(trip)
-    number_of_trips = options[NumberOfTrips.internal_name]
+    number_of_trips = option_number_of_trips
     if number_of_trips <= len(valid_trip_templates):
         chosen_trip_templates = random.sample(valid_trip_templates, k=number_of_trips)
         chosen_trip_amounts = {template: 1 for template in chosen_trip_templates}

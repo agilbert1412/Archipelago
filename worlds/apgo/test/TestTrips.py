@@ -1,9 +1,8 @@
 from random import Random, random
 from unittest import TestCase
 
-from . import APGOTestBase
 from .. import Options
-from ..Trips import generate_trips, Trip
+from ..Trips import generate_trips
 
 
 def create_seed() -> int:
@@ -27,7 +26,7 @@ class TestGenerateTrips(TestCase):
                 options = {Options.NumberOfTrips.internal_name: desired_trips,
                            Options.NumberOfLocks.internal_name: 0,
                            Options.SpeedRequirement.internal_name: 0}
-                trips = generate_trips(options, create_random())
+                trips = generate_trips(options[Options.SpeedRequirement.internal_name], options[Options.NumberOfLocks.internal_name], options[Options.NumberOfTrips.internal_name], create_random())
                 total_trips = len(trips)
                 self.assertEqual(total_trips, desired_trips)
                 for trip in trips:
@@ -41,7 +40,7 @@ class TestGenerateTrips(TestCase):
                 options = {Options.NumberOfTrips.internal_name: desired_trips,
                            Options.NumberOfLocks.internal_name: 0,
                            Options.SpeedRequirement.internal_name: 5}
-                trips = generate_trips(options, create_random())
+                trips = generate_trips(options[Options.SpeedRequirement.internal_name], options[Options.NumberOfLocks.internal_name], options[Options.NumberOfTrips.internal_name], create_random())
                 total_trips = len(trips)
                 self.assertEqual(total_trips, desired_trips)
                 no_speed_trips = 0
@@ -56,7 +55,7 @@ class TestGenerateTrips(TestCase):
                 options = {Options.NumberOfTrips.internal_name: desired_trips,
                            Options.NumberOfLocks.internal_name: 2,
                            Options.SpeedRequirement.internal_name: 0}
-                trips = generate_trips(options, create_random())
+                trips = generate_trips(options[Options.SpeedRequirement.internal_name], options[Options.NumberOfLocks.internal_name], options[Options.NumberOfTrips.internal_name], create_random())
                 total_trips = len(trips)
                 self.assertEqual(total_trips, desired_trips)
                 at_least_one_tiers = set()
@@ -76,7 +75,7 @@ class TestGenerateTrips(TestCase):
                 options = {Options.NumberOfTrips.internal_name: desired_trips,
                            Options.NumberOfLocks.internal_name: 0,
                            Options.SpeedRequirement.internal_name: 0}
-                trips = generate_trips(options, create_random())
+                trips = generate_trips(options[Options.SpeedRequirement.internal_name], options[Options.NumberOfLocks.internal_name], options[Options.NumberOfTrips.internal_name], create_random())
                 total_trips = len(trips)
                 self.assertEqual(total_trips, desired_trips)
                 for trip in trips:
@@ -89,7 +88,7 @@ class TestGenerateTrips(TestCase):
                 options = {Options.NumberOfTrips.internal_name: desired_trips,
                            Options.NumberOfLocks.internal_name: 0,
                            Options.SpeedRequirement.internal_name: 5}
-                trips = generate_trips(options, create_random())
+                trips = generate_trips(options[Options.SpeedRequirement.internal_name], options[Options.NumberOfLocks.internal_name], options[Options.NumberOfTrips.internal_name], create_random())
                 total_trips = len(trips)
                 self.assertEqual(total_trips, desired_trips)
                 for trip in trips:
@@ -102,7 +101,7 @@ class TestGenerateTrips(TestCase):
                 options = {Options.NumberOfTrips.internal_name: desired_trips,
                            Options.NumberOfLocks.internal_name: 10,
                            Options.SpeedRequirement.internal_name: 0}
-                trips = generate_trips(options, create_random())
+                trips = generate_trips(options[Options.SpeedRequirement.internal_name], options[Options.NumberOfLocks.internal_name], options[Options.NumberOfTrips.internal_name], create_random())
                 total_trips = len(trips)
                 self.assertEqual(total_trips, desired_trips)
                 for trip in trips:
@@ -115,7 +114,7 @@ class TestGenerateTrips(TestCase):
                 options = {Options.NumberOfTrips.internal_name: desired_trips,
                            Options.NumberOfLocks.internal_name: 10,
                            Options.SpeedRequirement.internal_name: 5}
-                trips = generate_trips(options, create_random())
+                trips = generate_trips(options[Options.SpeedRequirement.internal_name], options[Options.NumberOfLocks.internal_name], options[Options.NumberOfTrips.internal_name], create_random())
                 total_trips = len(trips)
                 self.assertEqual(total_trips, desired_trips)
                 for trip in trips:

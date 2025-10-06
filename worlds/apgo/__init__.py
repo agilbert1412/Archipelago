@@ -1,15 +1,13 @@
-import json
 import logging
-from typing import Mapping, Any, Union, Dict, Optional, List
+from typing import Mapping, Any, Union, Dict, Optional
 
-from BaseClasses import Region, Location, Item, ItemClassification, Tutorial
+from BaseClasses import ItemClassification, Tutorial
 from worlds.AutoWorld import World, WebWorld
 from .ItemNames import ItemName, long_macguffins, short_macguffins
-
-from .Regions import create_regions, area_number
-from .Options import APGOOptions, Goal
 from .Items import APGOItem, item_table, APGOItemData, create_items
 from .Locations import APGOLocation, location_table, create_locations
+from .Options import APGOOptions, Goal
+from .Regions import create_regions, area_number
 from .Trips import generate_trips, Trip
 from .rules import set_rules
 from ..generic.Rules import set_rule
@@ -65,7 +63,7 @@ class APGOWorld(World):
 
     def generate_early(self):
         self.force_change_options_if_incompatible(self.options, self.player, self.player_name)
-        generated_trips = generate_trips(self.options.as_dict(*[option_name for option_name in self.options_dataclass.type_hints]), self.random)
+        generated_trips = generate_trips(self.options.speed_requirement, self.options.number_of_locks, self.options.number_of_trips, self.random)
         self.trips = {trip.location_name: trip for trip in generated_trips}
         self.number_distance_reductions = 0
         self.number_keys = 0
