@@ -11,6 +11,7 @@ from BaseClasses import Region, Location, Item, Tutorial, ItemClassification, Mu
 from Options import PerGameCommonOptions
 from worlds.AutoWorld import World, WebWorld
 from worlds.LauncherComponents import components, Component, icon_paths, Type
+from .strings.region_names import Region as RegionNames
 from .bundles.bundle_room import BundleRoom
 from .bundles.bundles import get_all_bundles, get_trash_bear_requests
 from .content import StardewContent, create_content
@@ -146,6 +147,8 @@ class StardewValleyWorld(World):
 
     total_progression_items: int
     classifications_to_override_post_fill: list[tuple[StardewItem, ItemClassification]]
+
+    origin_region_name: str = RegionNames.stardew_valley
 
     @classmethod
     def create_group(cls, multiworld: MultiWorld, new_player_id: int, players: set[int]) -> World:
