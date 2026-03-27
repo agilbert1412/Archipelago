@@ -51,6 +51,8 @@ else:
             options.Secretsanity,
             options.Hatsanity,
             options.IncludeEndgameLocations,
+            options.DataRandomizationBehavior,
+            options.DataRandomization,
         ]),
         OptionGroup("Multipliers, Buffs and extra customization", [
             options.StartingMoney,

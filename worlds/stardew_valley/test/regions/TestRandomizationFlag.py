@@ -1,4 +1,5 @@
 import unittest
+from random import Random
 
 from ..options.utils import fill_dataclass_with_default
 from ... import create_content, options
@@ -71,7 +72,7 @@ class TestRandomizationFlag(unittest.TestCase):
         ):
             player_options = fill_dataclass_with_default({options.EntranceRandomization: entrance_randomization_choice,
                                                           options.SkillProgression: SkillProgression.option_progressive_with_masteries})
-            content = create_content(player_options)
+            content = create_content(player_options, Random(1))
 
             flag = create_player_randomization_flag(player_options.entrance_randomization, content)
 
@@ -83,7 +84,7 @@ class TestRandomizationFlag(unittest.TestCase):
                 options.EntranceRandomization: entrance_randomization_choice,
                 options.SkillProgression: options.SkillProgression.option_progressive
             })
-            content = create_content(player_options)
+            content = create_content(player_options, Random(1))
 
             flag = create_player_randomization_flag(player_options.entrance_randomization, content)
 
