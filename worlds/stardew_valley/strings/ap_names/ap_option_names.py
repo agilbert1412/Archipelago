@@ -104,3 +104,4 @@ class CustomLogicOptionName:
 
 class DataRandomizationOptionName:
     fish_difficulty = "Fish Difficulty"
+    fish_season = "Fish Season"
