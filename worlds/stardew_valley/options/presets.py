@@ -43,6 +43,7 @@ all_random_settings = {
     options.NumberOfMovementBuffs.internal_name:        "random",
     options.ExcludeGingerIsland.internal_name:          "random",
     options.TrapDifficulty.internal_name:               "random",
+    options.DataRandomizationBehavior.internal_name:    "random",
     options.MultipleDaySleepEnabled.internal_name:      "random",
     options.MultipleDaySleepCost.internal_name:         "random",
     options.ExperienceMultiplier.internal_name:         "random",
