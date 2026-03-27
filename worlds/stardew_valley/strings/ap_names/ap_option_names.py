@@ -109,3 +109,8 @@ class CustomLogicOptionName:
     bomb_hoeing = "Bomb Hoeing"
     rain_watering = "Rain Watering"
     critical_free_samples = "Critical Free Samples"
+
+
+class DataRandomizationOptionName:
+    fish_difficulty = "Fish Difficulty"
+    fish_season = "Fish Season"

@@ -34,7 +34,7 @@ class FishItem:
                f"Mod: {self.mod_name}"
 
 
-fresh_water = (Region.farm, Region.forest, Region.town, Region.mountain)
+fresh_water = (Region.forest, Region.town, Region.mountain)
 ocean = (Region.beach,)
 tide_pools = (Region.tide_pools,)
 town_river = (Region.town,)
@@ -50,7 +50,7 @@ sewers = (Region.sewer,)
 desert = (Region.desert,)
 mutant_bug_lair = (Region.mutant_bug_lair,)
 witch_swamp = (Region.witch_swamp,)
-night_market = (Region.beach,)
+night_market = (LogicRegion.night_market,)
 ginger_island_ocean = (Region.island_south, Region.island_west)
 ginger_island_river = (Region.island_west,)
 pirate_cove = (Region.pirate_cove,)
@@ -71,6 +71,14 @@ def create_fish(name: str, locations: Tuple[str, ...], seasons: Union[str, Tuple
 
     fish_item = FishItem(name, locations, seasons, difficulty, legendary, extended_family, minimum_level, mod_name)
     return fish_item
+
+
+def change_fish_difficulty(fish: FishItem, new_difficulty: int) -> FishItem:
+    return FishItem(fish.name, fish.locations, fish.seasons, new_difficulty, fish.legendary, fish.extended_family, fish.minimum_level, fish.mod_name)
+
+
+def change_fish_season(fish: FishItem, new_season: Tuple[str, ...]) -> FishItem:
+    return FishItem(fish.name, fish.locations, new_season, fish.difficulty, fish.legendary, fish.extended_family, fish.minimum_level, fish.mod_name)
 
 
 albacore = create_fish(Fish.albacore, ocean, (season.fall, season.winter), 60)

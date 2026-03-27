@@ -1,4 +1,5 @@
 import unittest
+from random import Random
 
 from ... import create_content, options
 from ...regions.entrance_rando import create_player_randomization_flag
@@ -68,12 +69,10 @@ class TestRandomizationFlag(unittest.TestCase):
                 (options.EntranceRandomization.option_overworld, RandomizationFlag.SET_OVERWORLD | RandomizationFlag.MASTERY_CAVE),
                 (options.EntranceRandomization.option_everywhere, RandomizationFlag.SET_EVERYTHING | RandomizationFlag.MASTERY_CAVE),
         ):
-            player_options = fill_dataclass_with_default({
-                options.EntranceRandomization: entrance_randomization_choice,
-                options.EntranceRandomizationBehaviour: options.EntranceRandomizationBehaviour.default,
-                options.SkillProgression: options.SkillProgression.option_progressive_with_masteries,
-                options.IncludeEndgameLocations: options.IncludeEndgameLocations.option_false, })
-            content = create_content(player_options)
+            player_options = fill_dataclass_with_default({options.EntranceRandomization: entrance_randomization_choice,
+                                                          options.EntranceRandomizationBehaviour: options.EntranceRandomizationBehaviour.default,
+                                                          options.SkillProgression: SkillProgression.option_progressive_with_masteries})
+            content = create_content(player_options, Random(1))
 
             flag = create_player_randomization_flag(
                 player_options.entrance_randomization,
@@ -89,9 +88,9 @@ class TestRandomizationFlag(unittest.TestCase):
             player_options = fill_dataclass_with_default({
                 options.EntranceRandomization: entrance_randomization_choice,
                 options.EntranceRandomizationBehaviour: options.EntranceRandomizationBehaviour.default,
-                options.SkillProgression: options.SkillProgression.option_progressive,
-                options.IncludeEndgameLocations: options.IncludeEndgameLocations.option_false, })
-            content = create_content(player_options)
+                options.SkillProgression: options.SkillProgression.option_progressive
+            })
+            content = create_content(player_options, Random(1))
 
             flag = create_player_randomization_flag(
                 player_options.entrance_randomization,
