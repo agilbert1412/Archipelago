@@ -16,7 +16,7 @@ from .bundles.bundles import get_all_bundles, get_trash_bear_requests
 from .content import StardewContent, create_content
 from .content.feature.special_order_locations import get_qi_gem_amount
 from .content.feature.walnutsanity import get_walnut_amount
-from .data_randomization.randomized_data_writer import add_randomized_data_to_spoiler_log
+from .data_randomization.randomized_data_writer import add_randomized_data_to_spoiler_log, prepare_randomized_data
 from .items import item_table, ItemData, Group, items_by_group, create_items, generate_filler_choice_pool, \
     setup_early_items
 from .items.item_data import FILLER_GROUPS
@@ -509,6 +509,8 @@ class StardewValleyWorld(World):
                 for i, item in enumerate(bundle.items):
                     bundles[room.name][bundle.name][str(i)] = f"{item.get_item()}|{item.amount}|{item.quality}"
 
+        randomized_data = prepare_randomized_data(self.content, self.options)
+
         excluded_options = [BundleRandomization, BundlePerRoom, NumberOfMovementBuffs,
                             EnabledFillerBuffs, TrapDistribution, BundleWhitelist, BundleBlacklist, JojaAreYouSure]
         excluded_option_names = [option.internal_name for option in excluded_options]
@@ -522,6 +524,7 @@ class StardewValleyWorld(World):
             "randomized_entrances": self.randomized_entrances,
             "trash_bear_requests": self.trash_bear_requests,
             "modified_bundles": bundles,
+            "randomized_data": randomized_data,
             "client_version": self.world_version.as_simple_string(),
         })
 
