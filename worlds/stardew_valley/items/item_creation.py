@@ -96,6 +96,7 @@ def create_unique_items(item_factory: StardewItemFactory, options: StardewValley
     create_tools(item_factory, content, items)
     create_skills(item_factory, content, items)
     create_wizard_buildings(item_factory, options, content, items)
+    create_return_scepter(item_factory, options, content, items)
     create_carpenter_buildings(item_factory, options, content, items)
     items.append(item_factory("Railroad Boulder Removed"))
     items.append(item_factory(CommunityUpgrade.fruit_bats))
@@ -108,7 +109,6 @@ def create_unique_items(item_factory: StardewItemFactory, options: StardewValley
     create_arcade_machine_items(item_factory, options, items)
     create_movement_buffs(item_factory, options, items)
     create_traveling_merchant_items(item_factory, items)
-    items.append(item_factory("Return Scepter"))
     create_seasons(item_factory, options, items)
     create_seeds(item_factory, content, items)
     create_friendsanity_items(item_factory, options, content, items, random)
@@ -155,7 +155,8 @@ def create_backpack_items(item_factory: StardewItemFactory, options: StardewVall
     if options.backpack_progression == BackpackProgression.option_vanilla:
         return
     num_per_tier = options.backpack_size.count_per_tier()
-    backpack_tier_names = Backpack.get_purchasable_tiers(ModNames.big_backpack in content.registered_packs, StartWithoutOptionName.backpack in options.start_without)
+    backpack_tier_names = Backpack.get_purchasable_tiers(ModNames.big_backpack in content.registered_packs,
+                                                         StartWithoutOptionName.backpack in options.start_without)
     num_backpacks = len(backpack_tier_names) * num_per_tier
 
     items.extend(item_factory(item) for item in ["Progressive Backpack"] * num_backpacks)
@@ -233,9 +234,11 @@ def create_skills(item_factory: StardewItemFactory, content: StardewContent, ite
 
 
 def create_wizard_buildings(item_factory: StardewItemFactory, options: StardewValleyOptions, content: StardewContent, items: List[Item]):
-    useful_buildings_classification = ItemClassification.progression_skip_balancing if goal_is_perfection(options) else ItemClassification.useful
-    items.append(item_factory("Earth Obelisk", classification_pre_fill=useful_buildings_classification))
-    items.append(item_factory("Water Obelisk", classification_pre_fill=useful_buildings_classification))
+    useful_buildings_classification = (ItemClassification.progression_skip_balancing if goal_is_perfection(options) else ItemClassification.useful)
+    er_obelisk_classification = (ItemClassification.progression_skip_balancing
+                                 if goal_is_perfection(options) or options.entrance_randomization.randomized_fast_travel_warps() else ItemClassification.useful)
+    items.append(item_factory("Earth Obelisk", classification_pre_fill=er_obelisk_classification))
+    items.append(item_factory("Water Obelisk", classification_pre_fill=er_obelisk_classification))
     items.append(item_factory("Desert Obelisk"))
     items.append(item_factory("Junimo Hut"))
     items.append(item_factory("Gold Clock", classification_pre_fill=useful_buildings_classification))
@@ -243,6 +246,12 @@ def create_wizard_buildings(item_factory: StardewItemFactory, options: StardewVa
         items.append(item_factory("Island Obelisk"))
     if content.is_enabled(ModNames.deepwoods):
         items.append(item_factory("Woods Obelisk"))
+
+
+def create_return_scepter(item_factory: StardewItemFactory, options: StardewValleyOptions, content: StardewContent, items: list[Item]):
+    return_scepter_classification = (ItemClassification.progression_skip_balancing
+                                     if options.entrance_randomization.randomized_fast_travel_warps() else ItemClassification.useful)
+    items.append(item_factory("Return Scepter", classification_pre_fill=return_scepter_classification))
 
 
 def create_carpenter_buildings(item_factory: StardewItemFactory, options: StardewValleyOptions, content: StardewContent, items: List[Item]):
@@ -576,18 +585,18 @@ def create_eatsanity_enzyme_items(item_factory: StardewItemFactory, options: Sta
     # These items unlock progressively stronger ability to digest food items that give the associated buff
     # Upon receiving the enzyme, you also get a temporary buff of whatever the effect is
     # Stamina and Health items can go beyond their original max value, but the buffs cannot.
-    items.extend(item_factory(item) for item in ["Stamina Enzyme"]*10)
-    items.extend(item_factory(item) for item in ["Health Enzyme"]*10)
-    items.extend(item_factory(item) for item in ["Speed Enzyme"]*5)
-    items.extend(item_factory(item) for item in ["Luck Enzyme"]*5)
-    items.extend(item_factory(item) for item in ["Farming Enzyme"]*5)
-    items.extend(item_factory(item) for item in ["Foraging Enzyme"]*5)
-    items.extend(item_factory(item) for item in ["Fishing Enzyme"]*5)
-    items.extend(item_factory(item) for item in ["Mining Enzyme"]*5)
-    items.extend(item_factory(item) for item in ["Magnetism Enzyme"]*2)
-    items.extend(item_factory(item) for item in ["Defense Enzyme"]*5)
-    items.extend(item_factory(item) for item in ["Attack Enzyme"]*5)
-    items.extend(item_factory(item) for item in ["Max Stamina Enzyme"]*3)
+    items.extend(item_factory(item) for item in ["Stamina Enzyme"] * 10)
+    items.extend(item_factory(item) for item in ["Health Enzyme"] * 10)
+    items.extend(item_factory(item) for item in ["Speed Enzyme"] * 5)
+    items.extend(item_factory(item) for item in ["Luck Enzyme"] * 5)
+    items.extend(item_factory(item) for item in ["Farming Enzyme"] * 5)
+    items.extend(item_factory(item) for item in ["Foraging Enzyme"] * 5)
+    items.extend(item_factory(item) for item in ["Fishing Enzyme"] * 5)
+    items.extend(item_factory(item) for item in ["Mining Enzyme"] * 5)
+    items.extend(item_factory(item) for item in ["Magnetism Enzyme"] * 2)
+    items.extend(item_factory(item) for item in ["Defense Enzyme"] * 5)
+    items.extend(item_factory(item) for item in ["Attack Enzyme"] * 5)
+    items.extend(item_factory(item) for item in ["Max Stamina Enzyme"] * 3)
     items.extend(item_factory(item) for item in ["Squid Ink Enzyme"])
     items.extend(item_factory(item) for item in ["Monster Musk Enzyme"])
     items.extend(item_factory(item) for item in ["Oil Of Garlic Enzyme"])

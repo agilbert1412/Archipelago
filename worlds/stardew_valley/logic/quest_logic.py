@@ -16,7 +16,7 @@ from ..strings.material_names import Material
 from ..strings.metal_names import MetalBar, Ore, Mineral
 from ..strings.monster_drop_names import Loot
 from ..strings.quest_names import Quest
-from ..strings.region_names import Region
+from ..strings.region_names import LogicRegion, Region
 from ..strings.season_names import Season
 from ..strings.special_item_names import SpecialItem
 from ..strings.tool_names import Tool, FishingRod
@@ -42,7 +42,7 @@ class QuestLogic(BaseLogic):
             Quest.feeding_animals: self.logic.quest.can_complete_quest(Quest.getting_started) & self.logic.building.has_building(Building.silo),
             Quest.advancement: self.logic.quest.can_complete_quest(Quest.getting_started) & self.logic.has(Craftable.scarecrow),
             Quest.archaeology: self.logic.tool.has_tool(Tool.hoe) | self.logic.mine.can_mine_in_the_mines_floor_1_40() | self.logic.fishing.can_fish_chests,
-            Quest.rat_problem: self.logic.region.can_reach_all(Region.town, Region.community_center),
+            Quest.rat_problem: self.logic.region.can_reach_all(Region.community_center, LogicRegion.town_cutscene),
             Quest.meet_the_wizard: self.logic.region.can_reach_all(Region.community_center, Region.wizard_tower) & self.logic.received("Wizard Invitation"),
             Quest.forging_ahead: self.logic.has(Ore.copper) & self.logic.has(Machine.furnace),
             Quest.smelting: self.logic.has(MetalBar.copper),
@@ -65,7 +65,7 @@ class QuestLogic(BaseLogic):
             Quest.the_mysterious_qi: (self.logic.region.can_reach_all(Region.bus_tunnel, Region.railroad, Region.mayor_house) &
                                       self.logic.has_all(ArtisanGood.battery_pack, Forageable.rainbow_shell, Vegetable.beet, Loot.solar_essence)),
             Quest.carving_pumpkins: self.logic.season.has(Season.fall) & self.logic.has(Vegetable.pumpkin) & self.logic.relationship.can_meet(NPC.caroline),
-            Quest.a_winter_mystery: self.logic.season.has(Season.winter),
+            Quest.a_winter_mystery: self.logic.season.has(Season.winter) & self.logic.region.can_reach_all(Region.town, LogicRegion.bus_stop_cutscene),
             Quest.strange_note: self.logic.has(Forageable.secret_note) & self.logic.has(ArtisanGood.maple_syrup),
             Quest.cryptic_note: self.logic.has(Forageable.secret_note) & self.logic.region.can_reach(Region.skull_cavern_100),
             Quest.fresh_fruit: self.logic.season.has(Season.spring) & self.logic.has(Fruit.apricot) & self.logic.relationship.can_meet(NPC.emily),
@@ -136,22 +136,22 @@ class QuestLogic(BaseLogic):
         number_months = number // number_per_month
         if number <= 7:
             return self.logic.time.has_lived_months(number_months)
-        return self.logic.time.has_lived_months(number_months) &\
-               self.can_do_item_delivery_quest() & self.can_do_gathering_quest() &\
-               self.can_do_fishing_quest() & self.can_do_slaying_quest()
+        return self.logic.time.has_lived_months(number_months) & \
+            self.can_do_item_delivery_quest() & self.can_do_gathering_quest() & \
+            self.can_do_fishing_quest() & self.can_do_slaying_quest()
 
     def can_do_item_delivery_quest(self) -> StardewRule:
         return self.logic.region.can_reach(Region.town)
 
     def can_do_gathering_quest(self) -> StardewRule:
         return self.logic.region.can_reach_all(*(Region.town, Region.forest)) & \
-               self.logic.region.can_reach_any(*(Region.mines, Region.quarry, Region.skull_cavern_25)) & \
-               self.logic.tool.has_tool(Tool.axe) & \
-               self.logic.tool.has_tool(Tool.pickaxe)
+            self.logic.region.can_reach_any(*(Region.mines, Region.quarry, Region.skull_cavern_25)) & \
+            self.logic.tool.has_tool(Tool.axe) & \
+            self.logic.tool.has_tool(Tool.pickaxe)
 
     def can_do_fishing_quest(self) -> StardewRule:
         return self.logic.region.can_reach_all(*(Region.town, Region.beach)) & \
-               self.logic.tool.has_fishing_rod(FishingRod.bamboo)
+            self.logic.tool.has_fishing_rod(FishingRod.bamboo)
 
     def can_do_slaying_quest(self) -> StardewRule:
         return self.logic.region.can_reach_all(*(Region.town, Region.mines_floor_10))

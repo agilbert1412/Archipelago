@@ -51,6 +51,7 @@ else:
             options.Secretsanity,
             options.Hatsanity,
             options.IncludeEndgameLocations,
+            options.EntranceRandomizationBehaviour,
             options.DataRandomizationBehavior,
             options.DataRandomization,
         ]),

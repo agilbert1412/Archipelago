@@ -5,6 +5,7 @@ from typing import List, Dict, Set
 
 from BaseClasses import MultiWorld, CollectionState
 from worlds.generic.Rules import set_rule as _set_rule
+from worlds.stardew_valley.data import building
 from . import locations
 from .bundles.bundle_room import BundleRoom
 from .content import StardewContent
@@ -91,6 +92,14 @@ class StardewRuleCollector:
         except KeyError as ex:
             logger.error(f"""Failed to evaluate indirect connection in: {explain(rule, CollectionState(self.multiworld))}""")
             raise ex
+
+    def set_many_entrances_rules(self, entrance_rules: dict[str, StardewRule]) -> None:
+        for entrance, rule in entrance_rules.items():
+            self.set_entrance_rule(entrance, rule)
+
+    def set_many_entrances_rule(self, entrances: list[str], rule: StardewRule) -> None:
+        for entrance in entrances:
+            self.set_entrance_rule(entrance, rule)
 
     def set_island_entrance_rule(self, entrance_name: str, rule: StardewRule) -> None:
         if not self.content.is_enabled(ginger_island_content_pack):
@@ -246,10 +255,17 @@ def set_entrance_rules(logic: StardewLogic, rule_collector: StardewRuleCollector
     set_dangerous_mine_rules(logic, rule_collector, content)
 
     rule_collector.set_entrance_rule(Entrance.enter_tide_pools, logic.received("Beach Bridge") | logic.mod.magic.can_blink())
+    rule_collector.set_entrance_rule(Entrance.leave_tide_pools, logic.received("Beach Bridge") | logic.mod.magic.can_blink())
     rule_collector.set_entrance_rule(Entrance.mountain_to_outside_adventure_guild, logic.received("Landslide Removed"))
+    rule_collector.set_entrance_rule(Entrance.outside_adventure_guild_to_mountain, logic.received("Landslide Removed"))
     rule_collector.set_entrance_rule(Entrance.enter_quarry,
                                      (logic.received("Bridge Repair") | logic.mod.magic.can_blink()) & logic.tool.has_tool(Tool.pickaxe))
-    rule_collector.set_entrance_rule(Entrance.enter_secret_woods, logic.tool.has_tool(Tool.axe, ToolMaterial.iron) | logic.mod.magic.can_blink() | logic.ability.can_chair_skip())
+    rule_collector.set_entrance_rule(Entrance.leave_quarry,
+                                     (logic.received("Bridge Repair") | logic.mod.magic.can_blink()) & logic.tool.has_tool(Tool.pickaxe))
+    rule_collector.set_entrance_rule(LogicEntrance.forest_to_part_behind_tree_stump,
+                                     logic.tool.has_tool(Tool.axe, ToolMaterial.iron) | logic.mod.magic.can_blink() | logic.ability.can_chair_skip())
+    rule_collector.set_entrance_rule(LogicEntrance.part_behind_tree_stump_to_forest,
+                                     logic.tool.has_tool(Tool.axe, ToolMaterial.iron) | logic.mod.magic.can_blink() | logic.ability.can_chair_skip())
     rule_collector.set_entrance_rule(Entrance.town_to_community_center, logic.received("Community Center Key"))
     rule_collector.set_entrance_rule(Entrance.forest_to_wizard_tower, logic.received("Wizard Invitation"))
     rule_collector.set_entrance_rule(Entrance.forest_to_sewer, logic.wallet.has_rusty_key())
@@ -260,7 +276,7 @@ def set_entrance_rules(logic: StardewLogic, rule_collector: StardewRuleCollector
     rule_collector.set_entrance_rule(Entrance.town_to_jojamart, logic.money.can_spend(1000))
     rule_collector.set_entrance_rule(Entrance.enter_abandoned_jojamart, logic.has_abandoned_jojamart())
     movie_theater_rule = logic.has_movie_theater()
-    rule_collector.set_entrance_rule(Entrance.purchase_movie_ticket, movie_theater_rule)
+    rule_collector.set_entrance_rule(LogicEntrance.purchase_movie_ticket, movie_theater_rule)
     rule_collector.set_entrance_rule(Entrance.enter_movie_theater, movie_theater_rule & logic.has(Gift.movie_ticket))
     rule_collector.set_entrance_rule(Entrance.take_bus_to_desert, logic.received(Transportation.bus_repair) & logic.money.can_spend(500))
     rule_collector.set_entrance_rule(Entrance.enter_skull_cavern, logic.received(Wallet.skull_key))
@@ -275,8 +291,10 @@ def set_entrance_rules(logic: StardewLogic, rule_collector: StardewRuleCollector
     set_farm_buildings_entrance_rules(logic, rule_collector)
 
     rule_collector.set_entrance_rule(Entrance.mountain_to_railroad, logic.received("Railroad Boulder Removed"))
-    rule_collector.set_entrance_rule(Entrance.enter_witch_warp_cave, logic.quest.has_dark_talisman() | (logic.mod.magic.can_blink()))
-    rule_collector.set_entrance_rule(Entrance.enter_witch_hut, (logic.quest.can_complete_quest(Quest.goblin_problem) | logic.mod.magic.can_blink()))
+    rule_collector.set_entrance_rule(LogicEntrance.railroad_to_part_behind_chicken_stone, logic.quest.has_dark_talisman() | (logic.mod.magic.can_blink()))
+    rule_collector.set_entrance_rule(LogicEntrance.part_behind_chicken_stone_to_railroad, logic.quest.has_dark_talisman() | (logic.mod.magic.can_blink()))
+    rule_collector.set_entrance_rule(LogicEntrance.witch_swamp_bot_to_top, (logic.quest.can_complete_quest(Quest.goblin_problem) | logic.mod.magic.can_blink()))
+    rule_collector.set_entrance_rule(LogicEntrance.witch_swamp_top_to_bot, (logic.quest.can_complete_quest(Quest.goblin_problem) | logic.mod.magic.can_blink()))
     rule_collector.set_entrance_rule(Entrance.enter_mutant_bug_lair,
                                      (logic.wallet.has_rusty_key() & logic.region.can_reach(Region.railroad) & logic.relationship.can_meet(NPC.krobus))
                                      | logic.mod.magic.can_blink())
@@ -284,11 +302,16 @@ def set_entrance_rules(logic: StardewLogic, rule_collector: StardewRuleCollector
 
     set_bedroom_entrance_rules(logic, rule_collector, content)
     set_festival_entrance_rules(logic, rule_collector)
-    
+
     # I can't remember why this was here, but clearly we do not need kitchen rules for island cooking....
     # rule_collector.set_island_entrance_rule(LogicEntrance.island_cooking, logic.cooking.can_cook_in_kitchen)
     rule_collector.set_entrance_rule(LogicEntrance.farmhouse_cooking, logic.cooking.can_cook_in_kitchen)
+    rule_collector.set_entrance_rule(LogicEntrance.farmhouse_upgrade_kitchen, logic.building.has_building(Building.kitchen))
+    rule_collector.set_entrance_rule(LogicEntrance.farmhouse_upgrade_crib, logic.building.has_building(Building.kids_room))
+    rule_collector.set_entrance_rule(LogicEntrance.farmhouse_upgrade_cellar, logic.building.has_building(Building.cellar))
     rule_collector.set_entrance_rule(LogicEntrance.shipping, logic.shipping.can_use_shipping_bin)
+    if world_options.exclude_ginger_island == ExcludeGingerIsland.option_false:
+        rule_collector.set_entrance_rule(LogicEntrance.island_shipping, logic.shipping.can_use_island_shipping_bin)
     rule_collector.set_entrance_rule(LogicEntrance.find_secret_notes,
                                      logic.quest.has_magnifying_glass() & (logic.ability.can_chop_trees() | logic.mine.can_mine_in_the_mines_floor_1_40()))
     rule_collector.set_entrance_rule(LogicEntrance.watch_queen_of_sauce, logic.action.can_watch(Channel.queen_of_sauce))
@@ -300,17 +323,68 @@ def set_entrance_rules(logic: StardewLogic, rule_collector: StardewRuleCollector
     rule_collector.set_entrance_rule(LogicEntrance.search_garbage_cans, logic.time.has_lived_months(MAX_MONTHS / 2))
 
     rule_collector.set_entrance_rule(Entrance.forest_beach_shortcut, logic.received("Forest To Beach Shortcut"))
-    rule_collector.set_entrance_rule(Entrance.mountain_jojamart_shortcut, logic.received("Mountain Shortcuts"))
-    rule_collector.set_entrance_rule(Entrance.mountain_town_shortcut, logic.received("Mountain Shortcuts"))
-    rule_collector.set_entrance_rule(Entrance.town_tidepools_shortcut, logic.received("Town To Tide Pools Shortcut"))
+    rule_collector.set_entrance_rule(Entrance.beach_forest_shortcut, logic.received("Forest To Beach Shortcut"))
     rule_collector.set_entrance_rule(Entrance.tunnel_backwoods_shortcut, logic.received("Tunnel To Backwoods Shortcut"))
-    rule_collector.set_entrance_rule(Entrance.mountain_lake_to_outside_adventure_guild_shortcut, logic.received("Mountain Shortcuts"))
+    rule_collector.set_entrance_rule(Entrance.backwoods_tunnel_shortcut, logic.received("Tunnel To Backwoods Shortcut"))
+    rule_collector.set_entrance_rule(
+        Entrance.mountain_lake_to_outside_adventure_guild_shortcut, logic.received("Mountain Shortcuts")
+    )
+    rule_collector.set_entrance_rule(
+        Entrance.outside_adventure_guild_to_mountain_lake_shortcut, logic.received("Mountain Shortcuts")
+    )
+    if world_options.include_endgame_locations:
+        rule_collector.set_many_entrances_rule(
+            [
+                LogicEntrance.mountain_shortcut_fence_entrance,
+                LogicEntrance.mountain_shortcut_fence_exit,
+                LogicEntrance.mountain_shortcut_walkway_entrance,
+                LogicEntrance.mountain_shortcut_walkway_exit,
+                LogicEntrance.jojamart_shortcut_cave_entrance,
+                LogicEntrance.jojamart_shortcut_cave_exit,
+                LogicEntrance.town_shortcut_fence_entrance,
+                LogicEntrance.town_shortcut_fence_exit,
+            ],
+            logic.received("Mountain Shortcuts")
+        )
+        rule_collector.set_many_entrances_rule(
+            [
+                Entrance.town_tidepools_shortcut,
+                Entrance.leave_tide_pools_shortcut,
+                Entrance.enter_tide_pools_shortcut
+            ],
+            logic.received("Town To Tide Pools Shortcut")
+        )
+    else:
+        rule_collector.set_many_entrances_rule(
+            [
+                Entrance.jojamart_mountain_shortcut,
+                Entrance.mountain_jojamart_shortcut,
+                Entrance.town_mountain_shortcut,
+                Entrance.mountain_town_shortcut,
+            ],
+            logic.received("Mountain Shortcuts")
+        )
+        rule_collector.set_many_entrances_rule(
+            [
+                Entrance.town_tidepools_shortcut,
+                Entrance.tidepools_town_shortcut,
+            ],
+            logic.received("Town To Tide Pools Shortcut")
+        )
 
-    rule_collector.set_entrance_rule(Entrance.feed_trash_bear, logic.received("Trash Bear Arrival"))
+    rule_collector.set_entrance_rule(LogicEntrance.feed_trash_bear, logic.received("Trash Bear Arrival"))
     rule_collector.set_entrance_rule(Entrance.enter_shorts_maze, logic.has(Craftable.staircase))
 
     rule_collector.set_entrance_rule(Entrance.enter_mens_locker_room, logic.wallet.has_mens_locker_key())
     rule_collector.set_entrance_rule(Entrance.enter_womens_locker_room, logic.wallet.has_womens_locker_key())
+
+    rule_collector.set_many_entrances_rule(
+        [Entrance.minecart_bus_stop_to_town, Entrance.minecart_mines_to_town, Entrance.minecart_quarry_to_town, Entrance.minecart_town_to_bus_stop,
+         Entrance.minecart_mines_to_bus_stop, Entrance.minecart_quarry_to_bus_stop], logic.received("Minecarts Repair"))
+    rule_collector.set_many_entrances_rule([Entrance.minecart_town_to_mines, Entrance.minecart_quarry_to_mines, Entrance.minecart_bus_stop_to_mines],
+                                           logic.received_all("Minecarts Repair", "Landslide Removed"))
+    rule_collector.set_many_entrances_rule([Entrance.minecart_town_to_quarry, Entrance.minecart_mines_to_quarry, Entrance.minecart_bus_stop_to_quarry],
+                                           logic.received_all("Minecarts Repair", "Bridge Repair"))
 
 
 def set_bookseller_rules(logic, rule_collector):
@@ -352,24 +426,61 @@ def set_dangerous_mine_rules(logic, rule_collector: StardewRuleCollector, conten
 
 
 def set_farm_buildings_entrance_rules(logic, rule_collector: StardewRuleCollector):
-    rule_collector.set_entrance_rule(Entrance.downstairs_to_cellar, logic.building.has_building(Building.cellar))
-    rule_collector.set_entrance_rule(Entrance.use_desert_obelisk, logic.can_use_obelisk(Transportation.desert_obelisk))
-    rule_collector.set_entrance_rule(Entrance.enter_greenhouse, logic.received("Greenhouse"))
+    rule_collector.set_entrance_rule(
+        Entrance.enter_greenhouse, logic.received("Greenhouse")
+    )
     rule_collector.set_entrance_rule(Entrance.enter_coop, logic.building.has_building(Building.coop))
     rule_collector.set_entrance_rule(Entrance.enter_barn, logic.building.has_building(Building.barn))
     rule_collector.set_entrance_rule(Entrance.enter_shed, logic.building.has_building(Building.shed))
     rule_collector.set_entrance_rule(Entrance.enter_slime_hutch, logic.building.has_building(Building.slime_hutch))
+    rule_collector.set_entrance_rule(
+        Entrance.use_desert_obelisk,
+        logic.can_use_obelisk(Transportation.desert_obelisk),
+    )
+    rule_collector.set_entrance_rule(
+        Entrance.use_earth_obelisk,
+        logic.can_use_obelisk(Transportation.earth_obelisk),
+    )
+    rule_collector.set_entrance_rule(
+        Entrance.use_water_obelisk,
+        logic.can_use_obelisk(Transportation.water_obelisk),
+    )
+    rule_collector.set_entrance_rule(
+        Entrance.use_farm_totem,
+        logic.has(Consumable.warp_totem_farm),
+    )
+    rule_collector.set_entrance_rule(
+        Entrance.use_mountain_totem,
+        logic.has(Consumable.warp_totem_mountains),
+    )
+    rule_collector.set_entrance_rule(
+        Entrance.use_beach_totem,
+        logic.has(Consumable.warp_totem_beach),
+    )
+    rule_collector.set_entrance_rule(
+        Entrance.use_desert_totem,
+        logic.has(Consumable.warp_totem_desert),
+    )
+    rule_collector.set_entrance_rule(
+        Entrance.use_return_scepter,
+        logic.received("Return Scepter"),
+    )
 
 
 def set_bedroom_entrance_rules(logic, rule_collector: StardewRuleCollector, content: StardewContent):
-    rule_collector.set_entrance_rule(Entrance.enter_harvey_room, logic.relationship.has_hearts(NPC.harvey, 2))
+    rule_collector.set_entrance_rule(Entrance.hospital_back_to_hospital, logic.relationship.has_hearts(NPC.harvey, 2))
+    rule_collector.set_entrance_rule(Entrance.hospital_to_hospital_back, logic.relationship.has_hearts(NPC.harvey, 2))
     rule_collector.set_entrance_rule(Entrance.mountain_to_maru_room, logic.relationship.has_hearts(NPC.maru, 2))
+    rule_collector.set_entrance_rule(Entrance.carpenter_shop_to_maru_room, logic.relationship.has_hearts(NPC.maru, 2))
+    rule_collector.set_entrance_rule(Entrance.maru_room_to_carpenter_shop, logic.relationship.has_hearts(NPC.maru, 2))
     rule_collector.set_entrance_rule(Entrance.enter_sebastian_room, (logic.relationship.has_hearts(NPC.sebastian, 2) | logic.mod.magic.can_blink()))
     rule_collector.set_entrance_rule(Entrance.forest_to_leah_cottage, logic.relationship.has_hearts(NPC.leah, 2))
     rule_collector.set_entrance_rule(Entrance.enter_elliott_house, logic.relationship.has_hearts(NPC.elliott, 2))
     rule_collector.set_entrance_rule(Entrance.enter_sunroom, logic.relationship.has_hearts(NPC.caroline, 2))
     rule_collector.set_entrance_rule(Entrance.enter_wizard_basement, logic.relationship.has_hearts(NPC.wizard, 4))
+    rule_collector.set_entrance_rule(Entrance.wizard_basement_to_witch_warp, logic.quest.can_complete_quest(Quest.goblin_problem))
     rule_collector.set_entrance_rule(Entrance.enter_lewis_bedroom, logic.relationship.has_hearts(NPC.lewis, 2))
+    rule_collector.set_entrance_rule(Entrance.leave_lewis_bedroom, logic.relationship.has_hearts(NPC.lewis, 2))
     if content.is_enabled(ModNames.alec):
         rule_collector.set_entrance_rule(AlecEntrance.petshop_to_bedroom, (logic.relationship.has_hearts(ModNPC.alec, 2) | logic.mod.magic.can_blink()))
     if content.is_enabled(ModNames.lacey):
@@ -480,35 +591,45 @@ def set_island_entrances_rules(logic: StardewLogic, rule_collector: StardewRuleC
     entrance_rules = {
         Entrance.use_island_obelisk: logic.can_use_obelisk(Transportation.island_obelisk),
         Entrance.use_farm_obelisk: logic.can_use_obelisk(Transportation.farm_obelisk),
+        Entrance.use_island_totem: logic.has("Warp Totem: Island"),
         Entrance.fish_shop_to_boat_tunnel: boat_repaired,
         Entrance.boat_to_ginger_island: boat_repaired & logic.money.can_spend(1000),
         Entrance.island_south_to_west: logic.received("Island West Turtle"),
         Entrance.island_south_to_north: logic.received("Island North Turtle"),
-        Entrance.island_west_to_islandfarmhouse: logic.received("Island Farmhouse"),
+        Entrance.island_west_to_island_farmhouse: logic.received("Island Farmhouse"),
         Entrance.island_west_to_gourmand_cave: logic.received("Island Farmhouse"),
         Entrance.island_north_to_dig_site: dig_site_rule | logic.ability.can_chair_skip(),
-        Entrance.dig_site_to_professor_snail_cave: logic.received("Open Professor Snail Cave"),
+        Entrance.dig_site_to_island_north: dig_site_rule | logic.ability.can_chair_skip(),
+        Entrance.dig_site_to_professor_snail_cave_entrance: logic.received("Open Professor Snail Cave"),
+        Entrance.professor_snail_cave_entrance_to_dig_site: logic.received("Open Professor Snail Cave"),
         Entrance.talk_to_island_trader: logic.received("Island Trader"),
         Entrance.island_south_to_southeast: logic.received("Island Resort"),
         Entrance.use_island_resort: logic.received("Island Resort"),
         Entrance.island_west_to_qi_walnut_room: logic.received("Qi Walnut Room"),
-        Entrance.island_north_to_volcano: logic.tool.can_water() | logic.received("Volcano Bridge") | logic.mod.magic.can_blink(),
-        Entrance.volcano_to_secret_beach: logic.tool.can_water(3),
+        Entrance.island_north_to_volcano: logic.tool.can_water(1) | logic.received("Volcano Bridge") | logic.mod.magic.can_blink(),
+        Entrance.volcano_to_volcano_side: logic.tool.can_water(3),
+        Entrance.volcano_side_to_volcano: logic.tool.can_water(3),
         Entrance.climb_to_volcano_5: logic.ability.can_mine_perfectly() & logic.tool.can_water(2),
         Entrance.talk_to_volcano_dwarf: logic.wallet.can_speak_dwarf(),
         Entrance.climb_to_volcano_10: logic.ability.can_mine_perfectly() & logic.tool.can_water(2),
         Entrance.mountain_to_leo_treehouse: logic.received("Treehouse"),
     }
-    parrots = [Entrance.parrot_express_docks_to_volcano, Entrance.parrot_express_jungle_to_volcano,
-               Entrance.parrot_express_dig_site_to_volcano, Entrance.parrot_express_docks_to_dig_site,
-               Entrance.parrot_express_jungle_to_dig_site, Entrance.parrot_express_volcano_to_dig_site,
-               Entrance.parrot_express_docks_to_jungle, Entrance.parrot_express_dig_site_to_jungle,
-               Entrance.parrot_express_volcano_to_jungle, Entrance.parrot_express_jungle_to_docks,
-               Entrance.parrot_express_dig_site_to_docks, Entrance.parrot_express_volcano_to_docks]
+    parrots = [
+        Entrance.parrot_express_docks_to_volcano, Entrance.parrot_express_docks_to_jungle,
+        Entrance.parrot_express_docks_to_dig_site, Entrance.parrot_express_docks_to_farm,
+        Entrance.parrot_express_volcano_to_docks, Entrance.parrot_express_volcano_to_jungle,
+        Entrance.parrot_express_volcano_to_dig_site, Entrance.parrot_express_volcano_to_farm,
+        Entrance.parrot_express_jungle_to_docks, Entrance.parrot_express_jungle_to_volcano,
+        Entrance.parrot_express_jungle_to_dig_site, Entrance.parrot_express_jungle_to_farm,
+        Entrance.parrot_express_dig_site_to_docks, Entrance.parrot_express_dig_site_to_volcano,
+        Entrance.parrot_express_dig_site_to_jungle, Entrance.parrot_express_dig_site_to_farm,
+        Entrance.parrot_express_farm_to_docks, Entrance.parrot_express_farm_to_volcano,
+        Entrance.parrot_express_farm_to_jungle, Entrance.parrot_express_farm_to_dig_site,
+    ]
     parrot_express_rule = logic.received(Transportation.parrot_express)
     parrot_express_to_dig_site_rule = dig_site_rule & parrot_express_rule
     for parrot in parrots:
-        if "Dig Site" in parrot:
+        if parrot.endswith("Dig Site"):
             entrance_rules[parrot] = parrot_express_to_dig_site_rule
         else:
             entrance_rules[parrot] = parrot_express_rule
@@ -865,7 +986,7 @@ def set_monstersanity_category_rules(all_location_names: Set[str], logic: Starde
         rule_collector.set_location_rule(location_name, rule)
 
 
-def set_shipsanity_rules(all_location_names: Set[str], logic: StardewLogic, rule_collector: StardewRuleCollector, world_options: StardewValleyOptions):
+def set_shipsanity_rules(all_location_names: set[str], logic: StardewLogic, rule_collector: StardewRuleCollector, world_options: StardewValleyOptions):
     shipsanity_option = world_options.shipsanity
     if shipsanity_option == Shipsanity.option_none:
         return
@@ -875,7 +996,8 @@ def set_shipsanity_rules(all_location_names: Set[str], logic: StardewLogic, rule
         if location.name not in all_location_names:
             continue
         item_to_ship = location.name[len(shipsanity_prefix):]
-        rule_collector.set_location_rule(location.name, logic.shipping.can_ship(item_to_ship))
+        # does not need to check for shipping bin as it is already in the region
+        rule_collector.set_location_rule(location.name, logic.has(item_to_ship))
 
 
 def set_cooksanity_rules(all_location_names: Set[str], logic: StardewLogic, rule_collector: StardewRuleCollector, world_options: StardewValleyOptions):
@@ -1011,7 +1133,8 @@ def set_secrets_rules(logic: StardewLogic, rule_collector: StardewRuleCollector,
         rule_collector.set_location_rule("Secret: Lucky Purple Bobber", logic.fishing.can_use_tackle(SpecialItem.lucky_purple_shorts))
         rule_collector.set_location_rule("Secret: Something For Santa", logic.season.has(Season.winter) & logic.has_any(AnimalProduct.any_milk, Meal.cookie))
         cc_rewards = ["Bridge Repair", "Greenhouse", "Glittering Boulder Removed", "Minecarts Repair", Transportation.bus_repair, "Friendship Bonus (2 <3)"]
-        rule_collector.set_location_rule("Secret: Jungle Junimo", logic.action.can_speak_junimo() & logic.and_(*[logic.received(reward) for reward in cc_rewards]))
+        rule_collector.set_location_rule("Secret: Jungle Junimo",
+                                         logic.action.can_speak_junimo() & logic.and_(*[logic.received(reward) for reward in cc_rewards]))
         rule_collector.set_location_rule("Secret: ??HMTGF??", logic.has(Fish.super_cucumber))
         rule_collector.set_location_rule("Secret: ??Pinky Lemon??", logic.has(ArtisanGood.duck_mayonnaise))
         rule_collector.set_location_rule("Secret: ??Foroguemon??", logic.has(Meal.strange_bun) & logic.relationship.has_hearts(NPC.vincent, 2))
@@ -1051,7 +1174,7 @@ def set_secrets_rules(logic: StardewLogic, rule_collector: StardewRuleCollector,
 
     if SecretsanityOptionName.difficult in world_options.secretsanity:
         rule_collector.set_location_rule("Secret: Free The Forsaken Souls", logic.action.can_watch(Channel.sinister_signal))
-        rule_collector.set_location_rule("Secret: Annoy the Moon Man", logic.shipping.can_use_shipping_bin & logic.time.has_lived_months(6))
+        rule_collector.set_location_rule("Secret: Annoy the Moon Man", logic.shipping.can_use_any_shipping_bin & logic.time.has_lived_months(6))
         rule_collector.set_location_rule("Secret: Strange Sighting", logic.region.can_reach_all(Region.bus_stop, Region.town) & logic.time.has_lived_months(6))
         rule_collector.set_location_rule("Secret: Sea Monster Sighting", logic.region.can_reach(Region.beach) & logic.time.has_lived_months(2))
         rule_collector.set_location_rule("Secret: ...Bigfoot?",
@@ -1178,7 +1301,8 @@ def set_endgame_locations_rules(logic: StardewLogic, rule_collector: StardewRule
             rule_collector.set_location_rule("Purchase Key To The Town", logic.money.can_trade_at(Region.qi_walnut_room, Currency.qi_gem, 20))
             rule_collector.set_location_rule("Purchase Mini-Shipping Bin", logic.money.can_trade_at(Region.qi_walnut_room, Currency.qi_gem, 60))
             rule_collector.set_location_rule("Purchase Exotic Double Bed", logic.money.can_trade_at(Region.qi_walnut_room, Currency.qi_gem, 50))
-            rule_collector.set_location_rule("Purchase Golden Egg", logic.received(AnimalProduct.golden_egg) & logic.money.can_trade_at(Region.qi_walnut_room, Currency.qi_gem, 100))
+            rule_collector.set_location_rule("Purchase Golden Egg",
+                                             logic.received(AnimalProduct.golden_egg) & logic.money.can_trade_at(Region.qi_walnut_room, Currency.qi_gem, 100))
 
 
 def set_friendsanity_rules(logic: StardewLogic, rule_collector: StardewRuleCollector, content: StardewContent):
