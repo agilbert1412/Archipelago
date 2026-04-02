@@ -1,10 +1,10 @@
 from collections.abc import Mapping
 from types import MappingProxyType
 
+from .model import ConnectionData, GroupFlag, RandomizationFlag, RegionData
 from ..strings.entrance_names import Entrance, LogicEntrance
 from ..strings.region_names import LogicRegion
 from ..strings.region_names import Region as RegionName
-from .model import ConnectionData, GroupFlag, RandomizationFlag, RegionData
 
 vanilla_regions: tuple[RegionData, ...] = (
     RegionData(
@@ -83,6 +83,8 @@ vanilla_regions: tuple[RegionData, ...] = (
             LogicEntrance.feed_trash_bear,
             LogicEntrance.buy_from_traveling_merchant,
             LogicEntrance.has_giant_stump,
+            LogicEntrance.fish_in_forest_river,
+            LogicEntrance.fish_in_forest_pond,
             LogicEntrance.fish_in_waterfall,
             LogicEntrance.attend_flower_dance,
             LogicEntrance.attend_trout_derby,
