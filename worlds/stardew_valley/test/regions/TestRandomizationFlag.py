@@ -71,13 +71,13 @@ class TestRandomizationFlag(unittest.TestCase):
                 (options.EntranceRandomization.option_everywhere, RandomizationFlag.SET_EVERYTHING | RandomizationFlag.MASTERY_CAVE),
         ):
             player_options = fill_dataclass_with_default({options.EntranceRandomization: entrance_randomization_choice,
-                                                          options.EntranceRandomizationBehaviour: options.EntranceRandomizationBehaviour.default,
+                                                          options.EntranceRandomizationBehavior: options.EntranceRandomizationBehavior.default,
                                                           options.SkillProgression: SkillProgression.option_progressive_with_masteries})
             content = create_content(player_options, Random(1))
 
             flag = create_player_randomization_flag(
                 player_options.entrance_randomization,
-                player_options.entrance_randomization_behaviour.value,
+                player_options.entrance_randomization_behavior.value,
                 player_options.include_endgame_locations.value == options.IncludeEndgameLocations.option_true,
                 content,
             )
@@ -88,14 +88,14 @@ class TestRandomizationFlag(unittest.TestCase):
         for entrance_randomization_choice in set(options.EntranceRandomization.options.values()) ^ {options.EntranceRandomization.option_disabled}:
             player_options = fill_dataclass_with_default({
                 options.EntranceRandomization: entrance_randomization_choice,
-                options.EntranceRandomizationBehaviour: options.EntranceRandomizationBehaviour.default,
+                options.EntranceRandomizationBehavior: options.EntranceRandomizationBehavior.default,
                 options.SkillProgression: options.SkillProgression.option_progressive
             })
             content = create_content(player_options, Random(1))
 
             flag = create_player_randomization_flag(
                 player_options.entrance_randomization,
-                player_options.entrance_randomization_behaviour.value,
+                player_options.entrance_randomization_behavior.value,
                 player_options.include_endgame_locations.value == options.IncludeEndgameLocations.option_true,
                 content,
             )
