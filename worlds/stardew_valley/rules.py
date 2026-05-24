@@ -127,6 +127,7 @@ class StardewRuleCollector:
             self.set_entrance_rule(entrance, rule)
 
     def set_location_rule(self, location_name: str, rule: StardewRule) -> None:
+        rule = rule.clean_infinite_loops()
         _set_rule(self.multiworld.get_location(location_name, self.player), rule)
 
 

@@ -141,6 +141,8 @@ class AggregatingStardewRule(BaseStardewRule, ABC):
             assert rules, f"Can't create an aggregating condition without rules"
             rules, _combinable_rules = self.split_rules(rules)
             _simplification_state = _SimplificationState(rules)
+        else:
+            a = 5
 
         self.combinable_rules = _combinable_rules
         self.simplification_state = _simplification_state
@@ -310,6 +312,23 @@ class AggregatingStardewRule(BaseStardewRule, ABC):
 
         return hash((*self.combinable_rules.values(), self.simplification_state.original_simplifiable_rules))
 
+    def clean_infinite_loops(self) -> StardewRule:
+        for rule_key in self.combinable_rules.keys():
+            rule = self.combinable_rules[rule_key]
+            clean_rule = rule.clean_infinite_loops()
+            if clean_rule == false_:
+                if self.complement == true_:
+                    self.combinable_rules.pop(rule_key)
+                else:
+                    print(f"Rule '{self}' is impossible to fulfill")
+                    return false_
+            else:
+                self.combinable_rules[rule_key] = clean_rule
+        if len(self.combinable_rules) <= 0:
+            print(f"Rule '{self}' is impossible to fulfill")
+            return false_
+        return self
+
 
 class Or(AggregatingStardewRule):
     identity = false_
@@ -452,6 +471,23 @@ class Count(BaseStardewRule):
             return f"Has {self.count} of [{', '.join(repr(rule) for rule in self.counter.keys())}]"
 
         return f"Has {self.count} of [{', '.join(f'{value}x {repr(rule)}' for rule, value in self.counter.items())}]"
+
+    def clean_infinite_loops(self) -> StardewRule:
+        for rule_key in self.combinable_rules.keys():
+            rule = self.combinable_rules[rule_key]
+            clean_rule = rule.clean_infinite_loops()
+            if clean_rule == false_:
+                if self.complement == true_:
+                    self.combinable_rules.pop(rule_key)
+                else:
+                    print(f"Rule '{self}' is impossible to fulfill")
+                    return false_
+            else:
+                self.combinable_rules[rule_key] = clean_rule
+        if len(self.combinable_rules) <= 0:
+            print(f"Rule '{self}' is impossible to fulfill")
+            return false_
+        return self
 
 
 @dataclass(frozen=True)

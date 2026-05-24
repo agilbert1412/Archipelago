@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from typing import Protocol, Tuple, runtime_checkable
+from typing import Protocol, runtime_checkable
 
 from BaseClasses import CollectionState
 
@@ -23,4 +23,7 @@ class StardewRule(Protocol):
 
     @abstractmethod
     def evaluate_while_simplifying(self, state: CollectionState) -> tuple[StardewRule, bool]:
+        ...
+
+    def clean_infinite_loops(self) -> StardewRule:
         ...
