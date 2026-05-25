@@ -67,10 +67,14 @@
             <span class="link-spacer">|</span>
             <a href="{{ world.web.bug_report_page }}">Report a Bug</a>
             {% endif %}
+            {% if "authors" in world.manifest %}
+            {% if world.manifest["authors"]|length == 1 %}
+            <p>Author: {{ world.manifest["authors"] }}</p>
+            {% else %}
+            <p>Authors: {{ world.manifest["authors"] | join(", ") }}</p>
+            {% endif %}
+            {% endif %}
         </details>
-        {% if "authors" in world.manifest %}
-        <p>Authors: {{ world.manifest["authors"] | join(", ") }}</p>
-        {% endif %}
         {% endfor %}
     </div>
 {% endblock %}
