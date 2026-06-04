@@ -1,4 +1,3 @@
-from NetUtils import JSONMessagePart
 import logging
 import math
 import typing
@@ -9,6 +8,7 @@ from typing import Any, ClassVar, Dict, List, Optional, TextIO
 
 import entrance_rando
 from BaseClasses import CollectionState, Entrance, Item, ItemClassification, Location, MultiWorld, Region, Tutorial
+from NetUtils import JSONMessagePart
 from Options import PerGameCommonOptions
 from worlds.AutoWorld import WebWorld, World
 from worlds.LauncherComponents import Component, Type, components, icon_paths
