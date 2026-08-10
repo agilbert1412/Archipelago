@@ -53,7 +53,7 @@ def create_player_randomization_flag(
 
 def get_target_groups(entrance_randomization_behavior: EntranceRandomizationBehavior):
     direction_matching_group_lookup = {
-        GroupFlag.TO_ANY: [GroupFlag.UP, GroupFlag.DOWN, GroupFlag.LEFT, GroupFlag.RIGHT],
+        GroupFlag.TO_ANY: [GroupFlag.UP, GroupFlag.DOWN, GroupFlag.LEFT, GroupFlag.RIGHT, GroupFlag.DOOR],
         GroupFlag.UP: [GroupFlag.DOWN],
         GroupFlag.DOWN: [GroupFlag.UP, GroupFlag.DOOR],
         GroupFlag.LEFT: [GroupFlag.RIGHT],
@@ -78,10 +78,13 @@ def get_target_groups(entrance_randomization_behavior: EntranceRandomizationBeha
     area_mask = 0b0
     farmhouse_mask = GroupFlag.FROM_FARMHOUSE
 
-    if EntranceRandomizationBehaviorOptionName.same_direction in entrance_randomization_behavior:
+    require_same_direction = EntranceRandomizationBehaviorOptionName.same_direction in entrance_randomization_behavior
+    require_same_type = EntranceRandomizationBehaviorOptionName.same_type in entrance_randomization_behavior
+
+    if require_same_direction:
         dir_mask = GroupFlag.DIR_MASK
 
-    if EntranceRandomizationBehaviorOptionName.same_type in entrance_randomization_behavior:
+    if require_same_type:
         area_mask = GroupFlag.AREA_MASK
 
     groups = dict()
@@ -91,21 +94,25 @@ def get_target_groups(entrance_randomization_behavior: EntranceRandomizationBeha
             direction_group = direction_matching_group_lookup[direction & dir_mask]
             area_group = area_matching_group_lookup[inorout & area_mask]
             group_key = int(direction | inorout)
-            groups[group_key] = []
+            groups[group_key] = set()
             for pair_direction in direction_group:
                 for pair_inorout in area_group:
                     group_value = int(pair_direction | pair_inorout)
-                    groups[group_key].append(group_value)
+                    groups[group_key].add(group_value)
+                    if not require_same_direction:
+                        groups[group_key].add(int(pair_inorout))
+                if not require_same_type:
+                    groups[group_key].add(int(pair_direction))
 
-    groups[int(GroupFlag.DOWN | GroupFlag.IN_TO_OUT | GroupFlag.FROM_FARMHOUSE)] = [
+    groups[int(GroupFlag.DOWN | GroupFlag.IN_TO_OUT | GroupFlag.FROM_FARMHOUSE)] = {
         int(pair_direction | pair_inorout | farmhouse_flag)
         for pair_direction in direction_matching_group_lookup[GroupFlag.DOWN & dir_mask]
         for pair_inorout in (
                 area_matching_group_lookup[GroupFlag.IN_TO_OUT] + area_matching_group_lookup[GroupFlag.OUT_TO_OUT]
         )
         for farmhouse_flag in [GroupFlag.FROM_FARMHOUSE, GroupFlag.TO_ANY]
-    ]
-    return groups
+    }
+    return {group_name: sorted(list(group_value)) for group_name, group_value in groups.items()}
 
 
 def connect_regions(
