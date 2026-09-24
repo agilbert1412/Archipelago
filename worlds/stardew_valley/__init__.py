@@ -4,7 +4,7 @@ import typing
 from collections import Counter
 from functools import wraps
 from random import Random
-from typing import Any, ClassVar, Dict, List, Optional, TextIO
+from typing import Any, Callable, ClassVar, Dict, List, Literal, Optional, TextIO
 
 import entrance_rando
 from BaseClasses import (
@@ -18,6 +18,7 @@ from BaseClasses import (
     Region,
     Tutorial,
 )
+from entrance_rando import ERPlacementState
 from NetUtils import JSONMessagePart
 
 from Options import PerGameCommonOptions
@@ -532,7 +533,7 @@ class StardewValleyWorld(World):
             from worlds.stardew_valley.data.regions.model import connector_keyword
             exit_name = exit.name
             parent_region_name = exit_name.split(connector_keyword)[0]
-            print(f"{exit_name} ({parent_region_name})")
+            # print(f"{exit_name} ({parent_region_name})")
             parent_region = self.get_region(parent_region_name)
             return parent_region
 
@@ -560,14 +561,11 @@ class StardewValleyWorld(World):
         # in reading of the slot_data the randomized entrances are set when UT is active.
         if self.randomized_entrances is None:  # no slot_data with randomized_entrances found
             target_groups = get_target_groups(self.options.entrance_randomization_behavior)
-
-            placement = entrance_rando.randomize_entrances(
-                self,
-                coupled=EntranceRandomizationBehaviorOptionName.decoupled not in self.options.entrance_randomization_behavior,
-                target_group_lookup=target_groups,
-                on_connect=connect_cutscene_regions_as_well,
-            )
+            placement = self.place_entrances_with_ger(target_groups)
             self.randomized_entrances = prepare_mod_data(placement, self.forced_entrances)
+            for entrance_name, exit_name in self.randomized_entrances.items():
+                entrance = self.get_entrance(entrance_name)
+                connect_cutscene_region(entrance, exit_name)
         elif not is_chaos:
 
             for entrance_name, exit_name in self.randomized_entrances.items():
@@ -599,6 +597,45 @@ class StardewValleyWorld(World):
                 target.entrances.remove(entr)
 
                 ex.connect(target)
+
+    def place_entrances_with_ger(self, target_groups: dict[Any, Any]) -> ERPlacementState:
+        MAX_GER_ATTEMPTS = 1
+        regions_to_disconnect = [_exit.name for region in self.get_regions() for _exit in region.get_exits() if not _exit.connected_region]
+        er_targets = sorted([entrance for region in self.get_regions() for entrance in region.entrances if not entrance.parent_region], key=lambda x: x.name)
+        er_exits = sorted([ex for region in self.get_regions() for ex in region.exits if not ex.connected_region], key=lambda x: x.name)
+        last_error = None
+        for i in range(MAX_GER_ATTEMPTS):
+            try:
+                placement = entrance_rando.randomize_entrances(
+                    self,
+                    coupled=EntranceRandomizationBehaviorOptionName.decoupled not in self.options.entrance_randomization_behavior,
+                    target_group_lookup=target_groups,
+                    # er_targets=list(er_targets),
+                    # exits=list(er_exits),
+                )
+                if i >= 1:
+                    print(f"Succeeded GER after {i} retries.")
+                return placement
+            except entrance_rando.EntranceRandomizationError as error:
+                last_error = error
+                logger.warning(f"Failed at placing entrances with GER (Attempt {i+1}/{MAX_GER_ATTEMPTS}. This should be very rare. Error: {error}")
+                print(f"Failed at placing entrances with GER (Attempt {i+1}/{MAX_GER_ATTEMPTS}. This should be very rare. Error: {error}")
+                # Some entrances were probably connected, we disconnect them all to prepare for the retry
+                self.disconnect_entrances(regions_to_disconnect)
+                self.random.shuffle(er_targets)
+                self.random.shuffle(er_exits)
+
+        raise entrance_rando.EntranceRandomizationError(f"Stardew Valley: Failed at placing entrances after {MAX_GER_ATTEMPTS} attempts. Last error: {last_error}")
+    
+    def disconnect_entrances(self, regions_to_disconnect):
+        for region in self.get_regions():
+            for _exit in region.get_exits():
+                if (
+                    _exit.name in regions_to_disconnect
+                    and _exit.parent_region
+                    and _exit.connected_region
+                ):
+                    entrance_rando.disconnect_entrance_for_randomization(_exit, _exit.randomization_group)
 
     def generate_basic(self):
         pass
