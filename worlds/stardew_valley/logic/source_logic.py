@@ -97,7 +97,7 @@ class SourceLogic(BaseLogic):
             access_rule = self.logic.source.has_access_to(source)
             valid_requirements = []
             for requirement in source.other_requirements:
-                if any(isinstance(requirement, bypass_type) for bypass_type in bypassed_requirement_types):
+                if not any(isinstance(requirement, bypass_type) for bypass_type in bypassed_requirement_types):
                     valid_requirements.append(requirement)
             requirements_rule = self.logic.requirement.meet_all_requirements(valid_requirements)
             rules.append(access_rule & requirements_rule)
