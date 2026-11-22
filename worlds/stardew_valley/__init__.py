@@ -63,6 +63,7 @@ from .options.presets import sv_options_presets
 from .options.settings import StardewSettings
 from .options.worlds_group import apply_most_restrictive_options
 from .regions import create_regions, get_target_groups, prepare_mod_data
+from .regions.entrance_rando import connect_entrances_considering_er
 from .rules import set_rules
 from .spoiler.spoiler import write_spoiler_header, write_spoiler_middle
 from .stardew_rule import StardewRule
@@ -516,90 +517,7 @@ class StardewValleyWorld(World):
 
     def connect_entrances(self) -> None:
         self.entrance_cache_invalid = True
-        is_chaos = self.options.entrance_randomization_behavior.is_chaos()
-        # when the cutscene-relevant entrances aren't randomized, connect them manually
-        if self.options.entrance_randomization.value < EntranceRandomization.option_overworld or is_chaos:
-            farm = self.get_region(RegionNames.farm)
-            krobus_cutscene = self.get_region(LogicRegion.bus_stop_krobus_cutscene)
-            farm.connect(krobus_cutscene, LogicEntrance.watch_bus_stop_krobus_cutscene)
-
-            bus_stop = self.get_region(RegionNames.bus_stop)
-            cc_cutscene = self.get_region(LogicRegion.town_community_center_cutscene)
-            bus_stop.connect(cc_cutscene, LogicEntrance.watch_community_center_cutscene)
-
-        def get_parent_region(exit: Entrance):
-            if exit.parent_region:
-                return exit.parent_region
-            from .data.regions.model import connector_keyword
-            exit_name = exit.name
-            parent_region_name = exit_name.split(connector_keyword)[0]
-            print(f"{exit_name} ({parent_region_name})")
-            parent_region = self.get_region(parent_region_name)
-            return parent_region
-
-        def connect_cutscene_region(exit: Entrance, connected_entrance: Entrance | str):
-            if isinstance(connected_entrance, Entrance):
-                connected_entrance = connected_entrance.name
-            if connected_entrance == EntranceNames.farm_to_bus_stop:
-                parent_region = get_parent_region(exit)
-                krobus_cutscene = self.get_region(LogicRegion.bus_stop_krobus_cutscene)
-                parent_region.connect(krobus_cutscene, LogicEntrance.watch_bus_stop_krobus_cutscene, exit.access_rule)
-                return True
-            elif connected_entrance == EntranceNames.bus_stop_to_town:
-                parent_region = get_parent_region(exit)
-                cc_cutscene = self.get_region(LogicRegion.town_community_center_cutscene)
-                parent_region.connect(cc_cutscene, LogicEntrance.watch_community_center_cutscene, exit.access_rule)
-                return True
-            return False
-
-        def connect_cutscene_regions_as_well(state: entrance_rando.ERPlacementState, placed_exits: list[Entrance], placed_entrances: list[Entrance]):
-            additional_sweep_needed = False
-            for ex, entr in zip(placed_exits, placed_entrances):
-                additional_sweep_needed = connect_cutscene_region(ex, entr)
-            return additional_sweep_needed
-
-        # in reading of the slot_data the randomized entrances are set when UT is active.
-        if self.randomized_entrances is None:  # no slot_data with randomized_entrances found
-            target_groups = get_target_groups(self.options.entrance_randomization_behavior)
-
-            placement = entrance_rando.randomize_entrances(
-                self,
-                coupled=EntranceRandomizationBehaviorOptionName.decoupled not in self.options.entrance_randomization_behavior,
-                target_group_lookup=target_groups,
-                on_connect=connect_cutscene_regions_as_well,
-            )
-            self.randomized_entrances = prepare_mod_data(placement, self.forced_entrances)
-        elif not is_chaos:
-
-            for entrance_name, exit_name in self.randomized_entrances.items():
-                entrance = self.get_entrance(entrance_name)
-                connect_cutscene_region(entrance, exit_name)
-                if entrance.connected_region is not None:
-                    entrance.connected_region.create_er_target(exit_name).randomization_type = EntranceType.ONE_WAY
-                    entrance.connected_region.entrances.remove(entrance)
-                    entrance.connected_region = None
-
-            # randomized_entrances were in the slot_data, connecting them as entered
-            entrances = {entrance.name: entrance for region in self.get_regions() for entrance in region.entrances if entrance.parent_region is None}
-            exits = {exit_.name: exit_ for region in self.get_regions() for exit_ in region.exits if exit_.connected_region is None}
-
-            is_ut = getattr(self.multiworld, "generation_is_fake", False)
-            if is_ut and self.multiworld.enforce_deferred_connections in ("on", "default"):
-                from .client import setup_ut_deferred_entrances
-                self.entrance_data_map = setup_ut_deferred_entrances(self.randomized_entrances, entrances, exits)
-                self.visited_entrances = 0
-                return
-
-            for original, random in self.randomized_entrances.items():
-                rev_random = reverse_connection_name(random) or random
-                ex = exits[original]
-                entr = entrances[rev_random]
-
-                target = entr.connected_region
-                assert target is not None, f"Entrance {entr} didn't have a connected region yet"
-                target.entrances.remove(entr)
-
-                ex.connect(target)
+        connect_entrances_considering_er(self.options, self)
 
     def generate_basic(self):
         pass
